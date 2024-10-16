@@ -1,11 +1,13 @@
 <script setup>
-import {ref, reactive, onMounted} from 'vue';
-import {useTastingStore} from "@/stores/tasting.js";
+import { ref, reactive, onMounted } from 'vue';
+import { useTastingStore } from "@/stores/tasting.js";
 
 const store = useTastingStore();
 
 const currentStep = ref(1);
 let steps = ref([]);
+
+const tabImg = ref("one");
 
 onMounted(() => {
   steps.value = store.tasting_steps;
@@ -13,75 +15,92 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-card class="" v-if="steps && steps.length">
-    <v-card-text>
 
-      <v-stepper
-          v-model="currentStep"
-          :items="steps"
-          show-actions
-      >
-        <template v-slot:[`item.${step.step}`]
-                  v-for="step in steps" :key="step.step">
+  <v-container>
+    <v-row no-gutters>
+      <v-col>
+        <v-card class="" v-if="steps && steps.length">
+          <v-row no-gutters>
+            <v-col class="v-col-5">
+              <v-sheet class="pa-2 ma-2">
 
-          <h3 class="text-h6">{{ step.title }}</h3>
+                <v-card>
+                  <v-tabs v-model="tabImg">
+                    <v-tab value="one">
+                      <v-icon class="mr-2" icon="mdi-bottle-wine"></v-icon>
+                      Bouteille</v-tab>
+                    <v-tab value="two">
+                      <v-icon class="mr-2" icon="mdi-glass-wine"></v-icon>
+                      Verre
+                    </v-tab>
+                  </v-tabs>
 
-          <v-container>
-            <v-row class="d-flex justify-center">
-              <v-col
-                  class=""
-                  cols="12"
-                  md="12"
-              >
+                  <v-card-text>
+                    <v-tabs-window v-model="tabImg">
+                      <v-tabs-window-item value="one">
+                        <v-img :width="auto" max-height="100%" aspect-ratio="1/1" cover
+                          src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg"></v-img>
+                      </v-tabs-window-item>
 
-                <template v-for="field in step.fields" :key="field.id">
-                  <v-text-field
-                      v-if="field.type === 'text'"
-                      hide-details="auto"
-                      :label="field.label"
-                  ></v-text-field>
+                      <v-tabs-window-item value="two">
+                        <v-img :width="auto" max-height="100%" aspect-ratio="1/1" cover
+                          src="https://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"></v-img>
+                      </v-tabs-window-item>
+                    </v-tabs-window>
+                  </v-card-text>
+                </v-card>
 
-                  <v-select
-                      v-if="field.type === 'select'"
-                      :label="field.label"
-                      :items="field.options"
-                  ></v-select>
+              </v-sheet>
+            </v-col>
+            <v-col>
+              <v-sheet class="pa-4">
 
-                  <v-text-field
-                      v-if="field.type === 'number'"
-                      :label="field.label"
-                      model-value="10.00"
-                      prefix="€"
-                  ></v-text-field>
+                <v-stepper v-model="currentStep" :items="steps" show-actions>
+                  <template v-slot:[`item.${step.step}`] v-for="step in steps" :key="step.step">
 
-                  <v-btn-toggle
-                      value=""
-                      v-if="field.type === 'select-button'"
-                  >
+                    <h3 class="text-h6">{{ step.title }}</h3>
 
-                    <v-btn :color="option.iconColor"
-                        v-for="option in field.options" :key="option.id">
-                      <span class="mr-2">{{ option.type }}</span>
-                      <v-icon start :color="option.iconColor" size="x-large">
-                        mdi-glass-wine
-                      </v-icon>
-                    </v-btn>
-                  </v-btn-toggle>
+                    <v-container>
+                      <v-row class="d-flex justify-center">
+                        <v-col class="" cols="12" md="12">
 
-                </template>
-              </v-col>
-            </v-row>
-          </v-container>
+                          <template v-for="field in step.fields" :key="field.id">
+                            <v-text-field v-if="field.type === 'text'" hide-details="auto"
+                              :label="field.label"></v-text-field>
 
-        </template>
+                            <v-select v-if="field.type === 'select'" :label="field.label"
+                              :items="field.values"></v-select>
 
-      </v-stepper>
+                            <v-text-field v-if="field.type === 'number'" :label="field.label" model-value="10.00"
+                              prefix="€"></v-text-field>
 
-    </v-card-text>
-  </v-card>
+                            <v-btn-toggle value="" v-if="field.type === 'select-button'">
+
+                              <v-btn :color="option.iconColor" v-for="option in field.options" :key="option.id">
+                                <span class="mr-2">{{ option.type }}</span>
+                                <v-icon start :color="option.iconColor" size="x-large">
+                                  mdi-glass-wine
+                                </v-icon>
+                              </v-btn>
+                            </v-btn-toggle>
+                          </template>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </template>
+                </v-stepper>
+              </v-sheet>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+
 </template>
 
 <style scoped>
-
-
+.v-container {
+  max-width: 100%;
+}
 </style>

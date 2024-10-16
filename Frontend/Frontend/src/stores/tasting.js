@@ -1,5 +1,5 @@
-import {ref, computed} from 'vue'
-import {defineStore} from 'pinia'
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
 
 export const useTastingStore = defineStore('tasting', () => {
 
@@ -14,9 +14,9 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Type",
                     "name": "type",
                     "options": [
-                        {"id": 1, "type": "Rouge", "icon": "mdi-glass-wine", "iconColor": "#CD0E00"},
-                        {"id": 2, "type": "Blanc", "icon": "mdi-glass-wine", "iconColor": "#dcc70a"},
-                        {"id": 3, "type": "Rosé", "icon": "mdi-glass-wine", "iconColor": "#fe7da9"}
+                        { "id": 1, "type": "Rouge", "icon": "mdi-glass-wine", "iconColor": "#CD0E00" },
+                        { "id": 2, "type": "Blanc", "icon": "mdi-glass-wine", "iconColor": "#dcc70a" },
+                        { "id": 3, "type": "Rosé", "icon": "mdi-glass-wine", "iconColor": "#fe7da9" }
                     ],
                     "placeholder": "Type de vin",
                     "required": true,
@@ -44,7 +44,7 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select",
                     "label": "AOP/IGP/VDF",
                     "name": "aop_igp_vdf",
-                    "options": [
+                    "values": [
                         "/",
                         "AOP",
                         "IGP",
@@ -65,7 +65,7 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select",
                     "label": "Import",
                     "name": "Import",
-                    "options": [
+                    "values": [
                         "/",
                         "Espagne",
                         "Italie",
@@ -99,7 +99,7 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select",
                     "label": "Robe",
                     "name": "robe",
-                    "options": [
+                    "values": [
                         {
                             "type": "Rouge",
                             "disques": [
@@ -216,15 +216,15 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "couleur": ""
                                 },
                                 {
-                                    "titre": "rose violacé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "orangé",
+                                    "titre": "rosé orangé",
                                     "couleur": ""
                                 },
                                 {
                                     "titre": "roux",
+                                    "couleur": ""
+                                },
+                                {
+                                    "titre": "orangé",
                                     "couleur": ""
                                 },
                                 {
@@ -238,45 +238,69 @@ export const useTastingStore = defineStore('tasting', () => {
                 },
                 {
                     "type": "select",
-                    "label": "Disque",
-                    "name": "disque",
-                    "options": [
-                        "violacé",
-                        "rosé",
-                        "brun",
-                        "tuilé",
-                        "orangé"
-                    ],
-                    "required": false
-                },
-                {
-                    "type": "select",
                     "label": "Intensité",
                     "name": "intensite",
-                    "options": [
-                        "pâle",
-                        "légère",
-                        "faible",
-                        "peu intense",
-                        "moyenne",
-                        "soutenue",
-                        "intense",
-                        "profonde",
-                        "opaque"
+                    "values": [
+                        {
+                            "titre": "pâle"
+                        },
+                        {
+                            "titre": "légère"
+                        },
+                        {
+                            "titre": "faible"
+                        },
+                        {
+                            "titre": "peu intense"
+                        },
+                        {
+                            "titre": "moyenne"
+                        },
+                        {
+                            "titre": "soutenue"
+                        },
+                        {
+                            "titre": "intense"
+                        },
+                        {
+                            "titre": "profonde"
+                        },
+                        {
+                            "titre": "opaque"
+                        },
                     ],
-                    "required": true
+                    "required": true,
+                    "multi": true
                 },
                 {
                     "type": "select",
                     "label": "Limpidité",
                     "name": "limpidite",
-                    "options": [
-                        "voilée",
-                        "trouble",
-                        "louche",
-                        "claire",
-                        "limpide",
-                        "parfaite"
+                    "values": [
+                        {
+                            "voilée": "voilée",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "trouble",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "louche",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "claire",
+                            "negatif": false
+                        },
+                        {
+                            "voilée": "limpide",
+                            "negatif": false
+                        },
+                        {
+                            "voilée": "parfaite",
+                            "negatif": false
+                        },
                     ],
                     "required": true
                 },
@@ -284,13 +308,31 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select",
                     "label": "Brillance",
                     "name": "brillance",
-                    "options": [
-                        "éteint",
-                        "terne",
-                        "mat",
-                        "cristalline",
-                        "brillante",
-                        "éclatante"
+                    "values": [
+                        {
+                            "voilée": "éteint",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "terne",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "mat",
+                            "negatif": true
+                        },
+                        {
+                            "voilée": "cristalline",
+                            "negatif": false
+                        },
+                        {
+                            "voilée": "brillante",
+                            "negatif": false
+                        },
+                        {
+                            "voilée": "éclatante",
+                            "negatif": false
+                        },
                     ],
                     "required": true
                 }
@@ -304,7 +346,7 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select",
                     "label": "Intensité",
                     "name": "intensite_nez",
-                    "options": [
+                    "values": [
                         "fermée",
                         "retenue",
                         "faible",
@@ -548,5 +590,5 @@ export const useTastingStore = defineStore('tasting', () => {
         // count.value++
     }
 
-    return {tasting_steps, increment}
+    return { tasting_steps, increment }
 })
