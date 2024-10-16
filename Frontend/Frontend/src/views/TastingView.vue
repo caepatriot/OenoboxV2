@@ -39,7 +39,9 @@ onMounted(() => {
                     <v-tabs-window v-model="tabImg">
                       <v-tabs-window-item value="one">
                         <v-img :width="auto" max-height="100%" aspect-ratio="1/1" cover
-                          src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg"></v-img>
+                          src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg">
+                        </v-img>
+
                       </v-tabs-window-item>
 
                       <v-tabs-window-item value="two">
@@ -61,27 +63,28 @@ onMounted(() => {
                     <h3 class="text-h6">{{ step.title }}</h3>
 
                     <v-container>
-                      <v-row class="d-flex justify-center">
-                        <v-col class="" cols="12" md="12">
+                      <v-row>
+                        <v-col class="d-flex flex-column ga-3">
 
-                          <template v-for="field in step.fields" :key="field.id">
+                          <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
                             <v-text-field v-if="field.type === 'text'" hide-details="auto"
                               :label="field.label"></v-text-field>
 
-                            <v-select v-if="field.type === 'select'" :label="field.label"
-                              :items="field.values"></v-select>
+                            <v-select v-if="field.type === 'select'" :label="field.label" :items="field.values"
+                              hide-details="true"></v-select>
 
                             <v-text-field v-if="field.type === 'number'" :label="field.label" model-value="10.00"
-                              prefix="€"></v-text-field>
+                              prefix="€" hide-details="true"></v-text-field>
 
                             <v-btn-toggle value="" v-if="field.type === 'select-button'">
 
                               <v-btn :color="option.iconColor" v-for="option in field.options" :key="option.id">
-                                <span class="mr-2">{{ option.type }}</span>
-                                <v-icon start :color="option.iconColor" size="x-large">
-                                  mdi-glass-wine
+                                <span>{{ option.type }}</span>
+                                <v-icon v-if="option.icon" start :color="option.iconColor" :icon="option.icon"
+                                  size="x-large">
                                 </v-icon>
                               </v-btn>
+
                             </v-btn-toggle>
                           </template>
                         </v-col>

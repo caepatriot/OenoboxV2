@@ -14,9 +14,9 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Type",
                     "name": "type",
                     "options": [
-                        { "id": 1, "type": "Rouge", "icon": "mdi-glass-wine", "iconColor": "#CD0E00" },
-                        { "id": 2, "type": "Blanc", "icon": "mdi-glass-wine", "iconColor": "#dcc70a" },
-                        { "id": 3, "type": "Rosé", "icon": "mdi-glass-wine", "iconColor": "#fe7da9" }
+                        { "id": 1, "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        { "id": 2, "type": "Blanc", "icon": "", "iconColor": "rgb(255, 241, 128)" },
+                        { "id": 3, "type": "Rosé", "icon": "", "iconColor": "rgb(255, 150, 186)" }
                     ],
                     "placeholder": "Type de vin",
                     "required": true,
