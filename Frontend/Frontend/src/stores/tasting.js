@@ -516,7 +516,7 @@ export const useTastingStore = defineStore('tasting', () => {
         }
     ]
 
-    const vins = [
+    const myTastings = [
         {
             "vin": {
                 "cepage": [],
@@ -527,7 +527,16 @@ export const useTastingStore = defineStore('tasting', () => {
                 "prix_lancement": 0,
                 "prix_actuel": 0,
                 "aspect_visuel": {
-                    "robe": "",
+                    "robe": {
+                        "couleur": "",
+                        "disque": "",
+                        "intensité": {},
+                        "limpidité": {},
+                        "brillance": {},
+                        "evolution": {},
+                        "remarques": ""
+
+                    },
                     "teinte": "",
                     "disque": "",
                     "intensite": "",
