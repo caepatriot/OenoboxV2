@@ -4,7 +4,72 @@ import { useTastingStore } from "@/stores/tasting.js";
 
 const store = useTastingStore();
 
-let selectedTasting = ref(null);
+const selectedTasting = ref({
+  vin: {
+    cepage: [],
+    region: "",
+    aop_igp_vdf: "",
+    elevage: "",
+    import: "",
+    prix_lancement: 0,
+    prix_actuel: 0,
+    aspect_visuel: {
+      robe: {
+        couleur: "",
+        disque: "",
+        intensité: {},
+        limpidité: {},
+        brillance: {},
+        evolution: {},
+        remarques: ""
+      }
+    },
+    nez: {
+      intensite: "",
+      qualite: "",
+      aromes: {
+        type: "",
+        nature: []
+      },
+      description: ""
+    },
+    bouche: {
+      attaque: "",
+      evolution: "",
+      fin_de_bouche: "",
+      structure: "",
+      texture: "",
+      intensite: "",
+      qualite: "",
+      equilibre: "",
+      aromes: [],
+      longueur_en_bouche: "",
+      persistance_aromatique: "",
+      remarques: ""
+    },
+    notes: {
+      caudalies: 0,
+      note_finale: {
+        tres_mediocre: false,
+        mediocre: false,
+        mauvais: false,
+        passable: false,
+        correct: false,
+        bon: false,
+        tres_bon: false,
+        superbe: false,
+        excellent: false,
+        exceptionnel: false,
+        legendaire: false
+      },
+      conclusion: ""
+    },
+    temperature_ideale_de_consommation: 0,
+    date_ideale_de_consommation: "",
+    evolution_probable: "",
+    accords_mets_vins: []
+  }
+});
 
 const currentStep = ref(1);
 let steps = ref([]);
@@ -13,18 +78,14 @@ const tabImg = ref("one");
 
 const drawer = ref(true);
 
-// const items = ref([
-//   { title: 'Foo', value: 'foo' },
-//   { title: 'Bar', value: 'bar' },
-//   { title: 'Fizz', value: 'fizz' },
-//   { title: 'Buzz', value: 'buzz' },
-// ]);
-
-
 onMounted(() => {
   document.body.addEventListener('mousemove', handleMouseMove)
   steps.value = store.tasting_steps;
 });
+
+const submitForm = () => {
+  console.log(selectedTasting.value); // This will log the full tasting data object
+};
 
 
 
@@ -154,7 +215,7 @@ const handleMouseLeave = () => {
           <v-col>
             <v-sheet class="pa-4">
 
-              <v-stepper v-model="currentStep" :items="steps" show-actions>
+              <v-stepper editable v-model="currentStep" :items="steps" show-actions>
                 <template v-slot:[`item.${step.step}`] v-for="step in steps" :key="step.step">
 
                   <h3 class="text-h6">{{ step.title }}</h3>
@@ -165,18 +226,18 @@ const handleMouseLeave = () => {
 
                         <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
 
-                          <v-text-field variant="outlined" v-model="selectedTasting" v-if="field.type === 'text'" hide-details="auto"
+                          <v-text-field variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'text'" hide-details="auto"
                             :label="field.label"></v-text-field>
 
-                          <v-select variant="outlined" v-if="field.type === 'select'" :label="field.label"
+                          <v-select variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'select'" :label="field.label"
                             :items="field.values" hide-details="true"></v-select>
 
-                          <v-text-field variant="outlined" v-if="field.type === 'number'" :label="field.label"
+                          <v-text-field variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'number'" :label="field.label"
                             prefix="€" hide-details="true"></v-text-field>
 
                           <v-btn-toggle value="" v-if="field.type === 'select-button'">
 
-                            <v-btn :color="option.iconColor" v-for="option in field.options" :key="option.id">
+                            <v-btn :color="option.iconColor" v-model="selectedTasting.vin[field.name]" v-for="option in field.options" :key="option.id">
                               <span>{{ option.type }}</span>
                               <v-icon v-if="option.icon" start :color="option.iconColor" :icon="option.icon"
                                 size="x-large">
@@ -190,6 +251,7 @@ const handleMouseLeave = () => {
                   </v-container>
                 </template>
               </v-stepper>
+              <v-btn @click="submitForm">Submit</v-btn>
             </v-sheet>
           </v-col>
         </v-row>
