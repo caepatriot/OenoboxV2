@@ -230,7 +230,8 @@ const handleMouseLeave = () => {
                             v-if="field.type === 'text'" hide-details="auto" :label="field.label"></v-text-field>
 
                           <v-autocomplete v-if="field.type === 'autocomplete'" :label="field.label" density="compact"
-                            chips v-model="selectedTasting.vin[field.name]" :items="field.values" hide-details="true"
+                            chips v-model="selectedTasting.vin[field.name]" :items="field.values" :item-title="field.values.value"
+                            :item-value="field.values.value" hide-details="true"
                             variant="outlined" multiple>
 
                             <template v-slot:chip="{ props, item }">
@@ -251,10 +252,10 @@ const handleMouseLeave = () => {
 
                           <v-btn-toggle divided value="" v-if="field.type === 'select-button'">
 
-                            <v-btn :color="option.iconColor" v-model="selectedTasting.vin[field.name]"
-                              v-for="option in field.options" :key="option.id">
-                              <span>{{ option.type }}</span>
-                              <v-icon v-if="option.icon" start :color="option.iconColor" :icon="option.icon"
+                            <v-btn :color="value.iconColor" v-model="selectedTasting.vin[field.name]"
+                              v-for="value in field.values" :key="value.id">
+                              <span>{{ value.type }}</span>
+                              <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"
                                 size="x-large">
                               </v-icon>
                             </v-btn>

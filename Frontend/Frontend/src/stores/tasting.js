@@ -13,7 +13,7 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select-button",
                     "label": "Type",
                     "name": "type",
-                    "options": [
+                    "values": [
                         { "id": 1, "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
                         { "id": 2, "type": "Blanc", "icon": "", "iconColor": "rgb(255, 241, 128)" },
                         { "id": 3, "type": "Rosé", "icon": "", "iconColor": "rgb(255, 150, 186)" }
@@ -28,9 +28,9 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Cépage(s)",
                     "name": "cepage",
                     "values": [
-                        "Chardonnay",
-                        "Viognier",
-                        "Sémillon"
+                        { "id": 1,"value":"Chardonnay", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        { "id": 2, "value":"Viognier", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        { "id": 3, "value":"Sémillon", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" }
                     ],
                     "placeholder": "Entrez les cépages",
                     "required": true,
