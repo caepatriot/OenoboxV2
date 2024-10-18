@@ -226,18 +226,33 @@ const handleMouseLeave = () => {
 
                         <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
 
-                          <v-text-field variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'text'" hide-details="auto"
-                            :label="field.label"></v-text-field>
+                          <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                            v-if="field.type === 'text'" hide-details="auto" :label="field.label"></v-text-field>
 
-                          <v-select variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'select'" :label="field.label"
-                            :items="field.values" hide-details="true"></v-select>
+                          <v-autocomplete v-if="field.type === 'autocomplete'" :label="field.label" density="compact"
+                            chips v-model="selectedTasting.vin[field.name]" :items="field.values" hide-details="true"
+                            variant="outlined" multiple>
 
-                          <v-text-field variant="outlined" v-model="selectedTasting.vin[field.name]" v-if="field.type === 'number'" :label="field.label"
-                            prefix="€" hide-details="true"></v-text-field>
+                            <template v-slot:chip="{ props, item }">
+                              <v-btn size="small" density="compact" icon="mdi-minus"></v-btn>
+                              <v-chip v-bind="props" :prepend-avatar="item.raw.avatar" :text="item.raw.name"></v-chip>
+                              <v-btn size="small" density="compact" icon="mdi-plus"></v-btn>
+                            </template>
 
-                          <v-btn-toggle value="" v-if="field.type === 'select-button'">
+                          </v-autocomplete>
 
-                            <v-btn :color="option.iconColor" v-model="selectedTasting.vin[field.name]" v-for="option in field.options" :key="option.id">
+                          <v-select density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                            v-if="field.type === 'select'" :label="field.label" :items="field.values"
+                            hide-details="true"></v-select>
+
+                          <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                            v-if="field.type === 'number'" :label="field.label" prefix="€"
+                            hide-details="true"></v-text-field>
+
+                          <v-btn-toggle divided value="" v-if="field.type === 'select-button'">
+
+                            <v-btn :color="option.iconColor" v-model="selectedTasting.vin[field.name]"
+                              v-for="option in field.options" :key="option.id">
                               <span>{{ option.type }}</span>
                               <v-icon v-if="option.icon" start :color="option.iconColor" :icon="option.icon"
                                 size="x-large">

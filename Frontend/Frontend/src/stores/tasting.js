@@ -24,9 +24,14 @@ export const useTastingStore = defineStore('tasting', () => {
                 },
                 {
                     "id": 2,
-                    "type": "text",
+                    "type": "autocomplete",
                     "label": "Cépage(s)",
-                    "name": "cepages",
+                    "name": "cepage",
+                    "values": [
+                        "Chardonnay",
+                        "Viognier",
+                        "Sémillon"
+                    ],
                     "placeholder": "Entrez les cépages",
                     "required": true,
                     "multi": true
@@ -41,15 +46,9 @@ export const useTastingStore = defineStore('tasting', () => {
                 },
                 {
                     "id": 4,
-                    "type": "select",
+                    "type": "text",
                     "label": "AOP/IGP/VDF",
                     "name": "aop_igp_vdf",
-                    "values": [
-                        "/",
-                        "AOP",
-                        "IGP",
-                        "VDF"
-                    ],
                     "required": true
                 },
                 {
