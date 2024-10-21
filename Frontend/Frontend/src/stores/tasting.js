@@ -122,10 +122,8 @@ export const useTastingStore = defineStore('tasting', () => {
                     // "type": "select",
                     "label": "Robe",
                     "name": "robe",
-
-
                     "type": "select-button",
-                    "options": [
+                    "values": [
                         {"id": 1, "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)"},
                         {"id": 2, "type": "Blanc", "icon": "", "iconColor": "rgb(255, 241, 128)"},
                         {"id": 3, "type": "Rosé", "icon": "", "iconColor": "rgb(255, 150, 186)"}
@@ -133,37 +131,19 @@ export const useTastingStore = defineStore('tasting', () => {
                     "required": true
                 },
                 {
-                    "type": "select",
+                    "type": "select-button",
                     "label": "Intensité",
                     "name": "intensite",
                     "values": [
-                        {
-                            "titre": "pâle"
-                        },
-                        {
-                            "titre": "légère"
-                        },
-                        {
-                            "titre": "faible"
-                        },
-                        {
-                            "titre": "peu intense"
-                        },
-                        {
-                            "titre": "moyenne"
-                        },
-                        {
-                            "titre": "soutenue"
-                        },
-                        {
-                            "titre": "intense"
-                        },
-                        {
-                            "titre": "profonde"
-                        },
-                        {
-                            "titre": "opaque"
-                        },
+                        {"id": 1, "value": "pâle", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 2, "value": "légère", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 3, "value": "faible", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 4, "value": "peu intense", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 5, "value": "moyenne", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 6, "value": "soutenue", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 7, "value": "intense", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 8, "value": "profonde", "wineType": "red", "icon": "", "iconColor": ""},
+                        {"id": 9, "value": "opaque", "wineType": "red", "icon": "", "iconColor": ""},
                     ],
                     "required": true,
                     "multi": true
