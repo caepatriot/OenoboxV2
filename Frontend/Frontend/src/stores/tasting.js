@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import {ref, computed} from 'vue'
+import {defineStore} from 'pinia'
 
 export const useTastingStore = defineStore('tasting', () => {
 
@@ -14,9 +14,9 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Type",
                     "name": "type",
                     "values": [
-                        { "id": 1, "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 2, "type": "Blanc", "icon": "", "iconColor": "rgb(255, 241, 128)" },
-                        { "id": 3, "type": "Rosé", "icon": "", "iconColor": "rgb(255, 150, 186)" }
+                        {"id": 1, "value": "Rouge", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 2, "value": "Blanc", "wineType": "white", "icon": "", "iconColor": "rgb(255, 241, 128)"},
+                        {"id": 3, "value": "Rosé", "wineType": "rose", "icon": "", "iconColor": "rgb(255, 150, 186)"}
                     ],
                     "placeholder": "Type de vin",
                     "required": true,
@@ -28,9 +28,33 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Cépage(s)",
                     "name": "cepage",
                     "values": [
-                        { "id": 1,"value":"Chardonnay", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 2, "value":"Viognier", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 3, "value":"Sémillon", "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)" }
+                        {"id": 1, "value": "CABERNET-SAUVIGNON", "wineType": ["red", "rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 2, "value": "CARIGNAN", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 3, "value": "CINSAULT", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 4, "value": "MALBEC", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 5, "value": "GAMAY", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 6, "value": "GRENACHE", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 7, "value": "MERLOT", "wineType": ["red", "rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 8, "value": "MOURVÈDRE", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 9, "value": "PINOT NOIR", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 10, "value": "SANGIOVESE", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 11, "value": "SYRAH", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+
+                        {"id": 11, "value": "Chardonnay", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 12, "value": "pinot blanc", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 13, "value": "sauvignon blanc", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 14, "value": "grenache blanc", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 15, "value": "chenin", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 16, "value": "gewurztraminer", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 17, "value": "riesling", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 18, "value": "viognier", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 19, "value": "sémillon", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 20, "value": "marsanne", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 21, "value": "roussanne", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+
+                        {"id": 22, "value": "Syrah", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 23, "value": "Grenache", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 24, "value": "Cinsault", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"}
                     ],
                     "placeholder": "Entrez les cépages",
                     "required": true,
@@ -95,143 +119,16 @@ export const useTastingStore = defineStore('tasting', () => {
             "title": "Aspect Visuel",
             "fields": [
                 {
-                    "type": "select",
+                    // "type": "select",
                     "label": "Robe",
                     "name": "robe",
-                    "values": [
-                        {
-                            "type": "Rouge",
-                            "disques": [
-                                {
-                                    "titre": "violacé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "rosé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "brun",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "tuilé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "orangé",
-                                    "couleur": ""
-                                },
-                            ],
-                            "couleurs": [
-                                {
-                                    "titre": "noir",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "bleuâtre",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "violet",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "pourpre",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "grenat",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "rubis",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "incarnat et carmin",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "brique",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "tuilé",
-                                    "couleur": ""
-                                }
-                            ]
-                        },
-                        {
-                            "type": "Blanc",
-                            "couleurs": [
-                                {
-                                    "titre": "blanc",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "jaune-vert",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "jaune pâle",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "paille",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "or",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "doré",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "ambré",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "madérisé",
-                                    "couleur": ""
-                                }
-                            ]
-                        },
-                        {
-                            "type": "Rosé",
-                            "couleurs": [
-                                {
-                                    "titre": "gris",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "rosé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "rose violacé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "rosé orangé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "roux",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "orangé",
-                                    "couleur": ""
-                                },
-                                {
-                                    "titre": "brun",
-                                    "couleur": ""
-                                }
-                            ]
-                        },
+
+
+                    "type": "select-button",
+                    "options": [
+                        {"id": 1, "type": "Rouge", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 2, "type": "Blanc", "icon": "", "iconColor": "rgb(255, 241, 128)"},
+                        {"id": 3, "type": "Rosé", "icon": "", "iconColor": "rgb(255, 150, 186)"}
                     ],
                     "required": true
                 },
@@ -301,6 +198,145 @@ export const useTastingStore = defineStore('tasting', () => {
                             "negatif": false
                         },
                     ],
+                    "placeholder": "Type de vin",
+                    "multi": false,
+
+
+                    // "values": [
+                    //     {
+                    //         "type": "Rouge",
+                    //         "disques": [
+                    //             {
+                    //                 "titre": "violacé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "rosé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "brun",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "tuilé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "orangé",
+                    //                 "couleur": ""
+                    //             },
+                    //         ],
+                    //         "couleurs": [
+                    //             {
+                    //                 "titre": "noir",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "bleuâtre",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "violet",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "pourpre",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "grenat",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "rubis",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "incarnat et carmin",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "brique",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "tuilé",
+                    //                 "couleur": ""
+                    //             }
+                    //         ]
+                    //     },
+                    //     {
+                    //         "type": "Blanc",
+                    //         "couleurs": [
+                    //             {
+                    //                 "titre": "blanc",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "jaune-vert",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "jaune pâle",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "paille",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "or",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "doré",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "ambré",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "madérisé",
+                    //                 "couleur": ""
+                    //             }
+                    //         ]
+                    //     },
+                    //     {
+                    //         "type": "Rosé",
+                    //         "couleurs": [
+                    //             {
+                    //                 "titre": "gris",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "rosé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "rose violacé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "rosé orangé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "roux",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "orangé",
+                    //                 "couleur": ""
+                    //             },
+                    //             {
+                    //                 "titre": "brun",
+                    //                 "couleur": ""
+                    //             }
+                    //         ]
+                    //     },
+                    // ],
                     "required": true
                 },
                 {
@@ -598,5 +634,5 @@ export const useTastingStore = defineStore('tasting', () => {
         // count.value++
     }
 
-    return { tasting_steps, increment }
+    return {tasting_steps, increment}
 })

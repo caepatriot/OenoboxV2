@@ -1,11 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
-import { useTastingStore } from "@/stores/tasting.js";
+import {ref, reactive, onMounted} from 'vue';
+import {useTastingStore} from "@/stores/tasting.js";
 
 const store = useTastingStore();
 
-const selectedTasting = ref({
+const selectedTasting = reactive({
   vin: {
+    type: "",
     cepage: [],
     region: "",
     aop_igp_vdf: "",
@@ -76,7 +77,7 @@ let steps = ref([]);
 
 const tabImg = ref("one");
 
-const drawer = ref(true);
+const drawer = ref(false);
 
 onMounted(() => {
   document.body.addEventListener('mousemove', handleMouseMove)
@@ -84,11 +85,8 @@ onMounted(() => {
 });
 
 const submitForm = () => {
-  console.log(selectedTasting.value); // This will log the full tasting data object
+  console.log(selectedTasting); // This will log the full tasting data object
 };
-
-
-
 
 
 // Reactive variables
@@ -125,8 +123,6 @@ const handleItemClick = (item) => {
 }
 
 
-
-
 // Open the drawer when the mouse moves near the left edge of the screen
 const handleMouseMove = (event) => {
   if (event.clientX <= 20) {        // Mouse near the left screen edge
@@ -137,6 +133,20 @@ const handleMouseMove = (event) => {
 // Hide the drawer when the mouse leaves the drawer area
 const handleMouseLeave = () => {
   drawer.value = false              // Hide the drawer
+}
+
+const filteredWineTypeValues = (items) => {
+  const selectedWineType = selectedTasting.vin.type?.wineType;
+
+  if (!selectedWineType) return items;
+
+  return items.filter(item => {
+    if (Array.isArray(item.wineType)) {
+      return item.wineType.includes(selectedWineType);
+    }
+
+    return item.wineType === selectedWineType;
+  });
 }
 
 </script>
@@ -154,7 +164,7 @@ const handleMouseLeave = () => {
         <v-card-title>Nouvelle fiche</v-card-title>
         <v-card-text>
           <v-form>
-            <v-text-field variant="outlined" label="Title" v-model="newTitle" :rules="titleRules" required />
+            <v-text-field variant="outlined" label="Title" v-model="newTitle" :rules="titleRules" required/>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -183,7 +193,8 @@ const handleMouseLeave = () => {
               <v-tabs v-model="tabImg">
                 <v-tab value="one">
                   <v-icon class="mr-2" icon="mdi-bottle-wine"></v-icon>
-                  Bouteille</v-tab>
+                  Bouteille
+                </v-tab>
                 <v-tab value="two">
                   <v-icon class="mr-2" icon="mdi-glass-wine"></v-icon>
                   Verre
@@ -195,17 +206,17 @@ const handleMouseLeave = () => {
 
                   <v-tabs-window-item class="relative" value="one">
                     <v-img width="100%" max-height="100%" aspect-ratio="1/1" cover
-                      src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg">
+                           src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg">
                     </v-img>
                     <v-btn class="position-absolute bottom-0 right-0 ma-2" icon="mdi-camera-outline"
-                      size="large"></v-btn>
+                           size="large"></v-btn>
                   </v-tabs-window-item>
 
                   <v-tabs-window-item class="relative" value="two">
                     <v-img width="100%" max-height="100%" aspect-ratio="1/1" cover
-                      src="https://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"></v-img>
+                           src="https://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"></v-img>
                     <v-btn class="position-absolute bottom-0 right-0 ma-2" icon="mdi-camera-outline"
-                      size="large"></v-btn>
+                           size="large"></v-btn>
                   </v-tabs-window-item>
 
                 </v-tabs-window>
@@ -227,36 +238,43 @@ const handleMouseLeave = () => {
                         <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
 
                           <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                            v-if="field.type === 'text'" hide-details="auto" :label="field.label"></v-text-field>
+                                        v-if="field.type === 'text'" hide-details="auto"
+                                        :label="field.label"></v-text-field>
 
                           <v-autocomplete v-if="field.type === 'autocomplete'" :label="field.label" density="compact"
-                            chips v-model="selectedTasting.vin[field.name]" :items="field.values" :item-title="field.values.value"
-                            :item-value="field.values.value" hide-details="true"
-                            variant="outlined" multiple>
+                                          chips v-model="selectedTasting.vin[field.name]"
+                                          :items="filteredWineTypeValues(field.values)"
+                                          item-title="value"
+                                          item-value="id"
+                                          hide-details="true"
+                                          variant="outlined"
+                                          return-object
+                                          multiple>
 
-                            <template v-slot:chip="{ props, item }">
-                              <v-btn size="small" density="compact" icon="mdi-minus"></v-btn>
-                              <v-chip v-bind="props" :prepend-avatar="item.raw.avatar" :text="item.raw.name"></v-chip>
-                              <v-btn size="small" density="compact" icon="mdi-plus"></v-btn>
-                            </template>
+                            <!--                            <template v-slot:chip="{ props, item }">-->
+                            <!--                              <v-btn size="small" density="compact" icon="mdi-minus"></v-btn>-->
+                            <!--                              <v-chip v-bind="props" :prepend-avatar="item.raw.avatar" :text="item.raw.name"></v-chip>-->
+                            <!--                              <v-btn size="small" density="compact" icon="mdi-plus"></v-btn>-->
+                            <!--                            </template>-->
 
                           </v-autocomplete>
 
                           <v-select density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                            v-if="field.type === 'select'" :label="field.label" :items="field.values"
-                            hide-details="true"></v-select>
+                                    v-if="field.type === 'select'" :label="field.label" :items="field.values"
+                                    hide-details="true"></v-select>
 
                           <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                            v-if="field.type === 'number'" :label="field.label" prefix="€"
-                            hide-details="true"></v-text-field>
+                                        v-if="field.type === 'number'" :label="field.label" prefix="€"
+                                        hide-details="true"></v-text-field>
 
-                          <v-btn-toggle divided value="" v-if="field.type === 'select-button'">
+                          <v-btn-toggle divided v-model="selectedTasting.vin[field.name]"
+                                        v-if="field.type === 'select-button'">
 
-                            <v-btn :color="value.iconColor" v-model="selectedTasting.vin[field.name]"
-                              v-for="value in field.values" :key="value.id">
-                              <span>{{ value.type }}</span>
+                            <v-btn :color="value.iconColor"
+                                   v-for="value in field.values" :key="value.id" :value="value">
+                              <span>{{ value.value }}</span>
                               <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"
-                                size="x-large">
+                                      size="x-large">
                               </v-icon>
                             </v-btn>
 
