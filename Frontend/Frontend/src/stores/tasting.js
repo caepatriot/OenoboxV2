@@ -769,82 +769,82 @@ export const useTastingStore = defineStore('tasting', () => {
         }
     ]
 
-    const myTastings = [
-        {
-            "vin": {
-                "cepage": [],
-                "region": "",
-                "aop_igp_vdf": "",
-                "elevage": "",
-                "import": "",
-                "prix_lancement": 0,
-                "prix_actuel": 0,
-                "aspect_visuel": {
-                    "robe": {
-                        "couleur": "",
-                        "disque": "",
-                        "intensité": {},
-                        "limpidité": {},
-                        "brillance": {},
-                        "evolution": {},
-                        "remarques": ""
-
-                    },
-                    "teinte": "",
-                    "disque": "",
-                    "intensite": "",
-                    "limpidite": "",
-                    "brillance": "",
-                    "evolution": "",
-                    "remarques": ""
-                },
-                "nez": {
-                    "intensite": "",
-                    "qualite": "",
-                    "aromes": {
-                        "type": "",
-                        "nature": []
-                    },
-                    "description": ""
-                },
-                "bouche": {
-                    "attaque": "",
-                    "evolution": "",
-                    "fin_de_bouche": "",
-                    "structure": "",
-                    "texture": "",
-                    "intensite": "",
-                    "qualite": "",
-                    "equilibre": "",
-                    "aromes": [],
-                    "longueur_en_bouche": "",
-                    "persistance_aromatique": "",
-                    "remarques": ""
-                },
-                "notes": {
-                    "caudalies": 0,
-                    "note_finale": {
-                        "tres_mediocre": false,
-                        "mediocre": false,
-                        "mauvais": false,
-                        "passable": false,
-                        "correct": false,
-                        "bon": false,
-                        "tres_bon": false,
-                        "superbe": false,
-                        "excellent": false,
-                        "exceptionnel": false,
-                        "legendaire": false
-                    },
-                    "conclusion": ""
-                },
-                "temperature_ideale_de_consommation": 0,
-                "date_ideale_de_consommation": "",
-                "evolution_probable": "",
-                "accords_mets_vins": []
-            }
-        }
-    ]
+    // const myTastings = [
+    //     {
+    //         "vin": {
+    //             "cepage": [],
+    //             "region": "",
+    //             "aop_igp_vdf": "",
+    //             "elevage": "",
+    //             "import": "",
+    //             "prix_lancement": 0,
+    //             "prix_actuel": 0,
+    //             "aspect_visuel": {
+    //                 "robe": {
+    //                     "couleur": "",
+    //                     "disque": "",
+    //                     "intensité": {},
+    //                     "limpidité": {},
+    //                     "brillance": {},
+    //                     "evolution": {},
+    //                     "remarques": ""
+    //
+    //                 },
+    //                 "teinte": "",
+    //                 "disque": "",
+    //                 "intensite": "",
+    //                 "limpidite": "",
+    //                 "brillance": "",
+    //                 "evolution": "",
+    //                 "remarques": ""
+    //             },
+    //             "nez": {
+    //                 "intensite": "",
+    //                 "qualite": "",
+    //                 "aromes": {
+    //                     "type": "",
+    //                     "nature": []
+    //                 },
+    //                 "description": ""
+    //             },
+    //             "bouche": {
+    //                 "attaque": "",
+    //                 "evolution": "",
+    //                 "fin_de_bouche": "",
+    //                 "structure": "",
+    //                 "texture": "",
+    //                 "intensite": "",
+    //                 "qualite": "",
+    //                 "equilibre": "",
+    //                 "aromes": [],
+    //                 "longueur_en_bouche": "",
+    //                 "persistance_aromatique": "",
+    //                 "remarques": ""
+    //             },
+    //             "notes": {
+    //                 "caudalies": 0,
+    //                 "note_finale": {
+    //                     "tres_mediocre": false,
+    //                     "mediocre": false,
+    //                     "mauvais": false,
+    //                     "passable": false,
+    //                     "correct": false,
+    //                     "bon": false,
+    //                     "tres_bon": false,
+    //                     "superbe": false,
+    //                     "excellent": false,
+    //                     "exceptionnel": false,
+    //                     "legendaire": false
+    //                 },
+    //                 "conclusion": ""
+    //             },
+    //             "temperature_ideale_de_consommation": 0,
+    //             "date_ideale_de_consommation": "",
+    //             "evolution_probable": "",
+    //             "accords_mets_vins": []
+    //         }
+    //     }
+    // ]
 
     // const doubleCount = computed(() => count.value * 2)
 
