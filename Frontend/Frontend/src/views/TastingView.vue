@@ -16,7 +16,9 @@ const selectedTasting = reactive({
     prix_actuel: 0,
     aspect_visuel: {
       robe: {
-        couleur: "",
+        robe_blanche: "",
+        robe_rouge: "",
+        robe_rose: "",
         disque: "",
         intensité: {},
         limpidité: {},
@@ -149,6 +151,24 @@ const filteredWineTypeValues = (items) => {
   });
 }
 
+const isSameWineType = (item) => {
+  const selectedWineType = selectedTasting.vin.type?.wineType;
+
+  if (!selectedWineType) {
+    return true;
+  }
+
+  if (!item.wineType.length) {
+    return true;
+  }
+
+  if (Array.isArray(item.wineType)) {
+    return item.wineType.includes(selectedWineType);
+  }
+
+  return selectedWineType === item.wineType;
+}
+
 </script>
 
 <template>
@@ -237,48 +257,70 @@ const filteredWineTypeValues = (items) => {
 
                         <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
 
-                          <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                                        v-if="field.type === 'text'" hide-details="auto"
-                                        :label="field.label"></v-text-field>
 
-                          <v-autocomplete v-if="field.type === 'autocomplete'" :label="field.label" density="compact"
-                                          chips v-model="selectedTasting.vin[field.name]"
-                                          :items="filteredWineTypeValues(field.values)"
-                                          item-title="value"
-                                          item-value="id"
-                                          hide-details="true"
-                                          variant="outlined"
-                                          return-object
-                                          multiple>
+                          <template v-if="field.type === 'text'">
+                            <label>test</label>
+                            <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                                          hide-details="auto"
+                                          :label="field.label"></v-text-field>
+                            <v-divider></v-divider>
+                          </template>
 
-                            <!--                            <template v-slot:chip="{ props, item }">-->
-                            <!--                              <v-btn size="small" density="compact" icon="mdi-minus"></v-btn>-->
-                            <!--                              <v-chip v-bind="props" :prepend-avatar="item.raw.avatar" :text="item.raw.name"></v-chip>-->
-                            <!--                              <v-btn size="small" density="compact" icon="mdi-plus"></v-btn>-->
-                            <!--                            </template>-->
+                          <template v-if="field.type === 'autocomplete'">
+                            <label>test</label>
+                            <v-autocomplete :label="field.label" density="compact"
+                                            chips v-model="selectedTasting.vin[field.name]"
+                                            :items="filteredWineTypeValues(field.values)"
+                                            item-title="value"
+                                            item-value="id"
+                                            hide-details="true"
+                                            variant="outlined"
+                                            return-object
+                                            multiple>
 
-                          </v-autocomplete>
+                              <!--                            <template v-slot:chip="{ props, item }">-->
+                              <!--                              <v-btn size="small" density="compact" icon="mdi-minus"></v-btn>-->
+                              <!--                              <v-chip v-bind="props" :prepend-avatar="item.raw.avatar" :text="item.raw.name"></v-chip>-->
+                              <!--                              <v-btn size="small" density="compact" icon="mdi-plus"></v-btn>-->
+                              <!--                            </template>-->
 
-                          <v-select density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                                    v-if="field.type === 'select'" :label="field.label" :items="field.values"
-                                    hide-details="true"></v-select>
+                            </v-autocomplete>
+                            <v-divider></v-divider>
+                          </template>
 
-                          <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
-                                        v-if="field.type === 'number'" :label="field.label" prefix="€"
-                                        hide-details="true"></v-text-field>
+                          <template v-if="field.type === 'select'">
+                            <label>test</label>
+                            <v-select density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                                      v-if="field.type === 'select'" :label="field.label" :items="field.values"
+                                      hide-details="true"></v-select>
+                            <v-divider></v-divider>
+                          </template>
 
-                          <v-btn-toggle divided v-model="selectedTasting.vin[field.name]"
-                                        v-if="field.type === 'select-button'">
+                          <template v-if="field.type === 'number'">
+                            <label>test</label>
+                            <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[field.name]"
+                                          :label="field.label" prefix="€"
+                                          hide-details="true"></v-text-field>
+                            <v-divider></v-divider>
+                          </template>
 
-                            <v-btn :color="value.iconColor"
-                                   v-for="value in field.values" :key="value.id" :value="value">
-                              <span>{{ value.value }}</span>
-                              <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"
-                                      size="x-large">
-                              </v-icon>
-                            </v-btn>
+                          <template v-if="field.type === 'select-button' && isSameWineType(field)">
+                            <label>test</label>
+                            <v-btn-toggle divided v-model="selectedTasting.vin[field.name]"
+                            >
 
-                          </v-btn-toggle>
+                              <v-btn :color="value.iconColor"
+                                     v-for="value in field.values" :key="value.id" :value="value">
+                                <span>{{ value.value }}</span>
+                                <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"
+                                        size="x-large">
+                                </v-icon>
+                              </v-btn>
+
+                            </v-btn-toggle>
+                            <v-divider></v-divider>
+                          </template>
+
                         </template>
                       </v-col>
                     </v-row>
