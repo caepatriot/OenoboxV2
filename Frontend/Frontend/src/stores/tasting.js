@@ -16,9 +16,30 @@ export const useTastingStore = defineStore('tasting', () => {
                     "label": "Type",
                     "name": "type",
                     "values": [
-                        {"id": 1, "value": "Rouge", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 2, "value": "Blanc", "wineType": "white", "icon": "", "iconColor": "rgb(255, 241, 128)"},
-                        {"id": 3, "value": "Rosé", "wineType": "rose", "icon": "", "iconColor": "rgb(255, 150, 186)"}
+                        {
+                            "id": 1,
+                            "value": "Rouge",
+                            "wineType": "red",
+                            "icon": "",
+                            "color": "rgb(191, 15, 2)",
+                            "iconColor": "rgb(191, 15, 2)"
+                        },
+                        {
+                            "id": 2,
+                            "value": "Blanc",
+                            "wineType": "white",
+                            "icon": "",
+                            "color": "rgb(255, 241, 128)",
+                            "iconColor": "rgb(255, 241, 128)"
+                        },
+                        {
+                            "id": 3,
+                            "value": "Rosé",
+                            "wineType": "rose",
+                            "icon": "",
+                            "color": "rgb(255, 150, 186)",
+                            "iconColor": "rgb(255, 150, 186)"
+                        }
                     ],
                     "placeholder": "Type de vin",
                     "required": true,
@@ -207,8 +228,8 @@ export const useTastingStore = defineStore('tasting', () => {
             "title": "Aspect Visuel",
             "fields": [
                 {
-                    "label": "Robe blanche",
-                    "name": "robe_blanche",
+                    "label": "Robe rouge",
+                    "name": "robe_rouge",
                     "type": "select-button",
                     "wineType": ["red"],
                     "values": [
@@ -297,19 +318,75 @@ export const useTastingStore = defineStore('tasting', () => {
                     "multi": false
                 },
                 {
-                    "label": "Robe rouge",
-                    "name": "robe_rouge",
+                    "label": "Robe blanche",
+                    "name": "robe_blanche",
                     "type": "select-button",
                     "wineType": ["white"],
                     "values": [
-                        {"id": 1, "value": "blanc", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 2, "value": "jaune-vert", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 3, "value": "jaune pâle", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 4, "value": "paille", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 5, "value": "or", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 6, "value": "doré", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 7, "value": "ambré", "wineType": ["white"], "icon": "", "iconColor": ""},
-                        {"id": 8, "value": "madérisé", "wineType": ["white"], "icon": "", "iconColor": ""}
+                        {
+                            "id": 1,
+                            "value": "blanc",
+                            "wineType": ["white"],
+                            "color": "#f6f2e7",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 2,
+                            "value": "jaune-vert",
+                            "wineType": ["white"],
+                            "color": "#e1db85",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 3,
+                            "value": "jaune pâle",
+                            "wineType": ["white"],
+                            "color": "#f3e978",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 4,
+                            "value": "paille",
+                            "wineType": ["white"],
+                            "color": "#e6cf45",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 5,
+                            "value": "or",
+                            "wineType": ["white"],
+                            "color": "#d7b643",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 6,
+                            "value": "doré",
+                            "wineType": ["white"],
+                            "color": "#d19c36",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 7,
+                            "value": "ambré",
+                            "wineType": ["white"],
+                            "color": "#d18539",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 8,
+                            "value": "madérisé",
+                            "wineType": ["white"],
+                            "color": "#a78a3e",
+                            "icon": "",
+                            "iconColor": ""
+                        }
                     ],
                     "required": true,
                     "multi": false
@@ -335,13 +412,62 @@ export const useTastingStore = defineStore('tasting', () => {
                     "type": "select-button",
                     "wineType": ["rose"],
                     "values": [
-                        {"id": 1, "value": "gris", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 2, "value": "rosé", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 3, "value": "rose violacé", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 4, "value": "rosé orangé", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 5, "value": "roux", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 6, "value": "orangé", "wineType": ["rose"], "icon": "", "iconColor": ""},
-                        {"id": 7, "value": "brun", "wineType": ["rose"], "icon": "", "iconColor": ""},
+                        {
+                            "id": 1,
+                            "value": "gris",
+                            "wineType": ["rose"],
+                            "color": "#f0cbb8",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 2,
+                            "value": "rosé",
+                            "wineType": ["rose"],
+                            "color": "#e7a39a",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 3,
+                            "value": "rose violacé",
+                            "wineType": ["rose"],
+                            "color": "#ee537b",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 4,
+                            "value": "rosé orangé",
+                            "wineType": ["rose"],
+                            "color": "#eb7d70",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 5,
+                            "value": "roux",
+                            "wineType": ["rose"],
+                            "color": "#e89e59",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 6,
+                            "value": "orangé",
+                            "wineType": ["rose"],
+                            "color": "#e27240",
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 7,
+                            "value": "brun",
+                            "wineType": ["rose"],
+                            "color": "#c95a2c",
+                            "icon": "",
+                            "iconColor": ""
+                        },
                     ],
                     "required": true,
                     "multi": false

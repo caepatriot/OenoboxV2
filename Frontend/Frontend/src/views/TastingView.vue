@@ -5,78 +5,78 @@ import {useTastingStore} from "@/stores/tasting.js";
 const store = useTastingStore();
 
 const selectedTasting = reactive({
-  vin: {
-    informations: {
-      type: "",
-      cepage: [],
-      region: "",
-      aop_igp_vdf: "",
-      elevage: "",
-      import: "",
-      prix_lancement: 0,
-      prix_actuel: 0,
+  "vin": {
+    "informations": {
+      "type": "",
+      "cepage": [],
+      "region": "",
+      "aop_igp_vdf": "",
+      "elevage": "",
+      "import": "",
+      "prix_lancement": 0,
+      "prix_actuel": 0,
     },
-    visuel: {
-      robe: {
-        robe_blanche: "",
-        robe_rouge: "",
-        robe_rose: "",
-        disque: "",
-        intensité: {},
-        limpidité: {},
-        brillance: {},
-        evolution: {},
-        remarques: ""
-      }
+    "visuel": {
+      "robe_blanche": "",
+      "robe_rouge": "",
+      "robe_rose": "",
+      "disque": "",
+      "intensite": {},
+      "limpidite": {},
+      "brillance": {},
+      "evolution": {},
+      "remarques": ""
     },
-    nez: {
-      intensite: "",
-      qualite: "",
-      aromes: {
-        type: "",
-        nature: []
+    "nez": {
+      "intensite": "",
+      "qualite": "",
+      "aromes": {
+        "type": "",
+        "nature": []
       },
-      description: ""
+      "description": ""
     },
-    bouche: {
-      attaque: "",
-      evolution: "",
-      fin_de_bouche: "",
-      structure: "",
-      texture: "",
-      intensite: "",
-      qualite: "",
-      equilibre: "",
-      aromes: [],
-      longueur_en_bouche: "",
-      persistance_aromatique: "",
-      remarques: ""
+    "bouche": {
+      "attaque": "",
+      "evolution": "",
+      "fin_de_bouche": "",
+      "structure": "",
+      "texture": "",
+      "intensite": "",
+      "qualite": "",
+      "equilibre": "",
+      "aromes": [],
+      "longueur_en_bouche": "",
+      "persistance_aromatique": "",
+      "remarques": ""
     },
-    conclusion: {
-      caudalies: 0,
-      note_finale: {
-        tres_mediocre: false,
-        mediocre: false,
-        mauvais: false,
-        passable: false,
-        correct: false,
-        bon: false,
-        tres_bon: false,
-        superbe: false,
-        excellent: false,
-        exceptionnel: false,
-        legendaire: false
+    "conclusion": {
+      "caudalies": 0,
+      "note_finale": {
+        "tres_mediocre": false,
+        "mediocre": false,
+        "mauvais": false,
+        "passable": false,
+        "correct": false,
+        "bon": false,
+        "tres_bon": false,
+        "superbe": false,
+        "excellent": false,
+        "exceptionnel": false,
+        "legendaire": false
       },
-      conclusion: ""
+      "conclusion": ""
     },
-    autres: {
-      temperature_ideale_de_consommation: 0,
-      date_ideale_de_consommation: "",
-      evolution_probable: "",
-      accords_mets_vins: []
+    "autres": {
+      "temperature_ideale_de_consommation": 0,
+      "date_ideale_de_consommation": "",
+      "evolution_probable": "",
+      "accords_mets_vins": []
     }
   }
 });
+
+const myWines = reactive([]);
 
 const currentStep = ref(1);
 let steps = ref([]);
@@ -92,6 +92,8 @@ onMounted(() => {
 
 const submitForm = () => {
   console.log(selectedTasting); // This will log the full tasting data object
+  myWines.push(selectedTasting);
+  items.value.push(selectedTasting)
 };
 
 
@@ -264,7 +266,8 @@ const isSameWineType = (item) => {
 
                           <template v-if="field.type === 'text'">
                             <label>{{ field.label }}</label>
-                            <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[step.name][field.name]"
+                            <v-text-field density="compact" variant="outlined"
+                                          v-model="selectedTasting.vin[step.name][field.name]"
                                           hide-details="auto"
                                           :label="field.label"></v-text-field>
                             <v-divider></v-divider>
@@ -301,7 +304,8 @@ const isSameWineType = (item) => {
 
                           <template v-if="field.type === 'select'">
                             <label>{{ field.label }}</label>
-                            <v-select density="compact" variant="outlined" v-model="selectedTasting.vin[step.name][field.name]"
+                            <v-select density="compact" variant="outlined"
+                                      v-model="selectedTasting.vin[step.name][field.name]"
                                       v-if="field.type === 'select'" :label="field.label" :items="field.values"
                                       hide-details="true"></v-select>
                             <v-divider></v-divider>
@@ -309,7 +313,8 @@ const isSameWineType = (item) => {
 
                           <template v-if="field.type === 'number'">
                             <label>{{ field.label }}</label>
-                            <v-text-field density="compact" variant="outlined" v-model="selectedTasting.vin[step.name][field.name]"
+                            <v-text-field density="compact" variant="outlined"
+                                          v-model="selectedTasting.vin[step.name][field.name]"
                                           :label="field.label" prefix="€"
                                           hide-details="true"></v-text-field>
                             <v-divider></v-divider>
@@ -317,7 +322,8 @@ const isSameWineType = (item) => {
 
                           <template v-if="field.type === 'select-button' && isSameWineType(field)">
                             <label>{{ field.label }}</label>
-                            <v-btn-toggle divided v-model="selectedTasting.vin[step.name][field.name]" :multiple="field.multi"
+                            <v-btn-toggle divided v-model="selectedTasting.vin[step.name][field.name]"
+                                          :multiple="field.multi"
                                           elevation="1" width="auto">
 
                               <v-btn :color="value.color"
