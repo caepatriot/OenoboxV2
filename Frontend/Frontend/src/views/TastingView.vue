@@ -1,5 +1,5 @@
 <script setup>
-import {ref, reactive, onMounted} from 'vue';
+import {ref, reactive, onMounted, computed} from 'vue';
 import {useTastingStore} from "@/stores/tasting.js";
 
 const store = useTastingStore();
@@ -30,10 +30,8 @@ const selectedTasting = reactive({
     "nez": {
       "intensite": "",
       "qualite": "",
-      "aromes": {
-        "type": "",
-        "nature": []
-      },
+      "type_aromes": {},
+      "nature_aromes": {},
       "description": ""
     },
     "bouche": {
@@ -173,6 +171,10 @@ const isSameWineType = (item) => {
   }
 
   return selectedWineType === item.wineType;
+}
+
+function test(value) {
+  console.log('Selected value:', value);
 }
 
 </script>
@@ -320,23 +322,47 @@ const isSameWineType = (item) => {
                             <v-divider></v-divider>
                           </template>
 
-                          <template v-if="field.type === 'select-button' && isSameWineType(field)">
-                            <label>{{ field.label }}</label>
-                            <v-btn-toggle divided v-model="selectedTasting.vin[step.name][field.name]"
-                                          :multiple="field.multi"
-                                          elevation="1" width="auto">
+                          <template v-if="field.values">
+                            <span>{{ field.values }}</span>
+                            <template v-if="field.type === 'select-button' && isSameWineType(field)">
+                              <label>{{ field.label }}</label>
+                              <v-btn-toggle divided v-model="selectedTasting.vin[step.name][field.name]"
+                                            :multiple="field.multi"
+                                            elevation="1" width="auto">
 
-                              <v-btn :color="value.color"
-                                     v-for="value in field.values" :key="value.id" :value="value">
-                                <span>{{ value.value }}</span>
-                                <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"
-                                        size="x-large">
-                                </v-icon>
-                              </v-btn>
+                                <v-btn v-for="(val, index) in field.values" :key="index">
+                                  <span>{{ val.value }}</span>
+                                  <v-icon v-if="val.icon" start :color="val.iconColor" :icon="val.icon"
+                                          size="x-large">
+                                  </v-icon>
+                                </v-btn>
 
-                            </v-btn-toggle>
-                            <v-divider></v-divider>
+                              </v-btn-toggle>
+                              <v-divider></v-divider>
+                            </template>
                           </template>
+
+
+                          <!--                          <template v-if="('groupes' in field) && isSameWineType(group)">-->
+                          <!--                            <label>{{ field.label }}</label>-->
+                          <!--                            <v-btn-toggle-->
+                          <!--                                v-for="(group, index) in field.groupes" :key="group.id"-->
+                          <!--                                divided v-model="selectedTasting.vin[step.name][field.name][group]"-->
+                          <!--                                @update:model-value="test(group)"-->
+                          <!--                                :multiple="field.multi"-->
+                          <!--                                elevation="1" width="auto">-->
+
+                          <!--                              <v-btn v-for="value in group.values" :key="value.id">-->
+                          <!--                                <span>{{ value.value }}</span>-->
+                          <!--                                <v-icon v-if="value.icon" start :color="value.iconColor" :icon="value.icon"-->
+                          <!--                                        size="x-large">-->
+                          <!--                                </v-icon>-->
+                          <!--                              </v-btn>-->
+
+                          <!--                            </v-btn-toggle>-->
+                          <!--                            <v-divider></v-divider>-->
+                          <!--                          </template>-->
+
 
                         </template>
                       </v-col>
