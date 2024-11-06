@@ -11,39 +11,47 @@ export const useTastingStore = defineStore('tasting', () => {
             "fields": [
                 {
                     "id": 1,
-                    "type": "select-button",
-                    "wineType": [],
                     "label": "Type",
                     "name": "type",
-                    "values": [
+                    "placeholder": "Type de vin",
+                    "groups": [
                         {
                             "id": 1,
-                            "value": "Rouge",
-                            "wineType": "red",
-                            "icon": "",
-                            "color": "rgb(191, 15, 2)",
-                            "iconColor": "rgb(191, 15, 2)"
+                            "type": "select-button",
+                            "wineType": ["red", "white", "rose"],
+                            "groupValues": [
+                                {
+                                    "id": 1,
+                                    "value": "Rouge",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "icon": "",
+                                    "color": "rgb(191, 15, 2)",
+                                    "iconColor": "rgb(191, 15, 2)"
+                                },
+                                {
+                                    "id": 2,
+                                    "value": "Blanc",
+                                    "wineType": ["white"],
+                                    "negatif": false,
+                                    "icon": "",
+                                    "color": "rgb(255, 241, 128)",
+                                    "iconColor": "rgb(255, 241, 128)"
+                                },
+                                {
+                                    "id": 3,
+                                    "value": "Rosé",
+                                    "wineType": ["rose"],
+                                    "negatif": false,
+                                    "icon": "",
+                                    "color": "rgb(255, 150, 186)",
+                                    "iconColor": "rgb(255, 150, 186)"
+                                }
+                            ],
+                            "multi": false,
+                            "required": true
                         },
-                        {
-                            "id": 2,
-                            "value": "Blanc",
-                            "wineType": "white",
-                            "icon": "",
-                            "color": "rgb(255, 241, 128)",
-                            "iconColor": "rgb(255, 241, 128)"
-                        },
-                        {
-                            "id": 3,
-                            "value": "Rosé",
-                            "wineType": "rose",
-                            "icon": "",
-                            "color": "rgb(255, 150, 186)",
-                            "iconColor": "rgb(255, 150, 186)"
-                        }
                     ],
-                    "placeholder": "Type de vin",
-                    "required": true,
-                    "multi": false
                 },
                 {
                     "id": 2,
@@ -228,249 +236,390 @@ export const useTastingStore = defineStore('tasting', () => {
             "title": "Aspect Visuel",
             "fields": [
                 {
+                    "id": 1,
                     "label": "Robe rouge",
                     "name": "robe_rouge",
-                    "type": "select-button",
                     "wineType": ["red"],
-                    "values": [
+                    "groups": [
                         {
                             "id": 1,
-                            "value": "Noir",
-                            "wineType": ["red"],
-                            "color": "#000",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "bleuâtre",
-                            "wineType": ["red"],
-                            "color": "#3b0014",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "violet",
-                            "wineType": ["red"],
-                            "color": "#901766",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "pourpre",
-                            "wineType": ["red"],
-                            "color": "#9a2049",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "grenat",
-                            "wineType": ["red"],
-                            "color": "#6e2445",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 6,
-                            "value": "rubis",
-                            "wineType": ["red"],
-                            "color": "#d73c3a",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 7,
-                            "value": "incarnat et carmin",
-                            "wineType": ["red"],
-                            "color": "#b91b18",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 8,
-                            "value": "brique",
-                            "wineType": ["red"],
-                            "color": "#be4731",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 9,
-                            "value": "tuilé",
-                            "wineType": ["red"],
-                            "color": "#8c3116",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 10,
-                            "value": "Orangé ",
-                            "wineType": ["red"],
-                            "color": "#c63d11",
-                            "icon": "",
-                            "iconColor": ""
+                            "type": "select-button",
+                            "wineType": ["red", "white", "rose"],
+                            "multi": false,
+                            "required": true,
+                            "groupValues": [
+                                {
+                                    "id": 1,
+                                    "value": "Noir",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#000",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 2,
+                                    "value": "bleuâtre",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#3b0014",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 3,
+                                    "value": "violet",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#901766",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 4,
+                                    "value": "pourpre",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#9a2049",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 5,
+                                    "value": "grenat",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#6e2445",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 6,
+                                    "value": "rubis",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#d73c3a",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 7,
+                                    "value": "incarnat et carmin",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#b91b18",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 8,
+                                    "value": "brique",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#be4731",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 9,
+                                    "value": "tuilé",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#8c3116",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 10,
+                                    "value": "Orangé ",
+                                    "wineType": ["red"],
+                                    "negatif": false,
+                                    "color": "#c63d11",
+                                    "icon": "",
+                                    "iconColor": ""
+                                }
+                            ],
                         },
                     ],
-                    "required": true,
-                    "multi": false
                 },
+
+
                 {
+                    "id": 2,
                     "label": "Robe blanche",
                     "name": "robe_blanche",
-                    "type": "select-button",
                     "wineType": ["white"],
-                    "values": [
+                    "groups": [
                         {
                             "id": 1,
-                            "value": "blanc",
+                            "type": "select-button",
                             "wineType": ["white"],
-                            "color": "#f6f2e7",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "jaune-vert",
-                            "wineType": ["white"],
-                            "color": "#e1db85",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "jaune pâle",
-                            "wineType": ["white"],
-                            "color": "#f3e978",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "paille",
-                            "wineType": ["white"],
-                            "color": "#e6cf45",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "or",
-                            "wineType": ["white"],
-                            "color": "#d7b643",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 6,
-                            "value": "doré",
-                            "wineType": ["white"],
-                            "color": "#d19c36",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 7,
-                            "value": "ambré",
-                            "wineType": ["white"],
-                            "color": "#d18539",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 8,
-                            "value": "madérisé",
-                            "wineType": ["white"],
-                            "color": "#a78a3e",
-                            "icon": "",
-                            "iconColor": ""
+                            "multi": false,
+                            "required": true,
+                            "groupValues": [
+                                {
+                                    "id": 1,
+                                    "value": "Noir",
+                                    "wineType": ["red"],
+                                    "color": "#000",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 2,
+                                    "value": "bleuâtre",
+                                    "wineType": ["red"],
+                                    "color": "#3b0014",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 3,
+                                    "value": "violet",
+                                    "wineType": ["red"],
+                                    "color": "#901766",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 4,
+                                    "value": "pourpre",
+                                    "wineType": ["red"],
+                                    "color": "#9a2049",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 5,
+                                    "value": "grenat",
+                                    "wineType": ["red"],
+                                    "color": "#6e2445",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 6,
+                                    "value": "rubis",
+                                    "wineType": ["red"],
+                                    "color": "#d73c3a",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 7,
+                                    "value": "incarnat et carmin",
+                                    "wineType": ["red"],
+                                    "color": "#b91b18",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 8,
+                                    "value": "brique",
+                                    "wineType": ["red"],
+                                    "color": "#be4731",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 9,
+                                    "value": "tuilé",
+                                    "wineType": ["red"],
+                                    "color": "#8c3116",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 10,
+                                    "value": "Orangé ",
+                                    "wineType": ["red"],
+                                    "color": "#c63d11",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                            ],
                         }
                     ],
-                    "required": true,
-                    "multi": false
                 },
+
+
                 {
-                    "label": "Disque",
-                    "name": "disque",
-                    "type": "select-button",
-                    "wineType": ["red"],
-                    "values": [
-                        {"id": 1, "value": "violacé", "wineType": ["red"], "icon": "", "iconColor": ""},
-                        {"id": 2, "value": "rosé", "wineType": ["red"], "icon": "", "iconColor": ""},
-                        {"id": 3, "value": "brun", "wineType": ["red"], "icon": "", "iconColor": ""},
-                        {"id": 4, "value": "tuilé", "wineType": ["red"], "icon": "", "iconColor": ""},
-                        {"id": 5, "value": "orangé", "wineType": ["red"], "icon": "", "iconColor": ""}
-                    ],
-                    "required": true,
-                    "multi": false
-                },
-                {
-                    "label": "Robe rosé",
-                    "name": "robe_rose",
-                    "type": "select-button",
-                    "wineType": ["rose"],
-                    "values": [
+                    "id": 2,
+                    "label": "Robe blanche",
+                    "name": "robe_blanche",
+                    "wineType": ["white"],
+                    "groups": [
                         {
                             "id": 1,
-                            "value": "gris",
-                            "wineType": ["rose"],
-                            "color": "#f0cbb8",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "rosé",
-                            "wineType": ["rose"],
-                            "color": "#e7a39a",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "rose violacé",
-                            "wineType": ["rose"],
-                            "color": "#ee537b",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "rosé orangé",
-                            "wineType": ["rose"],
-                            "color": "#eb7d70",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "roux",
-                            "wineType": ["rose"],
-                            "color": "#e89e59",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 6,
-                            "value": "orangé",
-                            "wineType": ["rose"],
-                            "color": "#e27240",
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 7,
-                            "value": "brun",
-                            "wineType": ["rose"],
-                            "color": "#c95a2c",
-                            "icon": "",
-                            "iconColor": ""
-                        },
+                            "type": "select-button",
+                            "wineType": ["white"],
+                            "multi": false,
+                            "required": true,
+                            "groupValues": [
+
+                                {
+                                    "id": 1,
+                                    "value": "blanc",
+                                    "wineType": ["white"],
+                                    "color": "#f6f2e7",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 2,
+                                    "value": "jaune-vert",
+                                    "wineType": ["white"],
+                                    "color": "#e1db85",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 3,
+                                    "value": "jaune pâle",
+                                    "wineType": ["white"],
+                                    "color": "#f3e978",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 4,
+                                    "value": "paille",
+                                    "wineType": ["white"],
+                                    "color": "#e6cf45",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 5,
+                                    "value": "or",
+                                    "wineType": ["white"],
+                                    "color": "#d7b643",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 6,
+                                    "value": "doré",
+                                    "wineType": ["white"],
+                                    "color": "#d19c36",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 7,
+                                    "value": "ambré",
+                                    "wineType": ["white"],
+                                    "color": "#d18539",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 8,
+                                    "value": "madérisé",
+                                    "wineType": ["white"],
+                                    "color": "#a78a3e",
+                                    "icon": "",
+                                    "iconColor": ""
+                                }
+                            ],
+                        }
                     ],
-                    "required": true,
-                    "multi": false
+                },
+
+                {
+                    "id": 3,
+                    "label": "Disque",
+                    "name": "disque",
+                    "wineType": ["red"],
+                    "groups": [
+                        {
+                            "id": 1,
+                            "type": "select-button",
+                            "wineType": ["red"],
+                            "multi": false,
+                            "required": true,
+                            "groupValues": [
+                                {"id": 1, "value": "violacé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 2, "value": "rosé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 3, "value": "brun", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 4, "value": "tuilé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 5, "value": "orangé", "wineType": ["red"], "icon": "", "iconColor": ""}
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "id": 4,
+                    "label": "Robe rosé",
+                    "name": "robe_rose",
+                    "wineType": ["rose"],
+                    "groups": [
+                        {
+                            "id": 1,
+                            "type": "select-button",
+                            "wineType": ["rose"],
+                            "multi": false,
+                            "required": true,
+                            "groupValues": [
+                                {
+                                    "id": 1,
+                                    "value": "gris",
+                                    "wineType": ["rose"],
+                                    "color": "#f0cbb8",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 2,
+                                    "value": "rosé",
+                                    "wineType": ["rose"],
+                                    "color": "#e7a39a",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 3,
+                                    "value": "rose violacé",
+                                    "wineType": ["rose"],
+                                    "color": "#ee537b",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 4,
+                                    "value": "rosé orangé",
+                                    "wineType": ["rose"],
+                                    "color": "#eb7d70",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 5,
+                                    "value": "roux",
+                                    "wineType": ["rose"],
+                                    "color": "#e89e59",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 6,
+                                    "value": "orangé",
+                                    "wineType": ["rose"],
+                                    "color": "#e27240",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                                {
+                                    "id": 7,
+                                    "value": "brun",
+                                    "wineType": ["rose"],
+                                    "color": "#c95a2c",
+                                    "icon": "",
+                                    "iconColor": ""
+                                },
+                            ],
+                        }
+                    ],
                 },
                 {
                     "type": "select-button",
@@ -478,9 +627,27 @@ export const useTastingStore = defineStore('tasting', () => {
                     "name": "intensite",
                     "wineType": ["red", "white", "rose"],
                     "values": [
-                        {"id": 1, "value": "pâle", "wineType": ["red", "white", "rose"], "icon": "", "iconColor": ""},
-                        {"id": 2, "value": "légère", "wineType": ["red", "white", "rose"], "icon": "", "iconColor": ""},
-                        {"id": 3, "value": "faible", "wineType": ["red", "white", "rose"], "icon": "", "iconColor": ""},
+                        {
+                            "id": 1,
+                            "value": "pâle",
+                            "wineType": ["red", "white", "rose"],
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 2,
+                            "value": "légère",
+                            "wineType": ["red", "white", "rose"],
+                            "icon": "",
+                            "iconColor": ""
+                        },
+                        {
+                            "id": 3,
+                            "value": "faible",
+                            "wineType": ["red", "white", "rose"],
+                            "icon": "",
+                            "iconColor": ""
+                        },
                         {
                             "id": 4,
                             "value": "peu intense",
@@ -516,7 +683,13 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": ""
                         },
-                        {"id": 9, "value": "opaque", "wineType": ["red", "white", "rose"], "icon": "", "iconColor": ""},
+                        {
+                            "id": 9,
+                            "value": "opaque",
+                            "wineType": ["red", "white", "rose"],
+                            "icon": "",
+                            "iconColor": ""
+                        },
                     ],
                     "required": true,
                     "multi": true
@@ -707,508 +880,557 @@ export const useTastingStore = defineStore('tasting', () => {
                 {
                     "id": 5,
                     "type": "textarea",
-                    "wineType": ["red", "white", "rose"],
                     "label": "Remarques",
                     "name": "remarques",
+                    "wineType": ["red", "white", "rose"],
                     "required": false
                 }
             ]
         },
-        {
-            "step": 3,
-            "title": "Nez",
-            "name": "nez",
-            "fields": [
-                {
-                    "type": "select-button",
-                    "label": "Intensité",
-                    "name": "intensite",
-                    "wineType": ["red", "white", "rose"],
-                    "values": [
-                        {
-                            "id": 1,
-                            "value": "fermée",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "retenue",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "faible",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "discrète",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "moyenne",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 6,
-                            "value": "bonne",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 7,
-                            "value": "très bonne",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 8,
-                            "value": "forte",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 9,
-                            "value": "puissante",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }
-                    ],
-                    "multi": false,
-                    "required": true
-                },
-                {
-                    "type": "select-button",
-                    "label": "Qualité",
-                    "name": "qualite",
-                    "wineType": ["red", "white", "rose"],
-                    "values": [
-                        {
-                            "id": 1,
-                            "value": "altérée",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": true,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "douteuse",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": true,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "franche",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "nette",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "parfaite",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                    ],
-                    "multi": false,
-                    "required": true
-                },
-                {
-                    // "type": "select-button",
-                    "name": "type_aromes",
-                    "label": "Arômes-Type",
-                    "wineType": ["red", "white", "rose"],
-                    "groupes": [
-                        {
-                            "id": 1,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "simple",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "complexe",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": true
-                        },
-                        {
-                            "id": 2,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "grossier",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "fin",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "élégant",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": true,
-                            "required": false
-                        },
-                        {
-                            "id": 3,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "racé",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": false
-                        },
-                        {
-                            "id": 4,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "vif",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "frais",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "neutre",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 4,
-                                    "value": "suave",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 5,
-                                    "value": "lourd",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": true
-                        },
-                        {
-                            "id": 5,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "désagréable",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "commun",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "agréable",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": true
-                        },
-                        {
-                            "id": 6,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "épanoui",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "évolué",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "passé",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": false
-                        },
-                        {
-                            "id": 7,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "rôti",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": false
-                        },
-                        {
-                            "id": 8,
-                            "type": "select-button",
-                            "wineType": ["red", "white", "rose"],
-                            "values": [
-                                {
-                                    "id": 1,
-                                    "value": "franc",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "strict",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": false,
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "violent",
-                                    "wineType": ["red", "white", "rose"],
-                                    "negatif": true,
-                                    "icon": "",
-                                    "iconColor": ""
-                                }
-                            ],
-                            "multi": false,
-                            "required": false
-                        }
-                    ]
-                },
-                {
-                    "type": "select-button",
-                    "label": "Aromes-Nature",
-                    "name": "nature_aromes",
-                    "wineType": ["red", "white", "rose"],
-                    "values": [
-                        {
-                            "id": 1,
-                            "value": "fruitée",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 2,
-                            "value": "florale",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 3,
-                            "value": "boisée",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 4,
-                            "value": "balsamique",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "épicée",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                        {
-                            "id": 5,
-                            "value": "empyreumatique",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "animale",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "végétale",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "alimentaire",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "minérale",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "chimique",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": false,
-                            "icon": "",
-                            "iconColor": ""
-                        }, ,
-                        {
-                            "id": 5,
-                            "value": "anormale",
-                            "wineType": ["red", "white", "rose"],
-                            "negatif": true,
-                            "icon": "",
-                            "iconColor": ""
-                        },
-                    ],
-                    "multi": true,
-                    "required": true
-                },
-            ],
-            "multi": false,
-            "required": true
-        },
+
+
+        // {
+        //     "step": 3,
+        //     "title": "Nez",
+        //     "name": "nez",
+        //     "fields": [
+        //
+        //         {
+        //             "id": 1,
+        //             "label": "Type",
+        //             "name": "type",
+        //             "placeholder": "Type de vin",
+        //             "groups": [
+        //                 {
+        //                     "id": 1,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "Rouge",
+        //                             "wineType": ["red"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "color": "rgb(191, 15, 2)",
+        //                             "iconColor": "rgb(191, 15, 2)"
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "Blanc",
+        //                             "wineType": ["white"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "color": "rgb(255, 241, 128)",
+        //                             "iconColor": "rgb(255, 241, 128)"
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "Rosé",
+        //                             "wineType": ["rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "color": "rgb(255, 150, 186)",
+        //                             "iconColor": "rgb(255, 150, 186)"
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": true
+        //                 },
+        //             ],
+        //         },
+        //
+        //
+        //         {
+        //             "type": "select-button",
+        //             "label": "Intensité",
+        //             "name": "intensite",
+        //             "wineType": ["red", "white", "rose"],
+        //             "values": [
+        //                 {
+        //                     "id": 1,
+        //                     "value": "fermée",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 2,
+        //                     "value": "retenue",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 3,
+        //                     "value": "faible",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 4,
+        //                     "value": "discrète",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "moyenne",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 6,
+        //                     "value": "bonne",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 7,
+        //                     "value": "très bonne",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 8,
+        //                     "value": "forte",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 9,
+        //                     "value": "puissante",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 }
+        //             ],
+        //             "multi": false,
+        //             "required": true
+        //         },
+        //         {
+        //             "type": "select-button",
+        //             "label": "Qualité",
+        //             "name": "qualite",
+        //             "wineType": ["red", "white", "rose"],
+        //             "values": [
+        //                 {
+        //                     "id": 1,
+        //                     "value": "altérée",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": true,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 2,
+        //                     "value": "douteuse",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": true,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 3,
+        //                     "value": "franche",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 4,
+        //                     "value": "nette",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "parfaite",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //             ],
+        //             "multi": false,
+        //             "required": true
+        //         },
+        //         {
+        //             // "type": "select-button",
+        //             "name": "type_aromes",
+        //             "label": "Arômes-Type",
+        //             "wineType": ["red", "white", "rose"],
+        //             "groups": [
+        //                 {
+        //                     "id": 1,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "simple",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "complexe",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": true
+        //                 },
+        //                 {
+        //                     "id": 2,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "grossier",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "fin",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "élégant",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": true,
+        //                     "required": false
+        //                 },
+        //                 {
+        //                     "id": 3,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "racé",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": false
+        //                 },
+        //                 {
+        //                     "id": 4,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "vif",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "frais",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "neutre",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 4,
+        //                             "value": "suave",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 5,
+        //                             "value": "lourd",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": true
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "désagréable",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "commun",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "agréable",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": true
+        //                 },
+        //                 {
+        //                     "id": 6,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "épanoui",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "évolué",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "passé",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": false
+        //                 },
+        //                 {
+        //                     "id": 7,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "rôti",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": false
+        //                 },
+        //                 {
+        //                     "id": 8,
+        //                     "type": "select-button",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "groupValues": [
+        //                         {
+        //                             "id": 1,
+        //                             "value": "franc",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 2,
+        //                             "value": "strict",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": false,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         },
+        //                         {
+        //                             "id": 3,
+        //                             "value": "violent",
+        //                             "wineType": ["red", "white", "rose"],
+        //                             "negatif": true,
+        //                             "icon": "",
+        //                             "iconColor": ""
+        //                         }
+        //                     ],
+        //                     "multi": false,
+        //                     "required": false
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "type": "select-button",
+        //             "label": "Aromes-Nature",
+        //             "name": "nature_aromes",
+        //             "wineType": ["red", "white", "rose"],
+        //             "values": [
+        //                 {
+        //                     "id": 1,
+        //                     "value": "fruitée",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 2,
+        //                     "value": "florale",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 3,
+        //                     "value": "boisée",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 4,
+        //                     "value": "balsamique",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "épicée",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "empyreumatique",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "animale",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "végétale",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "alimentaire",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "minérale",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "chimique",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": false,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //                 {
+        //                     "id": 5,
+        //                     "value": "anormale",
+        //                     "wineType": ["red", "white", "rose"],
+        //                     "negatif": true,
+        //                     "icon": "",
+        //                     "iconColor": ""
+        //                 },
+        //             ],
+        //             "multi": true,
+        //             "required": true
+        //         },
+        //     ],
+        //     "multi": false,
+        //     "required": true
+        // },
         {
             "step": 4,
             "title": "Bouche",
