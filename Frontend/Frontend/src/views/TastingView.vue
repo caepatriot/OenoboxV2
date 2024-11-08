@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, toRaw } from 'vue';
 import { useTastingStore } from "@/stores/tasting.js";
 
 const store = useTastingStore();
@@ -17,10 +17,10 @@ const selectedTasting = reactive({
       "prix_actuel": 0,
     },
     "visuel": {
-      "robe_blanche": "",
-      "robe_rouge": "",
-      "robe_rose": "",
-      "disque": "",
+      "robe_blanche": {},
+      "robe_rouge": {},
+      "robe_rose": {},
+      "disque": {},
       "intensite": {},
       "limpidite": {},
       "brillance": {},
@@ -28,8 +28,8 @@ const selectedTasting = reactive({
       "remarques": ""
     },
     "nez": {
-      "intensite": "",
-      "qualite": "",
+      "intensite": {},
+      "qualite": {},
       "type_aromes": {},
       "nature_aromes": {},
       "description": ""
@@ -89,7 +89,7 @@ onMounted(() => {
 });
 
 const submitForm = () => {
-  console.log(selectedTasting); // This will log the full tasting data object
+  console.log(toRaw(selectedTasting)); // This will log the full tasting data object
   myWines.push(selectedTasting);
   items.value.push(selectedTasting)
 };
@@ -151,24 +151,17 @@ const test = (e) => {
 }
 
 const filteredWineTypeValues = (items) => {
-  const selectedWineType = selectedTasting.vin.informations.type['1']?.wineType;
-
-  // console.log(selectedTasting.vin.informations.type['1']);
-  // console.log(items);
-  // const selectedWineType = selectedTasting.vin.informations.type?.wineType;
+  const selectedWineType = toRaw(selectedTasting.vin.informations.type['1']?.wineType);
 
   if (!selectedWineType) return items;
 
   return items.filter(item => {
-    // console.log(item?.wineType);
-    // console.log(Array.isArray(item?.wineType));
-    if (Array.isArray(item?.wineType)) {
-      console.log(item?.wineType[1]);
-      console.log(selectedWineType);
-      return item.wineType.includes(selectedWineType);
-    }
+    let wineType = toRaw(item?.wineType);
 
-    return item.wineType === selectedWineType;
+    if (Array.isArray(item?.wineType)) {
+      return wineType.includes(selectedWineType);
+    }
+    return wineType === selectedWineType;
   });
 }
 
