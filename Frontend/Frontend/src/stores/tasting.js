@@ -67,11 +67,11 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        {"id": 2, "value": "CARIGNAN", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 3, "value": "CINSAULT", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 4, "value": "MALBEC", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 5, "value": "GAMAY", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 6, "value": "GRENACHE", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 2, "value": "CARIGNAN", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 3, "value": "CINSAULT", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 4, "value": "MALBEC", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 5, "value": "GAMAY", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 6, "value": "GRENACHE", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
                         {
                             "id": 7,
                             "value": "MERLOT",
@@ -79,92 +79,92 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        {"id": 8, "value": "MOURVÈDRE", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 9, "value": "PINOT NOIR", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 8, "value": "MOURVÈDRE", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 9, "value": "PINOT NOIR", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
                         {
                             "id": 10,
                             "value": "SANGIOVESE",
-                            "wineType": "red",
+                            "wineType": ["red"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        {"id": 11, "value": "SYRAH", "wineType": "red", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 11, "value": "SYRAH", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
 
                         {
                             "id": 11,
                             "value": "Chardonnay",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 12,
                             "value": "pinot blanc",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 13,
                             "value": "sauvignon blanc",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 14,
                             "value": "grenache blanc",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        {"id": 15, "value": "chenin", "wineType": "white", "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 15, "value": "chenin", "wineType": ["white"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
                         {
                             "id": 16,
                             "value": "gewurztraminer",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 17,
                             "value": "riesling",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 18,
                             "value": "viognier",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 19,
                             "value": "sémillon",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 20,
                             "value": "marsanne",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
                         {
                             "id": 21,
                             "value": "roussanne",
-                            "wineType": "white",
+                            "wineType": ["white"],
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
 
-                        {"id": 22, "value": "Syrah", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 23, "value": "Grenache", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"},
-                        {"id": 24, "value": "Cinsault", "wineType": "rose", "icon": "", "iconColor": "rgb(191, 15, 2)"}
+                        {"id": 22, "value": "Syrah", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 23, "value": "Grenache", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 24, "value": "Cinsault", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"}
                     ],
                     "placeholder": "Entrez les cépages",
                     "required": true,
