@@ -331,36 +331,13 @@ const isSameWineType = (item) => {
                                   elevation="1">
 
                                   <v-btn v-for="(val, index2) in group.groupValues" :key="val.id" :value="val"
-                                    variant="flat" :color="val.negatif && 'red'" :prepend-icon="val.icon">
+                                    :color="val.negatif && 'red'" :prepend-icon="val.icon">
                                     <span>{{ val.value }}</span>
-                                    <!-- <v-icon v-if="val.icon" start :color="val.iconColor" :icon="val.icon"
-                                      size="x-large">
-                                    </v-icon> -->
                                   </v-btn>
 
                                 </v-btn-toggle>
                               </template>
                             </template>
-
-
-                            <!--                            <template v-if="field?.values !== undefined">-->
-                            <!--                              <span>{{ field.values }}</span>-->
-                            <!--                              <template v-if="field.type === 'select-button' && isSameWineType(field)">-->
-                            <!--                                <label>{{ field.label }}</label>-->
-                            <!--                                <v-btn-toggle divided density="compact"-->
-                            <!--                                              v-model="selectedTasting.vin[step.name][field.name]" elevation="1"-->
-                            <!--                                              width="auto">-->
-
-                            <!--                                  <v-btn v-for="val in field?.values" :key="val.id">-->
-                            <!--                                    <span>{{ val.value }}</span>-->
-                            <!--                                    <v-icon v-if="val.icon" start :color="val.iconColor" :icon="val.icon"-->
-                            <!--                                            size="x-large">-->
-                            <!--                                    </v-icon>-->
-                            <!--                                  </v-btn>-->
-                            <!--                                </v-btn-toggle>-->
-                            <!--                                <v-divider></v-divider>-->
-                            <!--                              </template>-->
-                            <!--                            </template>-->
 
 
                           </template>
