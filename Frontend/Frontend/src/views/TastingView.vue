@@ -330,11 +330,12 @@ const isSameWineType = (item) => {
                                   v-model="selectedTasting.vin[step.name][field.name][group.id]" :multiple="group.multi"
                                   elevation="1">
 
-                                  <v-btn v-for="(val, index2) in group?.groupValues" :key="val.id" :value="val">
+                                  <v-btn v-for="(val, index2) in group.groupValues" :key="val.id" :value="val"
+                                    variant="flat" :color="val.negatif && 'red'" :prepend-icon="val.icon">
                                     <span>{{ val.value }}</span>
-                                    <v-icon v-if="val.icon" start :color="val.iconColor" :icon="val.icon"
+                                    <!-- <v-icon v-if="val.icon" start :color="val.iconColor" :icon="val.icon"
                                       size="x-large">
-                                    </v-icon>
+                                    </v-icon> -->
                                   </v-btn>
 
                                 </v-btn-toggle>
