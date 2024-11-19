@@ -77,7 +77,9 @@ const selectedTasting = reactive({
 const myWines = reactive([]);
 
 const currentStep = ref(1);
-let steps = ref([]);
+let steps = ref([
+  {}
+]);
 
 const tabImg = ref("one");
 
@@ -85,7 +87,7 @@ const drawer = ref(false);
 
 onMounted(() => {
   document.body.addEventListener('mousemove', handleMouseMove)
-  steps.value = store.tasting_steps;
+  // steps.value = store.tasting_steps;
 });
 
 const submitForm = () => {

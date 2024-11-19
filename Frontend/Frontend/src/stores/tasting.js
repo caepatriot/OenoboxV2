@@ -1069,8 +1069,8 @@ export const useTastingStore = defineStore('tasting', () => {
                 },
                 {
                     "id": 7,
-                    "name": "type_aromes",
                     "label": "Arômes-Type",
+                    "name": "type_aromes",
                     "wineType": ["red", "white", "rose"],
                     "groups": [
                         {
@@ -1510,6 +1510,61 @@ export const useTastingStore = defineStore('tasting', () => {
         },
         {
             "step": 5,
+            "title": "Longueur en bouche",
+            "name": "longueur",
+            "fields": [
+                {
+                    "type": "slider",
+                    "label": "Persistance aromatique",
+                    "name": "persistance_aromatique",
+                    "options": [
+                        "nulle",
+                        "courte",
+                        "moyenne",
+                        "bonne",
+                        "longue",
+                        "très longue",
+                        "infinie"
+                    ],
+                    "required": true
+                },
+                {
+                    "type": "select",
+                    "label": "Caudalies",
+                    "name": "caudalies",
+                    "options": [
+                        "ample",
+                        "puissante",
+                        "généreuse",
+                        "continue",
+                        "tannique",
+                        "acide",
+                        "plate"
+                    ],
+                    "required": true
+                },
+                {
+                    "type": "select",
+                    "label": "Structure",
+                    "name": "structure",
+                    "options": [
+                        "concentrée",
+                        "souple",
+                        "charnue",
+                        "décharnée",
+                        "creuse",
+                        "maigre",
+                        "grossière",
+                        "sèche",
+                        "dure",
+                        "filiforme"
+                    ],
+                    "required": true
+                }
+            ]
+        },
+        {
+            "step": 6,
             "title": "Conclusion",
             "name": "conclusion",
             "fields": [

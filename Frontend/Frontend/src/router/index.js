@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import TastingView from '../views/TastingView.vue'
+// import TastingView from '../views/TastingView.vue'
+import TastingStaticView from '../views/TastingStaticView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,7 +14,7 @@ const router = createRouter({
         {
             path: '/tasting',
             name: 'tasting',
-            component: TastingView
+            component: TastingStaticView
         },
         {
             path: '/about',
