@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import {ref, computed} from 'vue'
+import {defineStore} from 'pinia'
 
 export const useTastingStore = defineStore('tasting', () => {
 
@@ -67,11 +67,11 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        { "id": 2, "value": "CARIGNAN", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 3, "value": "CINSAULT", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 4, "value": "MALBEC", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 5, "value": "GAMAY", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 6, "value": "GRENACHE", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        {"id": 2, "value": "CARIGNAN", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 3, "value": "CINSAULT", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 4, "value": "MALBEC", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 5, "value": "GAMAY", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {"id": 6, "value": "GRENACHE", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
                         {
                             "id": 7,
                             "value": "MERLOT",
@@ -79,8 +79,20 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        { "id": 8, "value": "MOURVÈDRE", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 9, "value": "PINOT NOIR", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        {
+                            "id": 8,
+                            "value": "MOURVÈDRE",
+                            "wineType": ["red"],
+                            "icon": "",
+                            "iconColor": "rgb(191, 15, 2)"
+                        },
+                        {
+                            "id": 9,
+                            "value": "PINOT NOIR",
+                            "wineType": ["red"],
+                            "icon": "",
+                            "iconColor": "rgb(191, 15, 2)"
+                        },
                         {
                             "id": 10,
                             "value": "SANGIOVESE",
@@ -88,7 +100,7 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        { "id": 11, "value": "SYRAH", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        {"id": 11, "value": "SYRAH", "wineType": ["red"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
 
                         {
                             "id": 11,
@@ -118,7 +130,13 @@ export const useTastingStore = defineStore('tasting', () => {
                             "icon": "",
                             "iconColor": "rgb(191, 15, 2)"
                         },
-                        { "id": 15, "value": "chenin", "wineType": ["white"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
+                        {
+                            "id": 15,
+                            "value": "chenin",
+                            "wineType": ["white"],
+                            "icon": "",
+                            "iconColor": "rgb(191, 15, 2)"
+                        },
                         {
                             "id": 16,
                             "value": "gewurztraminer",
@@ -162,9 +180,21 @@ export const useTastingStore = defineStore('tasting', () => {
                             "iconColor": "rgb(191, 15, 2)"
                         },
 
-                        { "id": 22, "value": "Syrah", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 23, "value": "Grenache", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)" },
-                        { "id": 24, "value": "Cinsault", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)" }
+                        {"id": 22, "value": "Syrah", "wineType": ["rose"], "icon": "", "iconColor": "rgb(191, 15, 2)"},
+                        {
+                            "id": 23,
+                            "value": "Grenache",
+                            "wineType": ["rose"],
+                            "icon": "",
+                            "iconColor": "rgb(191, 15, 2)"
+                        },
+                        {
+                            "id": 24,
+                            "value": "Cinsault",
+                            "wineType": ["rose"],
+                            "icon": "",
+                            "iconColor": "rgb(191, 15, 2)"
+                        }
                     ],
                     "placeholder": "Entrez les cépages",
                     "required": true,
@@ -342,107 +372,6 @@ export const useTastingStore = defineStore('tasting', () => {
                         },
                     ],
                 },
-
-
-                {
-                    "id": 2,
-                    "label": "Robe blanche",
-                    "name": "robe_blanche",
-                    "wineType": ["white"],
-                    "groups": [
-                        {
-                            "id": 1,
-                            "type": "select-button",
-                            "wineType": ["white"],
-                            "multi": false,
-                            "required": true,
-                            "groupValues": [
-                                {
-                                    "id": 1,
-                                    "value": "Noir",
-                                    "wineType": ["red"],
-                                    "color": "#000",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 2,
-                                    "value": "bleuâtre",
-                                    "wineType": ["red"],
-                                    "color": "#3b0014",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 3,
-                                    "value": "violet",
-                                    "wineType": ["red"],
-                                    "color": "#901766",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 4,
-                                    "value": "pourpre",
-                                    "wineType": ["red"],
-                                    "color": "#9a2049",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 5,
-                                    "value": "grenat",
-                                    "wineType": ["red"],
-                                    "color": "#6e2445",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 6,
-                                    "value": "rubis",
-                                    "wineType": ["red"],
-                                    "color": "#d73c3a",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 7,
-                                    "value": "incarnat et carmin",
-                                    "wineType": ["red"],
-                                    "color": "#b91b18",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 8,
-                                    "value": "brique",
-                                    "wineType": ["red"],
-                                    "color": "#be4731",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 9,
-                                    "value": "tuilé",
-                                    "wineType": ["red"],
-                                    "color": "#8c3116",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                                {
-                                    "id": 10,
-                                    "value": "Orangé ",
-                                    "wineType": ["red"],
-                                    "color": "#c63d11",
-                                    "icon": "",
-                                    "iconColor": ""
-                                },
-                            ],
-                        }
-                    ],
-                },
-
-
                 {
                     "id": 2,
                     "label": "Robe blanche",
@@ -539,11 +468,11 @@ export const useTastingStore = defineStore('tasting', () => {
                             "multi": false,
                             "required": true,
                             "groupValues": [
-                                { "id": 1, "value": "violacé", "wineType": ["red"], "icon": "", "iconColor": "" },
-                                { "id": 2, "value": "rosé", "wineType": ["red"], "icon": "", "iconColor": "" },
-                                { "id": 3, "value": "brun", "wineType": ["red"], "icon": "", "iconColor": "" },
-                                { "id": 4, "value": "tuilé", "wineType": ["red"], "icon": "", "iconColor": "" },
-                                { "id": 5, "value": "orangé", "wineType": ["red"], "icon": "", "iconColor": "" }
+                                {"id": 1, "value": "violacé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 2, "value": "rosé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 3, "value": "brun", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 4, "value": "tuilé", "wineType": ["red"], "icon": "", "iconColor": ""},
+                                {"id": 5, "value": "orangé", "wineType": ["red"], "icon": "", "iconColor": ""}
                             ],
                         }
                     ],
@@ -1333,7 +1262,21 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
                                     "icon": "mdi mdi-food-apple",
-                                    "iconColor": ""
+                                    "iconColor": "",
+                                    "notes": [
+                                        {
+                                            "libelle": "Citron",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Pamplemousse",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Orange",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                    ]
                                 },
                                 {
                                     "id": 2,
@@ -1341,7 +1284,21 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
                                     "icon": "mdi-flower",
-                                    "iconColor": ""
+                                    "iconColor": "",
+                                    "notes": [
+                                        {
+                                            "libelle": "Aubépine",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Acacia",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Tilleul",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                    ]
                                 },
                                 {
                                     "id": 3,
@@ -1349,7 +1306,21 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
                                     "icon": "mdi-forest",
-                                    "iconColor": ""
+                                    "iconColor": "",
+                                    "notes": [
+                                        {
+                                            "libelle": "Chêne",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Cèdre",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Réglisse",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                    ]
                                 },
                                 {
                                     "id": 4,
@@ -1357,7 +1328,17 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
                                     "icon": "mdi-leaf-maple",
-                                    "iconColor": ""
+                                    "iconColor": "",
+                                    "notes": [
+                                        {
+                                            "libelle": "Cire d’abeille",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                        {
+                                            "libelle": "Résine",
+                                            "details": "XXXXXXXXXX"
+                                        },
+                                    ]
                                 },
                                 {
                                     "id": 5,
@@ -1694,5 +1675,5 @@ export const useTastingStore = defineStore('tasting', () => {
         // count.value++
     }
 
-    return { tasting_steps, increment }
+    return {tasting_steps, increment}
 })

@@ -338,13 +338,14 @@ const isSameWineType = (item) => {
                                   <v-checkbox
                                       v-for="(val, index2) in group.groupValues" :key="val.id" :value="val"
                                       class="mx-3"
-                                      :color="val.negatif && 'red'"
+                                      :color="(val.color) ? val.color : (val.negatif ? 'red' : '')"
                                       :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
                                       v-model="selectedTasting.vin[step.name][field.name][group.id]"
                                       :multiple="group.multi"
                                       :label="val.value"
                                       density="compact"
                                       hide-details
+                                      @click="test(val)"
                                   ></v-checkbox>
 
                                   <!--                                <v-btn-toggle class="btn-toggle" density="compact" divided-->
@@ -358,7 +359,7 @@ const isSameWineType = (item) => {
                                   <!--                                </v-btn-toggle>-->
 
                                 </template>
-                                <v-divider></v-divider>
+                                <v-divider thickness="3"></v-divider>
                               </template>
 
                               <template v-if="field.type === 'slider'">
