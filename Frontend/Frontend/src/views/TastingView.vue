@@ -271,7 +271,6 @@ const isSameWineType = (item) => {
 
                         <template v-if="step.fields">
 
-
                           <template class="d-flex flex-wrap ga-3" v-for="field in step.fields" :key="field.id">
                             <v-row>
                               <h3>{{ field.label }}</h3>
@@ -335,18 +334,22 @@ const isSameWineType = (item) => {
                               <template v-for="(group, index1) in field.groups" :key="index1">
                                 <template v-if="group.type === 'select-button' && isSameWineType(group)">
 
-                                  <v-checkbox
-                                      v-for="(val, index2) in group.groupValues" :key="val.id" :value="val"
-                                      class="mx-3"
-                                      :color="(val.color) ? val.color : (val.negatif ? 'red' : '')"
-                                      :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
-                                      v-model="selectedTasting.vin[step.name][field.name][group.id]"
-                                      :multiple="group.multi"
-                                      :label="val.value"
-                                      density="compact"
-                                      hide-details
-                                      @click="test(val)"
-                                  ></v-checkbox>
+                                  <template v-for="(val, index2) in group.groupValues" :key="val.id">
+                                    <v-checkbox
+                                        :value="val"
+                                        class="mx-3"
+                                        :color="(val.color) ? val.color : (val.negatif ? 'red' : '')"
+                                        :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
+                                        v-model="selectedTasting.vin[step.name][field.name][group.id]"
+                                        :multiple="group.multi"
+                                        :label="val.value"
+                                        density="compact"
+                                        hide-details
+                                        @click="test(val)"
+                                    ></v-checkbox>
+
+                                  </template>
+
 
                                   <!--                                <v-btn-toggle class="btn-toggle" density="compact" divided-->
                                   <!--                                  v-model="selectedTasting.vin[step.name][field.name][group.id]" :multiple="group.multi"-->
@@ -383,6 +386,9 @@ const isSameWineType = (item) => {
                     </v-row>
                   </v-container>
                 </template>
+
+
+
               </v-stepper>
               <v-btn @click="submitForm">Submit</v-btn>
             </v-sheet>
