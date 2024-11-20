@@ -1430,8 +1430,6 @@ export const useTastingStore = defineStore('tasting', () => {
                     ],
                 }
             ],
-            "multi": false,
-            "required": true
         },
         {
             "step": 4,
