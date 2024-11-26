@@ -1,10 +1,10 @@
-package lu.caepatriot.backend;
+package lu.caepatriot.oenobox;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class OenoboxApplicationTests {
 
 	@Test
 	void contextLoads() {

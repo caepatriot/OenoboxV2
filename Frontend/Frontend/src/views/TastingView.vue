@@ -1,6 +1,6 @@
 <script setup>
-import { ref, reactive, onMounted, computed, toRaw } from 'vue';
-import { useTastingStore } from "@/stores/tasting.js";
+import {ref, reactive, onMounted, computed, toRaw} from 'vue';
+import {useTastingStore} from "@/stores/tasting.js";
 
 const store = useTastingStore();
 
@@ -198,7 +198,7 @@ const isSameWineType = (item) => {
         <v-card-title>Nouvelle fiche</v-card-title>
         <v-card-text>
           <v-form>
-            <v-text-field variant="outlined" label="Title" v-model="newTitle" :rules="titleRules" required />
+            <v-text-field variant="outlined" label="Title" v-model="newTitle" :rules="titleRules" required/>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -240,17 +240,17 @@ const isSameWineType = (item) => {
 
                   <v-tabs-window-item class="relative" value="one">
                     <v-img width="100%" max-height="100%" aspect-ratio="1/1" cover
-                      src="httpss://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg">
+                           src="httpss://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg">
                     </v-img>
                     <v-btn class="position-absolute bottom-0 right-0 ma-2" icon="mdi-camera-outline"
-                      size="large"></v-btn>
+                           size="large"></v-btn>
                   </v-tabs-window-item>
 
                   <v-tabs-window-item class="relative" value="two">
                     <v-img width="100%" max-height="100%" aspect-ratio="1/1" cover
-                      src="httpss://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"></v-img>
+                           src="httpss://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"></v-img>
                     <v-btn class="position-absolute bottom-0 right-0 ma-2" icon="mdi-camera-outline"
-                      size="large"></v-btn>
+                           size="large"></v-btn>
                   </v-tabs-window-item>
 
                 </v-tabs-window>
@@ -280,38 +280,42 @@ const isSameWineType = (item) => {
                               <template v-if="field.type === 'text'">
                                 <!--                                <label>{{ field.label }}</label>-->
                                 <v-text-field density="compact" variant="outlined"
-                                  v-model="selectedTasting.vin[step.name][field.name]" hide-details="auto"
-                                  :label="field.label"></v-text-field>
+                                              v-model="selectedTasting.vin[step.name][field.name]" hide-details="auto"
+                                              :label="field.label"></v-text-field>
                                 <v-divider></v-divider>
                               </template>
 
                               <template v-if="field.type === 'textarea'">
                                 <!--                                <label>{{ field.label }}</label>-->
                                 <v-textarea v-model="selectedTasting.vin[step.name][field.name]" :label="field.label"
-                                  variant="outlined" density="compact" hide-details="auto"></v-textarea>
+                                            variant="outlined" density="compact" hide-details="auto"></v-textarea>
                                 <v-divider></v-divider>
                               </template>
 
                               <template v-if="field.type === 'autocomplete'">
                                 <v-autocomplete :label="field.label" density="compact" chips
-                                  v-model="selectedTasting.vin[step.name][field.name]"
-                                  :items="filteredWineTypeValues(field.values)" item-title="value" item-value="id"
-                                  hide-details="true" variant="outlined" return-object :multiple="field.multi">
+                                                v-model="selectedTasting.vin[step.name][field.name]"
+                                                :items="filteredWineTypeValues(field.values)" item-title="value"
+                                                item-value="id"
+                                                hide-details="true" variant="outlined" return-object
+                                                :multiple="field.multi">
                                 </v-autocomplete>
                                 <v-divider></v-divider>
                               </template>
 
                               <template v-if="field.type === 'select'">
                                 <v-select density="compact" variant="outlined"
-                                  v-model="selectedTasting.vin[step.name][field.name]" v-if="field.type === 'select'"
-                                  :label="field.label" :items="field.values" hide-details="true"></v-select>
+                                          v-model="selectedTasting.vin[step.name][field.name]"
+                                          v-if="field.type === 'select'"
+                                          :label="field.label" :items="field.values" hide-details="true"></v-select>
                                 <v-divider></v-divider>
                               </template>
 
                               <template v-if="field.type === 'number'">
                                 <v-text-field density="compact" variant="outlined"
-                                  v-model="selectedTasting.vin[step.name][field.name]" :label="field.label" prefix="€"
-                                  hide-details="true"></v-text-field>
+                                              v-model="selectedTasting.vin[step.name][field.name]" :label="field.label"
+                                              prefix="€"
+                                              hide-details="true"></v-text-field>
                                 <v-divider></v-divider>
                               </template>
 
@@ -321,23 +325,30 @@ const isSameWineType = (item) => {
 
                                   <template v-for="(val, index2) in group.groupValues" :key="val.id">
                                     <v-checkbox :value="val" class="mx-3"
-                                      :color="(val.color) ? val.color : (val.negatif ? 'red' : '')"
-                                      :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
-                                      v-model="selectedTasting.vin[step.name][field.name][group.id]"
-                                      :multiple="group.multi" :label="val.value" density="compact" hide-details
-                                      @click="test(val)"></v-checkbox>
+                                                :color="(val.color) ? val.color : (val.negatif ? 'red' : '')"
+                                                :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
+                                                v-model="selectedTasting.vin[step.name][field.name][group.id]"
+                                                :multiple="group.multi" :label="val.value" density="compact"
+                                                hide-details
+                                                @click="test(val)"></v-checkbox>
 
-                                    <ul v-if="selectedTasting.vin[step.name][field.name][group.id]?.includes(val)">
-                                      <li v-for="(note, index) in val?.notes" :key="index">
-                                        {{ note }}
-                                      </li>
-                                    </ul>
+<!--                                    <ul v-if="selectedTasting.vin[step.name][field.name][group.id]?.includes(val)">-->
+<!--                                      <li v-for="(note, index) in val?.notes" :key="index">-->
+<!--                                        {{ note }}-->
+<!--                                      </li>-->
+<!--                                    </ul>-->
 
-                                    <v-autocomplete :label="field.label" density="compact" chips
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :items="filteredWineTypeValues(field.values)" item-title="value" item-value="id"
-                                      hide-details="true" variant="outlined" return-object :multiple="field.multi">
-                                    </v-autocomplete>
+                                    <template v-if="selectedTasting.vin[step.name][field.name][group.id]?.includes(val)">
+                                      <v-autocomplete :label="field.label" density="compact" chips
+                                                      @change="test(val)"
+                                                      v-model="selectedTasting.vin[step.name][field.name]"
+                                                      :items="val?.notes" item-title="libelle"
+                                                      item-value="libelle"
+                                                      hide-details="true" variant="outlined"
+                                                      multiple>
+                                      </v-autocomplete>
+                                    </template>
+
 
                                   </template>
 
@@ -378,7 +389,6 @@ const isSameWineType = (item) => {
                     </v-row>
                   </v-container>
                 </template>
-
 
 
               </v-stepper>
