@@ -351,8 +351,6 @@ const isSameWineType = (item) => {
                                       :multiple="group.multi" :label="val.value" density="compact" hide-details
                                       @click="test(val, group.id, val.notes)"></v-checkbox>
 
-
-
                                     <!-- Autocomplete for Notes -->
 
                                     <!-- <v-autocomplete
@@ -368,34 +366,7 @@ const isSameWineType = (item) => {
                                       multiple></v-autocomplete>
 
 
-
-                                    <!--                                    <ul v-if="selectedTasting.vin[step.name][field.name][group.id]?.includes(val)">-->
-                                    <!--                                      <li v-for="(note, index) in val?.notes" :key="index">-->
-                                    <!--                                        {{ note }}-->
-                                    <!--                                      </li>-->
-                                    <!--                                    </ul>-->
-
-                                    <!-- <template>
-                                      <v-autocomplete :label="field.label" density="compact" chips @change="test(val)"
-                                        v-model="selectedTasting.vin[step.name][field.name]" :items="val?.notes"
-                                        item-title="libelle" item-value="libelle" hide-details="true" variant="outlined"
-                                        multiple>
-                                      </v-autocomplete>
-                                    </template> -->
-
-
                                   </template>
-
-
-                                  <!--                                <v-btn-toggle class="btn-toggle" density="compact" divided-->
-                                  <!--                                  v-model="selectedTasting.vin[step.name][field.name][group.id]" :multiple="group.multi"-->
-                                  <!--                                  elevation="1">-->
-
-                                  <!--                                  <v-btn v-for="(val, index2) in group.groupValues" :key="val.id" :value="val"-->
-                                  <!--                                    :color="val.negatif && 'red'" :prepend-icon="val.icon">-->
-                                  <!--                                    <span>{{ val.value }}</span>-->
-                                  <!--                                  </v-btn>-->
-                                  <!--                                </v-btn-toggle>-->
 
                                 </template>
 
