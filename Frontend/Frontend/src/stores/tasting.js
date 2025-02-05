@@ -1265,14 +1265,17 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": "",
                                     "notes": [
                                         {
+                                            "id": 1,
                                             "libelle": "Citron",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 2,
                                             "libelle": "Pamplemousse",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 3,
                                             "libelle": "Orange",
                                             "details": "XXXXXXXXXX"
                                         },
@@ -1287,14 +1290,17 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": "",
                                     "notes": [
                                         {
+                                            "id": 4,
                                             "libelle": "Aubépine",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 5,
                                             "libelle": "Acacia",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 6,
                                             "libelle": "Tilleul",
                                             "details": "XXXXXXXXXX"
                                         },
@@ -1309,14 +1315,17 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": "",
                                     "notes": [
                                         {
+                                            "id": 7,
                                             "libelle": "Chêne",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 8,
                                             "libelle": "Cèdre",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 9,
                                             "libelle": "Réglisse",
                                             "details": "XXXXXXXXXX"
                                         },
@@ -1331,10 +1340,12 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": "",
                                     "notes": [
                                         {
+                                            "id": 10,
                                             "libelle": "Cire d’abeille",
                                             "details": "XXXXXXXXXX"
                                         },
                                         {
+                                            "id": 11,
                                             "libelle": "Résine",
                                             "details": "XXXXXXXXXX"
                                         },
@@ -1349,7 +1360,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 6,
                                     "value": "empyreumatique",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1357,7 +1368,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 7,
                                     "value": "animale",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1365,7 +1376,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 8,
                                     "value": "végétale",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1373,7 +1384,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 9,
                                     "value": "alimentaire",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1381,7 +1392,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 10,
                                     "value": "minérale",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1389,7 +1400,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 11,
                                     "value": "chimique",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": false,
@@ -1397,7 +1408,7 @@ export const useTastingStore = defineStore('tasting', () => {
                                     "iconColor": ""
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 12,
                                     "value": "anormale",
                                     "wineType": ["red", "white", "rose"],
                                     "negatif": true,
