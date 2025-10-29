@@ -10,8 +10,8 @@ public class TastingDto {
     private LocalDateTime updatedAt;
 
     // Informations sur le vin
-    private String wineType;
-    private List<String> cepages;
+    private WineTypeDto wineType;
+    private List<CepageDto> cepages;
     private String region;
     private String aopIgpVdf;
     private String elevage;
@@ -87,19 +87,19 @@ public class TastingDto {
         this.updatedAt = updatedAt;
     }
 
-    public String getWineType() {
+    public WineTypeDto getWineType() {
         return wineType;
     }
 
-    public void setWineType(String wineType) {
+    public void setWineType(WineTypeDto wineType) {
         this.wineType = wineType;
     }
 
-    public List<String> getCepages() {
+    public List<CepageDto> getCepages() {
         return cepages;
     }
 
-    public void setCepages(List<String> cepages) {
+    public void setCepages(List<CepageDto> cepages) {
         this.cepages = cepages;
     }
 

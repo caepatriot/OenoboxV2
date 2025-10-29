@@ -1,5 +1,7 @@
 package lu.caepatriot.oenobox.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lu.caepatriot.oenobox.dto.TastingDto;
 import lu.caepatriot.oenobox.service.TastingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/tastings")
 @CrossOrigin(origins = "*")
+@Tag(name = "Tastings", description = "API for managing wine tastings")
 public class TastingController {
 
     @Autowired
@@ -21,6 +24,7 @@ public class TastingController {
 
     // GET /api/tastings - Get all tastings
     @GetMapping
+    @Operation(summary = "Get all tastings", description = "Retrieves a list of all wine tastings")
     public ResponseEntity<List<TastingDto>> getAllTastings() {
         List<TastingDto> tastings = tastingService.findAll();
         return ResponseEntity.ok(tastings);
@@ -28,14 +32,16 @@ public class TastingController {
 
     // GET /api/tastings/{id} - Get tasting by ID
     @GetMapping("/{id}")
+    @Operation(summary = "Get tasting by ID", description = "Retrieves a specific wine tasting by its ID")
     public ResponseEntity<TastingDto> getTastingById(@PathVariable Long id) {
         Optional<TastingDto> tasting = tastingService.findById(id);
         return tasting.map(ResponseEntity::ok)
-                     .orElse(ResponseEntity.notFound().build());
+                      .orElse(ResponseEntity.notFound().build());
     }
 
     // POST /api/tastings - Create new tasting
     @PostMapping
+    @Operation(summary = "Create new tasting", description = "Creates a new wine tasting record")
     public ResponseEntity<TastingDto> createTasting(@RequestBody TastingDto tastingDto) {
         try {
             System.out.println("Received tasting data: " + tastingDto);
@@ -51,6 +57,7 @@ public class TastingController {
 
     // PUT /api/tastings/{id} - Update tasting
     @PutMapping("/{id}")
+    @Operation(summary = "Update tasting", description = "Updates an existing wine tasting by its ID")
     public ResponseEntity<TastingDto> updateTasting(@PathVariable Long id, @RequestBody TastingDto tastingDto) {
         try {
             TastingDto updatedTasting = tastingService.update(id, tastingDto);
@@ -64,6 +71,7 @@ public class TastingController {
 
     // DELETE /api/tastings/{id} - Delete tasting
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete tasting", description = "Deletes a wine tasting by its ID")
     public ResponseEntity<Void> deleteTasting(@PathVariable Long id) {
         try {
             tastingService.deleteById(id);
@@ -133,6 +141,7 @@ public class TastingController {
 
     // GET /api/tastings/steps - Get tasting steps configuration
     @GetMapping("/steps")
+    @Operation(summary = "Get tasting steps configuration", description = "Retrieves the configuration for tasting steps")
     public ResponseEntity<List<Object>> getTastingSteps() {
         // For now, return a simple list of steps. In a real application,
         // this could be loaded from a database or configuration file

@@ -1,7 +1,11 @@
 package lu.caepatriot.oenobox.service;
 
 import lu.caepatriot.oenobox.dto.TastingDto;
+import lu.caepatriot.oenobox.dto.WineTypeDto;
+import lu.caepatriot.oenobox.dto.CepageDto;
 import lu.caepatriot.oenobox.entity.Tasting;
+import lu.caepatriot.oenobox.entity.WineType;
+import lu.caepatriot.oenobox.entity.Cepage;
 import lu.caepatriot.oenobox.repository.TastingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class TastingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TastingService.class);
 
     @Autowired
     private TastingRepository tastingRepository;
@@ -26,8 +34,10 @@ public class TastingService {
         dto.setUpdatedAt(tasting.getUpdatedAt());
 
         // Informations sur le vin
-        dto.setWineType(tasting.getWineType());
-        dto.setCepages(tasting.getCepages());
+        dto.setWineType(tasting.getWineType() != null ? new WineTypeDto(1L, tasting.getWineType(), null, null, null, null, null) : null); // wineType is String in entity
+        dto.setCepages(tasting.getCepages() != null ? tasting.getCepages().stream()
+            .map(cepageName -> new CepageDto(1L, cepageName, null, null, null, null)) // cepages are List<String> in entity
+            .collect(Collectors.toList()) : null);
         dto.setRegion(tasting.getRegion());
         dto.setAopIgpVdf(tasting.getAopIgpVdf());
         dto.setElevage(tasting.getElevage());
@@ -80,6 +90,7 @@ public class TastingService {
 
     // Convert DTO to Entity
     private Tasting convertToEntity(TastingDto dto) {
+        logger.info("Converting TastingDto to Tasting entity. DTO wineType: {}", dto.getWineType());
         Tasting tasting = new Tasting();
 
         if (dto.getId() != null) {
@@ -87,8 +98,11 @@ public class TastingService {
         }
 
         // Informations sur le vin
-        tasting.setWineType(dto.getWineType());
-        tasting.setCepages(dto.getCepages());
+        logger.warn("WineType handling needs proper repository lookup. Currently using WineTypeDto name as String.");
+        tasting.setWineType(dto.getWineType() != null ? dto.getWineType().getName() : null); // wineType is String in entity
+        tasting.setCepages(dto.getCepages() != null ? dto.getCepages().stream()
+            .map(cepageDto -> cepageDto.getName()) // cepages are List<String> in entity
+            .collect(Collectors.toList()) : null);
         tasting.setRegion(dto.getRegion());
         tasting.setAopIgpVdf(dto.getAopIgpVdf());
         tasting.setElevage(dto.getElevage());

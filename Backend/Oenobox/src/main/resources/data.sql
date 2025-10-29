@@ -48,12 +48,11 @@ INSERT INTO cepage (id, name, wine_type_id, description) VALUES
 -- TASTING STEPS
 -- ===========================================
 INSERT INTO tasting_step (id, step_number, name, title, description) VALUES
-(1, 1, 'informations', 'Informations sur le Vin', 'Informations générales sur le vin à déguster'),
-(2, 2, 'visuel', 'Aspect Visuel', 'Évaluation de l''aspect visuel du vin'),
-(3, 3, 'nez', 'Nez', 'Analyse olfactive du vin'),
-(4, 4, 'bouche', 'Bouche', 'Évaluation en bouche'),
-(5, 5, 'longueur', 'Longueur en bouche', 'Persistance aromatique'),
-(6, 6, 'conclusion', 'Conclusion', 'Jugement final et notes');
+(1, 1, 'informations', 'Informations sur le Vin', null),
+(2, 2, 'visuel', 'Aspect Visuel', null),
+(3, 3, 'nez', 'Nez', null),
+(4, 4, 'bouche', 'Bouche', null),
+(5, 5, 'longueur', 'Longueur en bouche', null);
 
 -- ===========================================
 -- TASTING FIELDS
@@ -95,25 +94,19 @@ INSERT INTO tasting_field (id, step_id, field_type, name, label, placeholder, re
 -- Step 5: Longueur
 (26, 5, 'slider', 'persistance_aromatique', 'Persistance aromatique', null, true, false, '["red", "white", "rose"]'),
 (27, 5, 'select', 'caudalies', 'Caudalies', null, true, false, '["red", "white", "rose"]'),
-(28, 5, 'select', 'structure', 'Structure', null, true, false, '["red", "white", "rose"]'),
-
--- Step 6: Conclusion
-(29, 6, 'select', 'note_finale', 'Note Finale', null, true, false, '["red", "white", "rose"]'),
-(30, 6, 'number', 'caudalies', 'Caudalies', 'Nombre de caudalies', false, false, '["red", "white", "rose"]'),
-(31, 6, 'textarea', 'remarques', 'Remarques', 'Ajouter des remarques', false, false, '["red", "white", "rose"]'),
-(32, 6, 'text', 'accords_mets_vins', 'Accords Mets et Vins', 'Ex: Fromages, viandes', false, false, '["red", "white", "rose"]');
+(28, 5, 'select', 'structure', 'Structure', null, true, false, '["red", "white", "rose"]');
 
 -- ===========================================
 -- TASTING FIELD OPTIONS
 -- ===========================================
 
--- Wine Type Options
+-- Wine Type Options (field_id 1)
 INSERT INTO tasting_field_option (id, field_id, value, label, color_code, is_negative, sort_order) VALUES
 (1, 1, 'Rouge', 'Rouge', '#BF0202', false, 1),
 (2, 1, 'Blanc', 'Blanc', '#F1F180', false, 2),
 (3, 1, 'Rosé', 'Rosé', '#FF96BA', false, 3);
 
--- Import Options
+-- Import Options (field_id 6)
 INSERT INTO tasting_field_option (id, field_id, value, label, color_code, is_negative, sort_order) VALUES
 (4, 6, '/', '/', null, false, 1),
 (5, 6, 'Espagne', 'Espagne', null, false, 2),
@@ -360,22 +353,22 @@ INSERT INTO tasting_field_option (id, field_id, value, label, color_code, is_neg
 -- AROMA NOTES (Sub-options for aroma categories)
 -- ===========================================
 INSERT INTO aroma_note (id, category_option_id, name, description) VALUES
--- Fruitée notes
+-- Fruitée notes (category_option_id 101)
 (1, 101, 'Citron', 'Note citronnée fraîche'),
 (2, 101, 'Pamplemousse', 'Note d''agrume acidulé'),
 (3, 101, 'Orange', 'Note d''orange douce'),
 
--- Florale notes
+-- Florale notes (category_option_id 102)
 (4, 102, 'Aubépine', 'Fleur blanche délicate'),
 (5, 102, 'Acacia', 'Fleur printanière'),
 (6, 102, 'Tilleul', 'Fleur d''été'),
 
--- Boisée notes
+-- Boisée notes (category_option_id 103)
 (7, 103, 'Chêne', 'Bois de chêne vanillé'),
 (8, 103, 'Cèdre', 'Bois résineux'),
 (9, 103, 'Réglisse', 'Racine sucrée'),
 
--- Balsamique notes
+-- Balsamique notes (category_option_id 104)
 (10, 104, 'Cire d''abeille', 'Cire naturelle'),
 (11, 104, 'Résine', 'Résine de pin');
 

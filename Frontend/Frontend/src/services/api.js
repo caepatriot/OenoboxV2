@@ -66,7 +66,7 @@ export const tastingApi = {
   search: (params) => api.get('/tastings/search', { params }),
 
   // Get tasting steps configuration
-  getSteps: () => api.get('/tastings/steps'),
+  getSteps: () => api.get('/tasting-steps'),
 };
 
 // Cepage API endpoints (if needed)

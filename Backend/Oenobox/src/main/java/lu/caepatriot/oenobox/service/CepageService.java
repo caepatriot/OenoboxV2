@@ -20,7 +20,7 @@ public class CepageService {
 
     public List<CepageDto> getAllCepages() {
         return cepageRepository.findAll().stream()
-                .map(cepage -> new CepageDto(cepage.getId(), cepage.getNom_cepage(), cepage.getCouleur()))
+                .map(cepage -> new CepageDto(cepage.getId(), cepage.getName(), null, cepage.getDescription(), null, null))
                 .collect(Collectors.toList());
     }
 
@@ -33,9 +33,15 @@ public class CepageService {
 //    }
 
     public CepageDto getCepageById(Long id) {
-        Cepage user = cepageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return new CepageDto(user.getId(), user.getNom_cepage(), user.getCouleur());
+        Cepage cepage = cepageRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cepage not found"));
+        return new CepageDto(cepage.getId(), cepage.getName(), null, cepage.getDescription(), null, null);
+    }
+
+    public List<CepageDto> getCepagesByWineTypeId(Long wineTypeId) {
+        return cepageRepository.findByWineTypeId(wineTypeId).stream()
+                .map(cepage -> new CepageDto(cepage.getId(), cepage.getName(), null, cepage.getDescription(), null, null))
+                .collect(Collectors.toList());
     }
 
 }

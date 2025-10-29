@@ -2,21 +2,21 @@ package lu.caepatriot.oenobox.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "cepage")
-public class Cepage {
+@Table(name = "wine_type")
+public class WineType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wine_type_id", nullable = false)
-    private WineType wineType;
+    @Column(name = "color_code", length = 7)
+    private String colorCode;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -27,14 +27,16 @@ public class Cepage {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "wineType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cepage> cepages;
 
     // Constructors
-    public Cepage() {
+    public WineType() {
     }
 
-    public Cepage(String name, WineType wineType, String description) {
+    public WineType(String name, String colorCode, String description) {
         this.name = name;
-        this.wineType = wineType;
+        this.colorCode = colorCode;
         this.description = description;
     }
 
@@ -55,12 +57,12 @@ public class Cepage {
         this.name = name;
     }
 
-    public WineType getWineType() {
-        return wineType;
+    public String getColorCode() {
+        return colorCode;
     }
 
-    public void setWineType(WineType wineType) {
-        this.wineType = wineType;
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
     }
 
     public String getDescription() {
@@ -87,12 +89,20 @@ public class Cepage {
         this.updatedAt = updatedAt;
     }
 
+    public List<Cepage> getCepages() {
+        return cepages;
+    }
+
+    public void setCepages(List<Cepage> cepages) {
+        this.cepages = cepages;
+    }
+
     @Override
     public String toString() {
-        return "Cepage{" +
+        return "WineType{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", wineType=" + (wineType != null ? wineType.getName() : null) +
+                ", colorCode='" + colorCode + '\'' +
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

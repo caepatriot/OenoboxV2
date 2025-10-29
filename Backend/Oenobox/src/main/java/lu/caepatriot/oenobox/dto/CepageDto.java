@@ -1,24 +1,29 @@
 package lu.caepatriot.oenobox.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CepageDto {
 
     private Long id;
-    private String nom_cepage;
-    private String couleur;
-    private String origine;
-    private String caracteristiques;
-    private String adaptabilite_climatique;
+    private String name;
+    private WineTypeDto wineType;
+    private String description;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public CepageDto() {
     }
 
-    public CepageDto(Long id, String nom_cepage, String couleur) {
+    public CepageDto(Long id, String name, WineTypeDto wineType, String description,
+                    LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.nom_cepage = nom_cepage;
-        this.couleur = couleur;
+        this.name = name;
+        this.wineType = wineType;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -29,19 +34,43 @@ public class CepageDto {
         this.id = id;
     }
 
-    public String getNom_cepage() {
-        return nom_cepage;
+    public String getName() {
+        return name;
     }
 
-    public void setNom_cepage(String nom_cepage) {
-        this.nom_cepage = nom_cepage;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCouleur() {
-        return couleur;
+    public WineTypeDto getWineType() {
+        return wineType;
     }
 
-    public void setCouleur(String couleur) {
-        this.couleur = couleur;
+    public void setWineType(WineTypeDto wineType) {
+        this.wineType = wineType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

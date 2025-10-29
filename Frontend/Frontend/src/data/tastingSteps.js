@@ -1259,7 +1259,7 @@ export const tastingStepsData = [
                 "notes": [
                   {
                     "id": 1,
-                    "libelle": "Citron",
+                    "libelle": "Citrons",
                     "details": "XXXXXXXXXX"
                   },
                   {
