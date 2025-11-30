@@ -22,6 +22,7 @@ public class TastingFieldDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<TastingFieldOptionDto> options;
+    private List<TastingFieldGroupDto> groups;
 
     // Constructors
     public TastingFieldDto() {}
@@ -29,7 +30,8 @@ public class TastingFieldDto {
     public TastingFieldDto(Long id, TastingStepDto step, String fieldType, String name, String label,
                           String placeholder, Boolean required, Boolean multiSelect, List<String> wineTypeRestriction,
                           LocalDateTime createdAt, LocalDateTime updatedAt, List<TastingFieldOptionDto> options,
-                          String searchTerm, List<String> filterWineTypes, Boolean filterRequired, Boolean filterMultiSelect) {
+                          String searchTerm, List<String> filterWineTypes, Boolean filterRequired, Boolean filterMultiSelect,
+                          List<TastingFieldGroupDto> groups) {
         this.id = id;
         this.step = step;
         this.fieldType = fieldType;
@@ -46,6 +48,7 @@ public class TastingFieldDto {
         this.filterWineTypes = filterWineTypes;
         this.filterRequired = filterRequired;
         this.filterMultiSelect = filterMultiSelect;
+        this.groups = groups;
     }
 
     // Getters and Setters
@@ -96,4 +99,7 @@ public class TastingFieldDto {
 
     public Boolean getFilterMultiSelect() { return filterMultiSelect; }
     public void setFilterMultiSelect(Boolean filterMultiSelect) { this.filterMultiSelect = filterMultiSelect; }
+
+    public List<TastingFieldGroupDto> getGroups() { return groups; }
+    public void setGroups(List<TastingFieldGroupDto> groups) { this.groups = groups; }
 }

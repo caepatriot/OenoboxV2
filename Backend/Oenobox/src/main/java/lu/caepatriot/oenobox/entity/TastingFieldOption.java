@@ -1,6 +1,8 @@
 package lu.caepatriot.oenobox.entity;
 
 import jakarta.persistence.*;
+import lu.caepatriot.oenobox.util.StringListJsonbConverter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +36,14 @@ public class TastingFieldOption {
     private String icon;
 
     @Column(name = "wine_type_restriction", columnDefinition = "JSONB")
+    @Convert(converter = StringListJsonbConverter.class)
     private List<String> wineTypeRestriction;
+
+    @Column(name = "group_index")
+    private Short groupIndex;
+
+    @Column(name = "group_required")
+    private Boolean groupRequired = false;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -57,42 +66,103 @@ public class TastingFieldOption {
     }
 
     // Constructors
-    public TastingFieldOption() {}
+    public TastingFieldOption() {
+    }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public TastingField getField() { return field; }
-    public void setField(TastingField field) { this.field = field; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getValue() { return value; }
-    public void setValue(String value) { this.value = value; }
+    public TastingField getField() {
+        return field;
+    }
 
-    public String getLabel() { return label; }
-    public void setLabel(String label) { this.label = label; }
+    public void setField(TastingField field) {
+        this.field = field;
+    }
 
-    public String getColorCode() { return colorCode; }
-    public void setColorCode(String colorCode) { this.colorCode = colorCode; }
+    public String getValue() {
+        return value;
+    }
 
-    public Boolean getIsNegative() { return isNegative; }
-    public void setIsNegative(Boolean isNegative) { this.isNegative = isNegative; }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-    public Integer getSortOrder() { return sortOrder; }
-    public void setSortOrder(Integer sortOrder) { this.sortOrder = sortOrder; }
+    public String getLabel() {
+        return label;
+    }
 
-    public String getIcon() { return icon; }
-    public void setIcon(String icon) { this.icon = icon; }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-    public List<String> getWineTypeRestriction() { return wineTypeRestriction; }
-    public void setWineTypeRestriction(List<String> wineTypeRestriction) { this.wineTypeRestriction = wineTypeRestriction; }
+    public String getColorCode() {
+        return colorCode;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public Boolean getIsNegative() {
+        return isNegative;
+    }
 
-    public List<AromaNote> getAromaNotes() { return aromaNotes; }
-    public void setAromaNotes(List<AromaNote> aromaNotes) { this.aromaNotes = aromaNotes; }
+    public void setIsNegative(Boolean isNegative) {
+        this.isNegative = isNegative;
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public List<String> getWineTypeRestriction() {
+        return wineTypeRestriction;
+    }
+
+    public void setWineTypeRestriction(List<String> wineTypeRestriction) {
+        this.wineTypeRestriction = wineTypeRestriction;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<AromaNote> getAromaNotes() {
+        return aromaNotes;
+    }
+
+    public void setAromaNotes(List<AromaNote> aromaNotes) {
+        this.aromaNotes = aromaNotes;
+    }
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lu.caepatriot.oenobox.dto.TastingDto;
 import lu.caepatriot.oenobox.service.TastingService;
+import lu.caepatriot.oenobox.service.TastingStepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class TastingController {
 
     @Autowired
     private TastingService tastingService;
+
+    @Autowired
+    private TastingStepService tastingStepService;
 
     // GET /api/tastings - Get all tastings
     @GetMapping
@@ -154,5 +158,13 @@ public class TastingController {
             Map.of("step", 6, "name", "conclusion", "title", "Conclusion")
         );
         return ResponseEntity.ok(steps);
+    }
+
+    // GET /api/tastings/steps/dynamic - Get tasting steps in frontend structure
+    @GetMapping("/steps/dynamic")
+    @Operation(summary = "Get tasting steps in frontend structure", description = "Retrieves tasting steps data transformed to match the frontend JSON structure")
+    public ResponseEntity<List<Map<String, Object>>> getTastingStepsDynamic() {
+        List<Map<String, Object>> result = tastingStepService.getTastingStepsFrontendStructure();
+        return ResponseEntity.ok(result);
     }
 }

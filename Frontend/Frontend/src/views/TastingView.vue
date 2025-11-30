@@ -32,7 +32,7 @@ const selectedTasting = reactive({
     "nez": {
       "intensite": {},
       "qualite": {},
-      "type_aromes": {},
+      "type_aromes": [],
       "selectedCategories": [],
       "nature_aromes": [
         {
@@ -136,7 +136,8 @@ const selectedNotes = reactive({});
 const myWines = reactive([]);
 
 const currentStep = ref(1);
-let steps = ref([]);
+
+const steps = computed(() => store.tasting_steps);
 
 const tabImg = ref("one");
 
@@ -145,18 +146,18 @@ const drawer = ref(false);
 onMounted(async () => {
   document.body.addEventListener('mousemove', handleMouseMove)
 
-  // Load tasting steps from store (which can be from API in the future)
+  // Load tasting steps from API
   await store.loadTastingSteps()
-  steps.value = store.tasting_steps;
 
-  // Load existing tastings from API
+  // Load existing tastings
   try {
     const tastings = await store.getTastings();
-    myWines.splice(0, myWines.length, ...tastings); // Replace the array contents
+    myWines.splice(0, myWines.length, ...tastings);
   } catch (error) {
     console.error('Failed to load tastings:', error);
   }
 });
+
 
 const submitForm = async () => {
   try {
@@ -223,7 +224,9 @@ const convertFormDataToApiFormat = (formData) => {
     // Nose
     intensiteNez: formData.vin.nez.intensite,
     qualiteNez: formData.vin.nez.qualite,
-    typeAromes: formData.vin.nez.type_aromes,
+    typeAromes: Array.isArray(formData.vin.nez.type_aromes)
+        ? formData.vin.nez.type_aromes.join(', ')
+        : '',
     descriptionNez: formData.vin.nez.description,
 
     // Convert aromas nature to Map format
@@ -383,7 +386,7 @@ const deleteTasting = async (tastingId) => {
 // Populate form with tasting data
 const populateFormWithTastingData = (tasting) => {
   // Map API data structure to form structure
-  selectedTasting.vin.informations.type = { wineType: tasting.wineType };
+  selectedTasting.vin.informations.type = {wineType: tasting.wineType};
   selectedTasting.vin.informations.cepage = tasting.cepages || [];
   selectedTasting.vin.informations.region = tasting.region || '';
   selectedTasting.vin.informations.aop_igp_vdf = tasting.aopIgpVdf || '';
@@ -406,7 +409,9 @@ const populateFormWithTastingData = (tasting) => {
   // Nose
   selectedTasting.vin.nez.intensite = tasting.intensiteNez || '';
   selectedTasting.vin.nez.qualite = tasting.qualiteNez || '';
-  selectedTasting.vin.nez.type_aromes = tasting.typeAromes || '';
+  selectedTasting.vin.nez.type_aromes = tasting.typeAromes
+      ? tasting.typeAromes.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
   selectedTasting.vin.nez.description = tasting.descriptionNez || '';
 
   // Handle aromas nature mapping
@@ -482,7 +487,7 @@ const resetForm = () => {
       "nez": {
         "intensite": {},
         "qualite": {},
-        "type_aromes": {},
+        "type_aromes": [],
         "selectedCategories": [],
         "nature_aromes": [
           {"id": "1", "fruite": []},
@@ -589,38 +594,35 @@ const test = (...args) => {
   testTaste.value = args;
 }
 
-const filteredWineTypeValues = (items) => {
-  const selectedWineType = toRaw(selectedTasting.vin.informations.type['1']?.wineType);
+const filteredWineTypeValues = (items = []) => {
+  const selectedWineType = toRaw(selectedTasting.vin.informations.type?.wineType);
 
   if (!selectedWineType) return items;
 
   return items.filter(item => {
-    let wineType = toRaw(item?.wineType);
+    const wineType = toRaw(item?.wineType);
 
-    if (Array.isArray(item?.wineType)) {
-      return wineType.includes(selectedWineType);
-    }
+    if (!wineType) return true;              // option valid for all wine types
+    if (Array.isArray(wineType)) return wineType.includes(selectedWineType);
+
     return wineType === selectedWineType;
   });
-}
+};
+
 
 const isSameWineType = (item) => {
   const selectedWineType = selectedTasting.vin.informations.type?.wineType;
+  if (!selectedWineType) return true;
 
-  if (!selectedWineType) {
-    return true;
+  const itemWineType = item.wineType;
+  if (!itemWineType || !itemWineType.length) return true;
+
+  if (Array.isArray(itemWineType)) {
+    return itemWineType.includes(selectedWineType);
   }
 
-  if (!item.wineType.length) {
-    return true;
-  }
-
-  if (Array.isArray(item.wineType)) {
-    return item.wineType.includes(selectedWineType);
-  }
-
-  return selectedWineType === item.wineType;
-}
+  return selectedWineType === itemWineType;
+};
 
 const getStepIcon = (stepName) => {
   const icons = {
@@ -660,6 +662,49 @@ const getSliderLabel = (field, modelValue) => {
   return modelValue;
 };
 
+const ensureAromaBucket = (stepName, val) => {
+  const aromas = selectedTasting.vin[stepName].nature_aromes;
+  const index = Number(val.id) - 1;      // sécurise l'index numérique
+  const key = val.value.toLowerCase();   // "fruitée", "florale", etc.
+
+  // Si l'entrée du tableau n'existe pas, on la crée
+  if (!aromas[index]) {
+    aromas[index] = {};
+  }
+
+  // Si le tableau pour cette clé n'existe pas, on le crée
+  if (!Array.isArray(aromas[index][key])) {
+    aromas[index][key] = [];
+  }
+};
+
+const getTypeAromesGroups = (field) => {
+  if (!field?.groups || !Array.isArray(field.groups)) return [];
+  // Chaque entry de field.groups EST un groupe
+  return field.groups.map((g, index) => ({
+    id: g.id ?? index + 1,
+    required: !!g.required,
+    options: g.groupValues || []
+  }));
+};
+
+const onTypeAromeToggle = (group, value, checked) => {
+  const current = Array.isArray(selectedTasting.vin.nez.type_aromes)
+      ? [...selectedTasting.vin.nez.type_aromes]
+      : [];
+
+  // on retire toutes les valeurs de ce groupe ?
+  // → si tu veux limiter à UNE valeur par groupe, on enlève d’abord les anciennes valeurs de ce groupe :
+  const groupValues = group.options.map(o => o.value);
+  let next = current.filter(v => !groupValues.includes(v));
+
+  if (checked) {
+    next.push(value);
+  }
+
+  selectedTasting.vin.nez.type_aromes = next;
+};
+
 </script>
 
 <template>
@@ -679,13 +724,13 @@ const getSliderLabel = (field, modelValue) => {
           <v-card-text>
             <v-form>
               <v-text-field
-                variant="outlined"
-                label="Titre de la dégustation"
-                v-model="newTitle"
-                :rules="titleRules"
-                required
-                class="wine-text-field"
-                prepend-inner-icon="mdi-file-document-edit"
+                  variant="outlined"
+                  label="Titre de la dégustation"
+                  v-model="newTitle"
+                  :rules="titleRules"
+                  required
+                  class="wine-text-field"
+                  prepend-inner-icon="mdi-file-document-edit"
               />
             </v-form>
           </v-card-text>
@@ -703,11 +748,11 @@ const getSliderLabel = (field, modelValue) => {
 
         <v-list class="wine-list">
           <v-list-item
-            v-for="(tasting, index) in myWines"
-            :key="tasting.id || index"
-            @click="editTasting(tasting)"
-            class="wine-list-item"
-            :class="{ 'wine-list-item-active': editingTastingId === tasting.id }"
+              v-for="(tasting, index) in myWines"
+              :key="tasting.id || index"
+              @click="editTasting(tasting)"
+              class="wine-list-item"
+              :class="{ 'wine-list-item-active': editingTastingId === tasting.id }"
           >
             <v-icon class="mr-3">mdi-wine</v-icon>
             <v-list-item-content>
@@ -731,7 +776,7 @@ const getSliderLabel = (field, modelValue) => {
       </div>
     </v-navigation-drawer>
 
-    <v-container fluid class="tasting-container">
+    <v-container width="100%" fluid class="tasting-container">
       <v-row class="tasting-row" no-gutters>
         <!-- Image Section - Desktop: left, Mobile: top -->
         <v-col cols="12" lg="4" class="image-section">
@@ -751,19 +796,19 @@ const getSliderLabel = (field, modelValue) => {
               <v-tabs-window v-model="tabImg">
                 <v-tabs-window-item class="relative image-window" value="one">
                   <v-img
-                    width="100%"
-                    :height="$vuetify.display.xs ? '250px' : '100%'"
-                    cover
-                    src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg"
-                    class="wine-image"
+                      width="100%"
+                      :height="$vuetify.display.xs ? '250px' : '100%'"
+                      cover
+                      src="https://cuisinedecheffe.com/87427-large_default/vin-rouge-bordeaux-le-bedat-aoc-hve-bouteille-750ml.jpg"
+                      class="wine-image"
                   >
                     <div class="image-overlay"></div>
                   </v-img>
                   <v-btn
-                    class="position-absolute bottom-0 right-0 ma-2 wine-btn-camera"
-                    icon="mdi-camera-outline"
-                    :size="$vuetify.display.xs ? 'default' : 'large'"
-                    elevation="4"
+                      class="position-absolute bottom-0 right-0 ma-2 wine-btn-camera"
+                      icon="mdi-camera-outline"
+                      :size="$vuetify.display.xs ? 'default' : 'large'"
+                      elevation="4"
                   >
                     <v-icon>mdi-camera-outline</v-icon>
                   </v-btn>
@@ -771,19 +816,19 @@ const getSliderLabel = (field, modelValue) => {
 
                 <v-tabs-window-item class="relative image-window" value="two">
                   <v-img
-                    width="100%"
-                    :height="$vuetify.display.xs ? '250px' : '100%'"
-                    cover
-                    src="https://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"
-                    class="wine-image"
+                      width="100%"
+                      :height="$vuetify.display.xs ? '250px' : '100%'"
+                      cover
+                      src="https://lesraisinsdelajoie.fr/214-large_default/4-verres-a-bordeaux.jpg"
+                      class="wine-image"
                   >
                     <div class="image-overlay"></div>
                   </v-img>
                   <v-btn
-                    class="position-absolute bottom-0 right-0 ma-2 wine-btn-camera"
-                    icon="mdi-camera-outline"
-                    :size="$vuetify.display.xs ? 'default' : 'large'"
-                    elevation="4"
+                      class="position-absolute bottom-0 right-0 ma-2 wine-btn-camera"
+                      icon="mdi-camera-outline"
+                      :size="$vuetify.display.xs ? 'default' : 'large'"
+                      elevation="4"
                   >
                     <v-icon>mdi-camera-outline</v-icon>
                   </v-btn>
@@ -794,14 +839,14 @@ const getSliderLabel = (field, modelValue) => {
         </v-col>
 
         <!-- Form Section - Desktop: right, Mobile: bottom -->
-        <v-col cols="12" lg="8" class="form-section">
+        <v-col cols="12" class="form-section">
           <v-card class="wine-card form-card" elevation="8">
             <v-stepper
-              v-model="currentStep"
-              :items="steps"
-              show-actions
-              class="wine-stepper"
-              elevation="0"
+                v-model="currentStep"
+                :items="steps"
+                show-actions
+                class="wine-stepper"
+                elevation="0"
             >
               <template v-slot:[`item.${step.step}`] v-for="step in steps" :key="step.step">
                 <div class="step-content">
@@ -817,9 +862,9 @@ const getSliderLabel = (field, modelValue) => {
                           <template v-if="step.fields">
                             <template v-for="field in step.fields" :key="field.id">
                               <v-card
-                                class="field-card wine-card"
-                                elevation="2"
-                                :class="{ 'aroma-field': field.name === 'nature_aromes' }"
+                                  class="field-card wine-card"
+                                  elevation="2"
+                                  :class="{ 'aroma-field': field.name === 'nature_aromes' }"
                               >
                                 <v-card-title class="field-title pa-2">
                                   <v-icon class="mr-2" size="small" :icon="getFieldIcon(field.type)"></v-icon>
@@ -828,106 +873,150 @@ const getSliderLabel = (field, modelValue) => {
                                 <v-card-text class="pa-3">
                                   <template v-if="field.type === 'text'">
                                     <v-text-field
-                                      density="comfortable"
-                                      variant="outlined"
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :label="field.label"
-                                      class="wine-text-field"
-                                      prepend-inner-icon="mdi-text"
-                                      :hide-details="$vuetify.display.xs"
+                                        density="comfortable"
+                                        variant="outlined"
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :label="field.label"
+                                        class="wine-text-field"
+                                        prepend-inner-icon="mdi-text"
+                                        :hide-details="$vuetify.display.xs"
                                     />
                                   </template>
 
                                   <template v-if="field.type === 'textarea'">
                                     <v-textarea
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :label="field.label"
-                                      variant="outlined"
-                                      density="comfortable"
-                                      class="wine-textarea"
-                                      prepend-inner-icon="mdi-text-long"
-                                      :rows="$vuetify.display.xs ? 2 : 3"
-                                      :hide-details="$vuetify.display.xs"
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :label="field.label"
+                                        variant="outlined"
+                                        density="comfortable"
+                                        class="wine-textarea"
+                                        prepend-inner-icon="mdi-text-long"
+                                        :rows="$vuetify.display.xs ? 2 : 3"
+                                        :hide-details="$vuetify.display.xs"
                                     />
                                   </template>
 
                                   <template v-if="field.type === 'autocomplete'">
                                     <v-autocomplete
-                                      :label="field.label"
-                                      density="comfortable"
-                                      chips
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :items="filteredWineTypeValues(field.values)"
-                                      item-title="value"
-                                      item-value="id"
-                                      variant="outlined"
-                                      return-object
-                                      :multiple="field.multi"
-                                      class="wine-autocomplete"
-                                      prepend-inner-icon="mdi-magnify"
-                                      :hide-details="$vuetify.display.xs"
+                                        :label="field.label"
+                                        density="comfortable"
+                                        chips
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :items="filteredWineTypeValues(field.values)"
+                                        item-title="value"
+                                        item-value="id"
+                                        variant="outlined"
+                                        return-object
+                                        :multiple="field.multi"
+                                        class="wine-autocomplete"
+                                        prepend-inner-icon="mdi-magnify"
+                                        :hide-details="$vuetify.display.xs"
                                     />
                                   </template>
 
                                   <template v-if="field.type === 'select'">
                                     <v-select
-                                      density="comfortable"
-                                      variant="outlined"
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :label="field.label"
-                                      :items="field.values"
-                                      class="wine-select"
-                                      prepend-inner-icon="mdi-menu-down"
-                                      :hide-details="$vuetify.display.xs"
+                                        density="comfortable"
+                                        variant="outlined"
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :label="field.label"
+                                        :items="field.values"
+                                        class="wine-select"
+                                        prepend-inner-icon="mdi-menu-down"
+                                        :hide-details="$vuetify.display.xs"
                                     />
                                   </template>
 
                                   <template v-if="field.type === 'number'">
                                     <v-text-field
-                                      density="comfortable"
-                                      variant="outlined"
-                                      v-model="selectedTasting.vin[step.name][field.name]"
-                                      :label="field.label"
-                                      prefix="€"
-                                      type="number"
-                                      class="wine-text-field"
-                                      prepend-inner-icon="mdi-currency-eur"
-                                      :hide-details="$vuetify.display.xs"
+                                        density="comfortable"
+                                        variant="outlined"
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :label="field.label"
+                                        prefix="€"
+                                        type="number"
+                                        class="wine-text-field"
+                                        prepend-inner-icon="mdi-currency-eur"
+                                        :hide-details="$vuetify.display.xs"
                                     />
                                   </template>
 
-                                  <template v-if="field.groups">
+                                  <template v-if="field.name === 'type_aromes'">
+                                    <div class="type-aromes-groups">
+                                      <div
+                                          v-for="group in getTypeAromesGroups(field)"
+                                          :key="group.id"
+                                          class="type-aromes-group mb-3"
+                                      >
+                                        <div class="d-flex align-center mb-1">
+        <span class="text-body-2 font-weight-medium">
+          Groupe {{ group.id }}
+        </span>
+                                          <v-chip
+                                              v-if="group.required"
+                                              size="x-small"
+                                              class="ml-2"
+                                              color="error"
+                                              label
+                                          >
+                                            obligatoire
+                                          </v-chip>
+                                        </div>
+
+                                        <div class="checkbox-group">
+                                          <v-checkbox
+                                              v-for="opt in group.options"
+                                              :key="opt.id"
+                                              class="wine-checkbox mb-2"
+                                              :label="opt.value"
+                                              :true-icon="opt.icon || 'mdi-checkbox-marked'"
+                                              :color="getCheckboxColor(opt)"
+                                              :model-value="selectedTasting.vin.nez.type_aromes.includes(opt.value)"
+                                              @update:model-value="checked => onTypeAromeToggle(group, opt.value, checked)"
+                                              density="comfortable"
+                                              hide-details
+                                              :class="{ 'checkbox-mobile': $vuetify.display.xs }"
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </template>
+
+                                  <template v-else-if="field.groups">
                                     <div class="checkbox-group">
                                       <template v-for="(val, index2) in field.groups[0].groupValues" :key="val.id">
                                         <v-checkbox
-                                          :value="val"
-                                          class="wine-checkbox mb-2"
-                                          :color="getCheckboxColor(val)"
-                                          :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
-                                          v-model="selectedTasting.vin[step.name].selectedCategories"
-                                          :multiple="field.groups[0].multi"
-                                          :label="val.value"
-                                          density="comfortable"
-                                          hide-details
-                                          :class="{ 'checkbox-mobile': $vuetify.display.xs }"
+                                            :value="val"
+                                            class="wine-checkbox mb-2"
+                                            :color="getCheckboxColor(val)"
+                                            :true-icon="val.icon ? val.icon : 'mdi-checkbox-marked'"
+                                            v-model="selectedTasting.vin[step.name].selectedCategories"
+                                            :multiple="field.groups[0].multi"
+                                            :label="val.value"
+                                            density="comfortable"
+                                            hide-details
+                                            :class="{ 'checkbox-mobile': $vuetify.display.xs }"
+                                            @change="ensureAromaBucket(step.name, val)"
                                         />
+
 
                                         <v-expand-transition>
                                           <v-autocomplete
-                                            v-if="val.notes && selectedTasting.vin[step.name].selectedCategories?.includes(val)"
-                                            :label="`Notes pour ${val.value}`"
-                                            density="comfortable"
-                                            chips
-                                            :items="val.notes"
-                                            v-model="selectedTasting.vin[step.name].nature_aromes[val.id - 1][val.value.toLowerCase()]"
-                                            item-title="libelle"
-                                            item-value="libelle"
-                                            variant="outlined"
-                                            multiple
-                                            class="wine-autocomplete aroma-select"
-                                            prepend-inner-icon="mdi-fruit-grapes"
-                                            :hide-details="$vuetify.display.xs"
+                                              v-if=" val.notes && Array.isArray(selectedTasting.vin[step.name].selectedCategories) && selectedTasting.vin[step.name].selectedCategories.includes(val) && selectedTasting.vin[step.name].nature_aromes[val.id - 1]"
+                                              :label="`Notes pour ${val.value}`"
+                                              density="comfortable"
+                                              chips
+                                              :items="val.notes"
+                                              v-model="selectedTasting.vin[step.name].nature_aromes[val.id - 1][val.value.toLowerCase()]"
+                                              item-title="libelle"
+                                              item-value="libelle"
+                                              variant="outlined"
+                                              multiple
+                                              class="wine-autocomplete aroma-select"
+                                              prepend-inner-icon="mdi-fruit-grapes"
+                                              :hide-details="$vuetify.display.xs"
                                           />
+
                                         </v-expand-transition>
                                       </template>
                                     </div>
@@ -936,10 +1025,10 @@ const getSliderLabel = (field, modelValue) => {
                                   <template v-if="field.type === 'slider'">
                                     <div class="slider-container">
                                       <v-slider
-                                        v-model="selectedTasting.vin[step.name][field.name]"
-                                        thumb-label="always"
-                                        class="wine-slider"
-                                        color="wine-primary"
+                                          v-model="selectedTasting.vin[step.name][field.name]"
+                                          thumb-label="always"
+                                          class="wine-slider"
+                                          color="wine-primary"
                                       >
                                         <template v-slot:thumb-label="{ modelValue }">
                                           {{ getSliderLabel(field, modelValue) }}
@@ -961,26 +1050,28 @@ const getSliderLabel = (field, modelValue) => {
 
             <v-card-actions class="pa-4 justify-center">
               <v-btn
-                v-if="isEditMode"
-                @click="cancelEdit"
-                variant="outlined"
-                class="wine-btn-secondary mr-2"
-                :size="$vuetify.display.xs ? 'default' : 'large'"
-                elevation="2"
+                  v-if="isEditMode"
+                  @click="cancelEdit"
+                  variant="outlined"
+                  class="wine-btn-secondary mr-2"
+                  :size="$vuetify.display.xs ? 'default' : 'large'"
+                  elevation="2"
               >
                 <v-icon class="mr-2">mdi-close</v-icon>
                 <span class="d-none d-sm-inline">Annuler</span>
                 <span class="d-sm-none">Annuler</span>
               </v-btn>
               <v-btn
-                @click="submitForm"
-                class="wine-btn-primary submit-btn"
-                :size="$vuetify.display.xs ? 'default' : 'large'"
-                elevation="4"
-                block
+                  @click="submitForm"
+                  class="wine-btn-primary submit-btn"
+                  :size="$vuetify.display.xs ? 'default' : 'large'"
+                  elevation="4"
+                  block
               >
                 <v-icon class="mr-2">{{ isEditMode ? 'mdi-content-save-edit' : 'mdi-content-save' }}</v-icon>
-                <span class="d-none d-sm-inline">{{ isEditMode ? 'Mettre à jour' : 'Enregistrer la dégustation' }}</span>
+                <span class="d-none d-sm-inline">{{
+                    isEditMode ? 'Mettre à jour' : 'Enregistrer la dégustation'
+                  }}</span>
                 <span class="d-sm-none">{{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}</span>
               </v-btn>
             </v-card-actions>
@@ -1014,11 +1105,6 @@ const getSliderLabel = (field, modelValue) => {
   transition: all 0.3s ease;
 }
 
-.wine-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(139, 69, 19, 0.15);
-}
-
 .wine-card-title {
   background: linear-gradient(90deg, #8b4513, #a0522d);
   color: white;
@@ -1035,11 +1121,6 @@ const getSliderLabel = (field, modelValue) => {
   min-height: 44px;
 }
 
-.wine-btn-primary:hover {
-  background: linear-gradient(45deg, #a0522d, #8b4513);
-  transform: scale(1.02);
-}
-
 .wine-btn-secondary {
   border-radius: 20px;
   text-transform: none;
@@ -1048,19 +1129,10 @@ const getSliderLabel = (field, modelValue) => {
   color: #8b4513;
 }
 
-.wine-btn-secondary:hover {
-  background: rgba(139, 69, 19, 0.1);
-}
-
 .wine-list-item {
   border-radius: 6px;
   margin: 2px 0;
   transition: all 0.3s ease;
-}
-
-.wine-list-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(3px);
 }
 
 .wine-list-item-active {
@@ -1124,10 +1196,6 @@ const getSliderLabel = (field, modelValue) => {
   transition: transform 0.3s ease;
 }
 
-.wine-image:hover {
-  transform: scale(1.02);
-}
-
 .image-overlay {
   position: absolute;
   top: 0;
@@ -1145,11 +1213,6 @@ const getSliderLabel = (field, modelValue) => {
   min-width: 40px;
   width: 40px;
   height: 40px;
-}
-
-.wine-btn-camera:hover {
-  background: white;
-  transform: scale(1.05);
 }
 
 .form-section {
@@ -1261,10 +1324,6 @@ const getSliderLabel = (field, modelValue) => {
   transition: all 0.3s ease;
 }
 
-.field-card:hover {
-  transform: translateY(-1px);
-}
-
 .field-title {
   background: linear-gradient(90deg, rgba(139, 69, 19, 0.1), rgba(160, 82, 45, 0.1));
   color: #8b4513;
@@ -1306,10 +1365,6 @@ const getSliderLabel = (field, modelValue) => {
   border-radius: 6px;
   transition: all 0.3s ease;
   margin: 0;
-}
-
-.wine-checkbox:hover {
-  transform: scale(1.01);
 }
 
 .checkbox-mobile {
@@ -1476,51 +1531,6 @@ const getSliderLabel = (field, modelValue) => {
     height: 36px;
   }
 }
-
-/* Animation keyframes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.field-card {
-  animation: fadeInUp 0.4s ease-out;
-}
-
-.field-card:nth-child(1) { animation-delay: 0.05s; }
-.field-card:nth-child(2) { animation-delay: 0.1s; }
-.field-card:nth-child(3) { animation-delay: 0.15s; }
-.field-card:nth-child(4) { animation-delay: 0.2s; }
-.field-card:nth-child(5) { animation-delay: 0.25s; }
-
-/* Animation keyframes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.field-card {
-  animation: fadeInUp 0.4s ease-out;
-}
-
-.field-card:nth-child(1) { animation-delay: 0.05s; }
-.field-card:nth-child(2) { animation-delay: 0.1s; }
-.field-card:nth-child(3) { animation-delay: 0.15s; }
-.field-card:nth-child(4) { animation-delay: 0.2s; }
-.field-card:nth-child(5) { animation-delay: 0.25s; }
-
 </style>
 
 

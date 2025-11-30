@@ -3,6 +3,7 @@ package lu.caepatriot.oenobox.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import lu.caepatriot.oenobox.util.StringListJsonbConverter;
 
 @Entity
 @Table(name = "tasting_field")
@@ -34,6 +35,7 @@ public class TastingField {
     private Boolean multiSelect = false;
 
     @Column(name = "wine_type_restriction", columnDefinition = "JSONB")
+    @Convert(converter = StringListJsonbConverter.class)
     private List<String> wineTypeRestriction;
 
     @Column(name = "created_at")

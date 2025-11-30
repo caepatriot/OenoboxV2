@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Spring Boot default port
+  baseURL: 'http://localhost:8080/api', // Updated to match backend port 8080
   headers: {
     'Content-Type': 'application/json',
   },
@@ -66,7 +66,7 @@ export const tastingApi = {
   search: (params) => api.get('/tastings/search', { params }),
 
   // Get tasting steps configuration
-  getSteps: () => api.get('/tasting-steps'),
+  getSteps: () => api.get('/tastings/steps/dynamic'),
 };
 
 // Cepage API endpoints (if needed)

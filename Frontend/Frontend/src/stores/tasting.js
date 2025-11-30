@@ -1,7 +1,6 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
 import { tastingApi } from '@/services/api'
-import { tastingStepsData } from '@/data/tastingSteps'
 
 export const useTastingStore = defineStore('tasting', () => {
 
@@ -10,19 +9,19 @@ export const useTastingStore = defineStore('tasting', () => {
     const isLoading = ref(false)
     const error = ref(null)
 
-    // Load tasting steps from API with fallback to static data
+    // Load tasting steps from API
     const loadTastingSteps = async () => {
         try {
             isLoading.value = true
             error.value = null
 
-            // Try to load from API first
+            // Load from API
             const response = await tastingApi.getSteps()
             tastingSteps.value = response.data
         } catch (apiErr) {
-            console.warn('Failed to load steps from API, falling back to static data:', apiErr.message)
-            // Fallback to static data if API fails
-            tastingSteps.value = tastingStepsData
+            console.error('Failed to load steps from API:', apiErr.message)
+            error.value = apiErr.message
+            throw apiErr
         } finally {
             isLoading.value = false
         }

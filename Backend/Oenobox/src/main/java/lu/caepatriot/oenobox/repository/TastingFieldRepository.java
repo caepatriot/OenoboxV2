@@ -17,4 +17,5 @@ public interface TastingFieldRepository extends JpaRepository<TastingField, Long
 
     @Query(value = "SELECT f.* FROM tasting_field f LEFT JOIN tasting_field_option o ON o.field_id = f.id WHERE f.wine_type_restriction::text LIKE '%' || :wineType || '%' ORDER BY f.step_id, f.id", nativeQuery = true)
     List<TastingField> findByWineTypeRestrictionContaining(@Param("wineType") String wineType);
+
 }

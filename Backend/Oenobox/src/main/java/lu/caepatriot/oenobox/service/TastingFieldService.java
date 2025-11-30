@@ -79,7 +79,8 @@ public class TastingFieldService {
                 null, // searchTerm not in entity
                 null, // filterWineTypes not in entity
                 null, // filterRequired not in entity
-                null  // filterMultiSelect not in entity
+                null, // filterMultiSelect not in entity
+                null  // groups not set
         );
     }
 }
