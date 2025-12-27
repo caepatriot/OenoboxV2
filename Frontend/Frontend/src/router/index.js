@@ -17,6 +17,16 @@ const router = createRouter({
             component: TastingView
         },
         {
+            path: '/cave-admin',
+            name: 'cave-admin',
+            component: () => import('../views/CaveAdminView.vue')
+        },
+        {
+            path: '/cave-placement',
+            name: 'cave-placement',
+            component: () => import('../views/CavePlacementView.vue')
+        },
+        {
             path: '/about',
             name: 'about',
             // route level code-splitting

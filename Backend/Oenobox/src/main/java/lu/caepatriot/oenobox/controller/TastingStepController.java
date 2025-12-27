@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasting-steps")
@@ -32,4 +33,15 @@ public class TastingStepController {
         List<TastingStepDto> steps = tastingStepService.getTastingStepsByWineType(wineType);
         return ResponseEntity.ok(steps);
     }
+
+    @GetMapping("/frontend-structure")
+    @Operation(
+            summary = "Get tasting steps in frontend structure",
+            description = "Returns tasting steps in a flat structure tailored for dynamic form building"
+    )
+    public ResponseEntity<List<Map<String, Object>>> getTastingStepsFrontendStructure() {
+        List<Map<String, Object>> steps = tastingStepService.getTastingStepsFrontendStructure();
+        return ResponseEntity.ok(steps);
+    }
+
 }

@@ -19,6 +19,18 @@ const app = createApp(App)
 const vuetify = createVuetify({
     components,
     directives,
+    theme: {
+        defaultTheme: 'light',
+        themes: {
+            light: {
+                colors: {
+                    'wine-primary': '#8b4513',
+                    'wine-secondary': '#a0522d',
+                    'wine-accent': '#654321',
+                }
+            }
+        }
+    },
     icons: {
         defaultSet: 'mdi',
         aliases,

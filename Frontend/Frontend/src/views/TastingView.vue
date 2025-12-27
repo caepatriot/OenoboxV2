@@ -1,207 +1,204 @@
 <script setup>
-import {ref, reactive, onMounted, computed, toRaw} from 'vue';
-import {useTastingStore} from "@/stores/tasting.js";
+import { ref, reactive, onMounted, onBeforeUnmount, computed, toRaw } from 'vue'
+import { useTastingStore } from '@/stores/tasting.js'
 
-const store = useTastingStore();
+const store = useTastingStore()
 
-const testTaste = ref({});
+const testTaste = ref({})
+
+const AROMA_CATEGORIES = [
+  'fruitée',
+  'florale',
+  'boisée',
+  'balsamique',
+  'épicée',
+  'empyreumatique',
+  'animale',
+  'végétale',
+  'alimentaire',
+  'minérale',
+  'chimique',
+  'anormale'
+].map((s) => s.toLowerCase())
 
 const selectedTasting = reactive({
-  "vin": {
-    "informations": {
-      "type": {},
-      "cepage": [],
-      "region": "",
-      "aop_igp_vdf": "",
-      "elevage": "",
-      "import": "",
-      "prix_lancement": 0,
-      "prix_actuel": 0,
+  vin: {
+    informations: {
+      type: null,
+      cepage: [],
+      region: '',
+      aop_igp_vdf: '',
+      elevage: '',
+      import: '',
+      prix_lancement: 0,
+      prix_actuel: 0
     },
-    "visuel": {
-      "robe_blanche": {},
-      "robe_rouge": {},
-      "robe_rose": {},
-      "disque": {},
-      "intensite": {},
-      "limpidite": {},
-      "brillance": {},
-      "evolution": {},
-      "remarques": ""
+    visuel: {
+      robe_blanche: null,
+      robe_rouge: null,
+      robe_rose: null,
+      disque: null,
+      intensite: null,
+      limpidite: null,
+      brillance: null,
+      evolution: null,
+      remarques: ''
     },
-    "nez": {
-      "intensite": {},
-      "qualite": {},
-      "type_aromes": [],
-      "selectedCategories": [],
-      "nature_aromes": [
-        {
-          "id": "1",
-          "fruite": []
-        },
-        {
-          "id": "2",
-          "florale": []
-        },
-        {
-          "id": "3",
-          "boisee": []
-        },
-        {
-          "id": "4",
-          "balsamique": []
-        },
-        {
-          "id": "5",
-          "epicee": []
-        },
-        {
-          "id": "6",
-          "empyreumatique": []
-        },
-        {
-          "id": "7",
-          "animale": []
-        },
-        {
-          "id": "8",
-          "vegetale": []
-        },
-        {
-          "id": "9",
-          "alimentaire": []
-        },
-        {
-          "id": "10",
-          "minerale": []
-        },
-        {
-          "id": "11",
-          "chimique": []
-        },
-        {
-          "id": "12",
-          "anormale": []
-        }
-      ],
-      "description": ""
+    nez: {
+      intensite: null,
+      qualite: null,
+      type_aromes: [],
+      selectedCategories: [],
+      nature_aromes: Array.from({ length: 12 }, () => ({})),
+      description: ''
     },
-    "bouche": {
-      "attaque": "",
-      "evolution": "",
-      "fin_de_bouche": "",
-      "structure": "",
-      "texture": "",
-      "intensite": "",
-      "qualite": "",
-      "equilibre": "",
-      "aromes": [],
-      "longueur_en_bouche": "",
-      "persistance_aromatique": "",
-      "remarques": ""
+    bouche: {
+      attaque: '',
+      evolution: '',
+      fin_de_bouche: '',
+      structure: '',
+      texture: '',
+      intensite: '',
+      qualite: '',
+      equilibre: '',
+      aromes: [],
+      persistance_aromatique: '',
+      longueur_en_bouche: '',
+      remarques: ''
     },
-    "conclusion": {
-      "caudalies": 0,
-      "note_finale": {
-        "tres_mediocre": false,
-        "mediocre": false,
-        "mauvais": false,
-        "passable": false,
-        "correct": false,
-        "bon": false,
-        "tres_bon": false,
-        "superbe": false,
-        "excellent": false,
-        "exceptionnel": false,
-        "legendaire": false
+    longueur: {
+      persistance_aromatique: 0,
+      caudalies: 0,
+      structure: ''
+    },
+    conclusion: {
+      caudalies: 0,
+      note_finale: {
+        tres_mediocre: false,
+        mediocre: false,
+        mauvais: false,
+        passable: false,
+        correct: false,
+        bon: false,
+        tres_bon: false,
+        superbe: false,
+        excellent: false,
+        exceptionnel: false,
+        legendaire: false
       },
-      "conclusion": ""
+      conclusion: ''
     },
-    "autres": {
-      "temperature_ideale_de_consommation": 0,
-      "date_ideale_de_consommation": "",
-      "evolution_probable": "",
-      "accords_mets_vins": []
+    autres: {
+      temperature_ideale_de_consommation: 0,
+      date_ideale_de_consommation: '',
+      evolution_probable: '',
+      accords_mets_vins: []
     }
   }
-});
+})
 
-// State for edit mode
-const isEditMode = ref(false);
-const editingTastingId = ref(null);
+const isEditMode = ref(false)
+const editingTastingId = ref(null)
 
-const selected = ref({});
-const selectedNotes = reactive({});
+const selected = ref({})
+const selectedNotes = reactive({})
 
-const myWines = reactive([]);
+const myWines = reactive([])
 
-const currentStep = ref(1);
+const currentStep = ref(1)
+const steps = computed(() => store.tasting_steps)
 
-const steps = computed(() => store.tasting_steps);
-
-const tabImg = ref("one");
-
-const drawer = ref(false);
+const tabImg = ref('one')
+const drawer = ref(false)
 
 onMounted(async () => {
   document.body.addEventListener('mousemove', handleMouseMove)
 
-  // Load tasting steps from API
-  await store.loadTastingSteps()
-
-  // Load existing tastings
   try {
-    const tastings = await store.getTastings();
-    myWines.splice(0, myWines.length, ...tastings);
+    await store.loadTastingSteps()
   } catch (error) {
-    console.error('Failed to load tastings:', error);
+    console.error('Failed to load tasting steps:', error)
   }
-});
 
-
-const submitForm = async () => {
   try {
-    console.log(toRaw(selectedTasting)); // This will log the full tasting data object
+    const tastings = await store.getTastings()
+    myWines.splice(0, myWines.length, ...(tastings || []))
+  } catch (error) {
+    console.error('Failed to load tastings:', error)
+  }
+})
 
-    // Convert form data to API format
-    const apiData = convertFormDataToApiFormat(toRaw(selectedTasting));
+onBeforeUnmount(() => {
+  document.body.removeEventListener('mousemove', handleMouseMove)
+})
 
-    let savedTasting;
+const inferWineTypeFromOption = (opt) => {
+  if (!opt) return null
 
-    if (isEditMode.value) {
-      // Update existing tasting
-      savedTasting = await store.updateTasting(editingTastingId.value, apiData);
+  if (typeof opt === 'string') {
+    const s = opt.toLowerCase()
+    if (s.includes('rouge')) return 'red'
+    if (s.includes('blanc')) return 'white'
+    if (s.includes('rosé') || s.includes('rose')) return 'rose'
+    return s
+  }
 
-      // Update in local list
-      const index = myWines.findIndex(t => t.id === editingTastingId.value);
-      if (index > -1) {
-        myWines[index] = savedTasting;
+  if (opt.wineType) return opt.wineType
+
+  if (typeof opt.value === 'string') {
+    const label = opt.value.toLowerCase()
+    if (label.includes('rouge')) return 'red'
+    if (label.includes('blanc')) return 'white'
+    if (label.includes('rosé') || label.includes('rose')) return 'rose'
+    return label
+  }
+
+  return null
+}
+
+const getSelectedWineTypeCode = () => {
+  const typeField = toRaw(selectedTasting.vin.informations.type)
+  if (!typeField) return null
+  return inferWineTypeFromOption(typeField)
+}
+
+const asValueString = (v) => {
+  if (!v) return ''
+  if (typeof v === 'object') return v.value || ''
+  return String(v)
+}
+
+const convertAromasNatureToMap = (aromasArray) => {
+  const result = {}
+  if (!Array.isArray(aromasArray)) return result
+
+  aromasArray.forEach((bucket) => {
+    if (!bucket || typeof bucket !== 'object') return
+    Object.entries(bucket).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        result[key] = value
       }
+    })
+  })
 
-      alert('Dégustation mise à jour avec succès !');
-    } else {
-      // Create new tasting
-      savedTasting = await store.createTasting(apiData);
+  return result
+}
 
-      // Add to local list
-      myWines.push(savedTasting);
-
-      alert('Dégustation enregistrée avec succès !');
-    }
-
-    // Reset form
-    resetForm();
-
-  } catch (error) {
-    console.error('Erreur lors de l\'enregistrement:', error);
-    alert('Erreur lors de l\'enregistrement de la dégustation. Veuillez réessayer.');
-  }
-};
-
-// Convert form data structure to API format
 const convertFormDataToApiFormat = (formData) => {
+  const typeField = formData.vin.informations.type
+  const wineType = inferWineTypeFromOption(typeField)
+
+  const noteFinaleObj = formData.vin.conclusion?.note_finale || {}
+  const noteKeys = Object.keys(noteFinaleObj)
+  const activeNote = noteKeys.find((key) => !!noteFinaleObj[key]) || null
+
+  const accordsArr = Array.isArray(formData.vin.autres?.accords_mets_vins)
+      ? formData.vin.autres.accords_mets_vins
+      : []
+  const accordsMetsVins = accordsArr.join(', ')
+
   return {
-    wineType: formData.vin.informations.type.wineType,
+    wineType,
     cepages: formData.vin.informations.cepage,
     region: formData.vin.informations.region,
     aopIgpVdf: formData.vin.informations.aop_igp_vdf,
@@ -210,10 +207,9 @@ const convertFormDataToApiFormat = (formData) => {
     prixLancement: formData.vin.informations.prix_lancement,
     prixActuel: formData.vin.informations.prix_actuel,
 
-    // Visual aspect - extract string values from objects
-    robeRouge: typeof formData.vin.visuel.robe_rouge === 'object' ? formData.vin.visuel.robe_rouge?.value || '' : formData.vin.visuel.robe_rouge || '',
-    robeBlanche: typeof formData.vin.visuel.robe_blanche === 'object' ? formData.vin.visuel.robe_blanche?.value || '' : formData.vin.visuel.robe_blanche || '',
-    robeRose: typeof formData.vin.visuel.robe_rose === 'object' ? formData.vin.visuel.robe_rose?.value || '' : formData.vin.visuel.robe_rose || '',
+    robeRouge: asValueString(formData.vin.visuel.robe_rouge),
+    robeBlanche: asValueString(formData.vin.visuel.robe_blanche),
+    robeRose: asValueString(formData.vin.visuel.robe_rose),
     disque: formData.vin.visuel.disque,
     intensiteVisuelle: formData.vin.visuel.intensite,
     limpidite: formData.vin.visuel.limpidite,
@@ -221,408 +217,361 @@ const convertFormDataToApiFormat = (formData) => {
     evolutionVisuelle: formData.vin.visuel.evolution,
     remarquesVisuelles: formData.vin.visuel.remarques,
 
-    // Nose
     intensiteNez: formData.vin.nez.intensite,
     qualiteNez: formData.vin.nez.qualite,
-    typeAromes: Array.isArray(formData.vin.nez.type_aromes)
-        ? formData.vin.nez.type_aromes.join(', ')
-        : '',
+    typeAromes: Array.isArray(formData.vin.nez.type_aromes) ? formData.vin.nez.type_aromes.join(', ') : '',
     descriptionNez: formData.vin.nez.description,
-
-    // Convert aromas nature to Map format
     aromesNature: convertAromasNatureToMap(formData.vin.nez.nature_aromes),
 
-    // Mouth
     attaque: formData.vin.bouche.attaque,
     evolutionBouche: formData.vin.bouche.evolution,
     structure: formData.vin.bouche.structure,
     texture: formData.vin.bouche.texture,
-    persistanceAromatique: formData.vin.bouche.persistance_aromatique,
-    caudaliesLongueur: formData.vin.bouche.caudalies,
-    structureLongueur: formData.vin.bouche.longueur_en_bouche,
 
-    // Conclusion
-    noteFinale: formData.vin.conclusion.note_finale,
+    persistanceAromatique: formData.vin.longueur.persistance_aromatique,
+    caudaliesLongueur: formData.vin.longueur.caudalies,
+    structureLongueur: formData.vin.longueur.structure,
+
+    noteFinale: activeNote,
     caudaliesConclusion: formData.vin.conclusion.caudalies,
     remarquesConclusion: formData.vin.conclusion.conclusion,
-    accordsMetsVins: formData.vin.autres.accords_mets_vins.join(', '),
+    accordsMetsVins,
 
-    // Other
     temperatureIdeale: formData.vin.autres.temperature_ideale_de_consommation,
     dateIdealeConsommation: formData.vin.autres.date_ideale_de_consommation,
     evolutionProbable: formData.vin.autres.evolution_probable
-  };
-};
+  }
+}
 
-// Convert aromas nature array to Map format for API
-const convertAromasNatureToMap = (aromasArray) => {
-  const result = {};
+const submitForm = async () => {
+  try {
+    const raw = toRaw(selectedTasting)
+    const apiData = convertFormDataToApiFormat(raw)
 
-  aromasArray.forEach((category, index) => {
-    const categoryName = getCategoryNameByIndex(index);
-    const notes = [];
+    let savedTasting
 
-    // Collect all notes from this category
-    Object.values(category).forEach(noteArray => {
-      if (Array.isArray(noteArray)) {
-        notes.push(...noteArray);
+    if (isEditMode.value) {
+      savedTasting = await store.updateTasting(editingTastingId.value, apiData)
+
+      const index = myWines.findIndex((t) => t.id === editingTastingId.value)
+      if (index > -1) {
+        myWines[index] = savedTasting
       }
-    });
 
-    if (notes.length > 0) {
-      result[categoryName] = notes;
+      alert('Dégustation mise à jour avec succès !')
+    } else {
+      savedTasting = await store.createTasting(apiData)
+      myWines.push(savedTasting)
+      alert('Dégustation enregistrée avec succès !')
     }
-  });
 
-  return result;
-};
+    resetForm()
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement:", error)
+    alert("Erreur lors de l'enregistrement de la dégustation. Veuillez réessayer.")
+  }
+}
 
-// Helper to get category name by index
-const getCategoryNameByIndex = (index) => {
-  const categories = ['fruite', 'florale', 'boisee', 'balsamique', 'epicee', 'empyreumatique', 'animale', 'vegetale', 'alimentaire', 'minerale', 'chimique', 'anormale'];
-  return categories[index] || `category_${index}`;
-};
+const getCategoryIndex = (category) => {
+  if (!category) return -1
+  const key = category.toString().toLowerCase()
+  return AROMA_CATEGORIES.indexOf(key)
+}
 
-
-// Reactive variables
-const showForm = ref(false)       // Toggle between form and button
-const newTitle = ref('')          // Stores the new title input
-const items = ref([])             // List of items to display
-
-// Validation rules for title input
+const showForm = ref(false)
+const newTitle = ref('')
+const items = ref([])
 const titleRules = [(v) => !!v || 'Title is required']
 
-// Toggle the form display
 const toggleForm = () => {
   showForm.value = !showForm.value
 }
 
-// Confirm and add the new title to the items list
 const confirmNewItem = () => {
   if (newTitle.value) {
-    items.value.push(newTitle.value)  // Add title to list
-    newTitle.value = ''               // Clear input field
-    showForm.value = false            // Hide form and show the button
+    items.value.push(newTitle.value)
+    newTitle.value = ''
+    showForm.value = false
   }
 }
 
-// Cancel adding a new item
 const cancelNewItem = () => {
-  newTitle.value = ''                // Reset the form
-  showForm.value = false             // Hide the form and show the button
+  newTitle.value = ''
+  showForm.value = false
 }
 
-// Cancel editing
 const cancelEdit = () => {
-  resetForm();
+  resetForm()
 }
 
-// Helper functions for displaying tasting data
 const getTastingTitle = (tasting) => {
-  // Create a title from cepages and region
-  const cepages = tasting.cepages && tasting.cepages.length > 0 ? tasting.cepages.join(', ') : 'Vin';
-  return `${cepages} - ${tasting.region || 'Région inconnue'}`;
+  const cepages = tasting?.cepages?.length ? tasting.cepages.join(', ') : 'Vin'
+  return `${cepages} - ${tasting?.region || 'Région inconnue'}`
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
+  if (!dateString) return ''
+  const date = new Date(dateString)
   return date.toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
-  });
+  })
 }
 
-// Edit tasting functionality
 const editTasting = async (tasting) => {
   try {
-    // Fetch full tasting data
-    const fullTasting = await store.getTastingById(tasting.id);
+    const fullTasting = await store.getTastingById(tasting.id)
+    populateFormWithTastingData(fullTasting)
 
-    // Populate form with tasting data
-    populateFormWithTastingData(fullTasting);
-
-    // Set edit mode
-    isEditMode.value = true;
-    editingTastingId.value = tasting.id;
-
-    // Show form
-    showForm.value = true;
-
-    // Reset to first step
-    currentStep.value = 1;
-
+    isEditMode.value = true
+    editingTastingId.value = tasting.id
+    showForm.value = true
+    currentStep.value = 1
   } catch (error) {
-    console.error('Failed to load tasting for editing:', error);
-    alert('Erreur lors du chargement de la dégustation pour modification.');
+    console.error('Failed to load tasting for editing:', error)
+    alert('Erreur lors du chargement de la dégustation pour modification.')
   }
 }
 
-// Delete tasting functionality
 const deleteTasting = async (tastingId) => {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette dégustation ?')) {
-    try {
-      await store.deleteTasting(tastingId);
+  if (!confirm('Êtes-vous sûr de vouloir supprimer cette dégustation ?')) return
 
-      // Remove from local list
-      const index = myWines.findIndex(t => t.id === tastingId);
-      if (index > -1) {
-        myWines.splice(index, 1);
-      }
+  try {
+    await store.deleteTasting(tastingId)
 
-      // If we were editing this tasting, reset form
-      if (editingTastingId.value === tastingId) {
-        resetForm();
-      }
-
-    } catch (error) {
-      console.error('Failed to delete tasting:', error);
-      alert('Erreur lors de la suppression de la dégustation.');
+    const index = myWines.findIndex((t) => t.id === tastingId)
+    if (index > -1) {
+      myWines.splice(index, 1)
     }
+
+    if (editingTastingId.value === tastingId) {
+      resetForm()
+    }
+  } catch (error) {
+    console.error('Failed to delete tasting:', error)
+    alert('Erreur lors de la suppression de la dégustation.')
   }
 }
 
-// Populate form with tasting data
 const populateFormWithTastingData = (tasting) => {
-  // Map API data structure to form structure
-  selectedTasting.vin.informations.type = {wineType: tasting.wineType};
-  selectedTasting.vin.informations.cepage = tasting.cepages || [];
-  selectedTasting.vin.informations.region = tasting.region || '';
-  selectedTasting.vin.informations.aop_igp_vdf = tasting.aopIgpVdf || '';
-  selectedTasting.vin.informations.elevage = tasting.elevage || '';
-  selectedTasting.vin.informations.import = tasting.wineImport || '';
-  selectedTasting.vin.informations.prix_lancement = tasting.prixLancement || 0;
-  selectedTasting.vin.informations.prix_actuel = tasting.prixActuel || 0;
+  const wineTypeCode = tasting?.wineType || null
+  let typeLabel = null
+  if (wineTypeCode === 'red') typeLabel = 'Rouge'
+  else if (wineTypeCode === 'white') typeLabel = 'Blanc'
+  else if (wineTypeCode === 'rose') typeLabel = 'Rosé'
 
-  // Visual aspect
-  selectedTasting.vin.visuel.robe_rouge = tasting.robeRouge || '';
-  selectedTasting.vin.visuel.robe_blanche = tasting.robeBlanche || '';
-  selectedTasting.vin.visuel.robe_rose = tasting.robeRose || '';
-  selectedTasting.vin.visuel.disque = tasting.disque || '';
-  selectedTasting.vin.visuel.intensite = tasting.intensiteVisuelle || '';
-  selectedTasting.vin.visuel.limpidite = tasting.limpidite || '';
-  selectedTasting.vin.visuel.brillance = tasting.brillance || '';
-  selectedTasting.vin.visuel.evolution = tasting.evolutionVisuelle || '';
-  selectedTasting.vin.visuel.remarques = tasting.remarquesVisuelles || '';
+  selectedTasting.vin.informations.type = wineTypeCode ? { value: typeLabel || wineTypeCode, wineType: wineTypeCode } : null
+  selectedTasting.vin.informations.cepage = tasting?.cepages || []
+  selectedTasting.vin.informations.region = tasting?.region || ''
+  selectedTasting.vin.informations.aop_igp_vdf = tasting?.aopIgpVdf || ''
+  selectedTasting.vin.informations.elevage = tasting?.elevage || ''
+  selectedTasting.vin.informations.import = tasting?.wineImport || ''
+  selectedTasting.vin.informations.prix_lancement = tasting?.prixLancement || 0
+  selectedTasting.vin.informations.prix_actuel = tasting?.prixActuel || 0
 
-  // Nose
-  selectedTasting.vin.nez.intensite = tasting.intensiteNez || '';
-  selectedTasting.vin.nez.qualite = tasting.qualiteNez || '';
-  selectedTasting.vin.nez.type_aromes = tasting.typeAromes
-      ? tasting.typeAromes.split(',').map(s => s.trim()).filter(Boolean)
-      : [];
-  selectedTasting.vin.nez.description = tasting.descriptionNez || '';
+  selectedTasting.vin.visuel.robe_rouge = tasting?.robeRouge || null
+  selectedTasting.vin.visuel.robe_blanche = tasting?.robeBlanche || null
+  selectedTasting.vin.visuel.robe_rose = tasting?.robeRose || null
+  selectedTasting.vin.visuel.disque = tasting?.disque || null
+  selectedTasting.vin.visuel.intensite = tasting?.intensiteVisuelle || null
+  selectedTasting.vin.visuel.limpidite = tasting?.limpidite || null
+  selectedTasting.vin.visuel.brillance = tasting?.brillance || null
+  selectedTasting.vin.visuel.evolution = tasting?.evolutionVisuelle || null
+  selectedTasting.vin.visuel.remarques = tasting?.remarquesVisuelles || ''
 
-  // Handle aromas nature mapping
-  if (tasting.aromesNature) {
-    // Map the aromas nature data to the form structure
+  selectedTasting.vin.nez.intensite = tasting?.intensiteNez || null
+  selectedTasting.vin.nez.qualite = tasting?.qualiteNez || null
+  selectedTasting.vin.nez.type_aromes = tasting?.typeAromes
+      ? tasting.typeAromes.split(',').map((s) => s.trim()).filter(Boolean)
+      : []
+  selectedTasting.vin.nez.description = tasting?.descriptionNez || ''
+
+  selectedTasting.vin.nez.nature_aromes = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+  selectedTasting.vin.nez.selectedCategories = []
+
+  if (tasting?.aromesNature) {
     Object.entries(tasting.aromesNature).forEach(([category, notes]) => {
-      const categoryIndex = getCategoryIndex(category);
-      if (categoryIndex !== -1 && selectedTasting.vin.nez.nature_aromes[categoryIndex]) {
-        selectedTasting.vin.nez.nature_aromes[categoryIndex][category.toLowerCase()] = notes || [];
+      const idx = getCategoryIndex(category)
+      if (idx !== -1) {
+        if (!selectedTasting.vin.nez.nature_aromes[idx]) {
+          selectedTasting.vin.nez.nature_aromes[idx] = {}
+        }
+        selectedTasting.vin.nez.nature_aromes[idx][category.toLowerCase()] = notes || []
       }
-    });
+    })
   }
 
-  // Mouth
-  selectedTasting.vin.bouche.attaque = tasting.attaque || '';
-  selectedTasting.vin.bouche.evolution = tasting.evolutionBouche || '';
-  selectedTasting.vin.bouche.structure = tasting.structure || '';
-  selectedTasting.vin.bouche.texture = tasting.texture || '';
-  selectedTasting.vin.bouche.persistance_aromatique = tasting.persistanceAromatique || '';
-  selectedTasting.vin.bouche.caudalies = tasting.caudaliesLongueur || '';
-  selectedTasting.vin.bouche.longueur_en_bouche = tasting.structureLongueur || '';
+  selectedTasting.vin.bouche.attaque = tasting?.attaque || ''
+  selectedTasting.vin.bouche.evolution = tasting?.evolutionBouche || ''
+  selectedTasting.vin.bouche.structure = tasting?.structure || ''
+  selectedTasting.vin.bouche.texture = tasting?.texture || ''
 
-  // Conclusion
-  selectedTasting.vin.conclusion.caudalies = tasting.caudaliesConclusion || 0;
-  selectedTasting.vin.conclusion.note_finale = tasting.noteFinale || '';
-  selectedTasting.vin.conclusion.conclusion = tasting.remarquesConclusion || '';
+  selectedTasting.vin.longueur.persistance_aromatique = tasting?.persistanceAromatique || 0
+  selectedTasting.vin.longueur.caudalies = tasting?.caudaliesLongueur || 0
+  selectedTasting.vin.longueur.structure = tasting?.structureLongueur || ''
 
-  // Other
-  selectedTasting.vin.autres.temperature_ideale_de_consommation = tasting.temperatureIdeale || 0;
-  selectedTasting.vin.autres.date_ideale_de_consommation = tasting.dateIdealeConsommation || '';
-  selectedTasting.vin.autres.evolution_probable = tasting.evolutionProbable || '';
-  selectedTasting.vin.autres.accords_mets_vins = tasting.accordsMetsVins ? [tasting.accordsMetsVins] : [];
+  selectedTasting.vin.conclusion.caudalies = tasting?.caudaliesConclusion || 0
+
+  let noteFinaleObj = {
+    tres_mediocre: false,
+    mediocre: false,
+    mauvais: false,
+    passable: false,
+    correct: false,
+    bon: false,
+    tres_bon: false,
+    superbe: false,
+    excellent: false,
+    exceptionnel: false,
+    legendaire: false
+  }
+
+  if (tasting?.noteFinale && typeof tasting.noteFinale === 'string') {
+    const key = tasting.noteFinale.toLowerCase().replace(/\s+/g, '_')
+    if (Object.prototype.hasOwnProperty.call(noteFinaleObj, key)) {
+      noteFinaleObj[key] = true
+    }
+  } else if (tasting?.noteFinale && typeof tasting.noteFinale === 'object') {
+    noteFinaleObj = { ...noteFinaleObj, ...tasting.noteFinale }
+  }
+
+  selectedTasting.vin.conclusion.note_finale = noteFinaleObj
+  selectedTasting.vin.conclusion.conclusion = tasting?.remarquesConclusion || ''
+
+  selectedTasting.vin.autres.temperature_ideale_de_consommation = tasting?.temperatureIdeale || 0
+  selectedTasting.vin.autres.date_ideale_de_consommation = tasting?.dateIdealeConsommation || ''
+  selectedTasting.vin.autres.evolution_probable = tasting?.evolutionProbable || ''
+  selectedTasting.vin.autres.accords_mets_vins = tasting?.accordsMetsVins
+      ? tasting.accordsMetsVins.split(',').map((s) => s.trim()).filter(Boolean)
+      : []
 }
 
-// Helper function to get category index
-const getCategoryIndex = (category) => {
-  const categories = ['fruite', 'florale', 'boisee', 'balsamique', 'epicee', 'empyreumatique', 'animale', 'vegetale', 'alimentaire', 'minerale', 'chimique', 'anormale'];
-  return categories.indexOf(category.toLowerCase());
-}
-
-// Reset form to create mode
 const resetForm = () => {
-  isEditMode.value = false;
-  editingTastingId.value = null;
-  showForm.value = false;
-  newTitle.value = '';
-  currentStep.value = 1;
+  isEditMode.value = false
+  editingTastingId.value = null
+  showForm.value = false
+  newTitle.value = ''
+  currentStep.value = 1
 
-  // Reset form data
   Object.assign(selectedTasting, {
-    "vin": {
-      "informations": {
-        "type": {},
-        "cepage": [],
-        "region": "",
-        "aop_igp_vdf": "",
-        "elevage": "",
-        "import": "",
-        "prix_lancement": 0,
-        "prix_actuel": 0,
+    vin: {
+      informations: {
+        type: null,
+        cepage: [],
+        region: '',
+        aop_igp_vdf: '',
+        elevage: '',
+        import: '',
+        prix_lancement: 0,
+        prix_actuel: 0
       },
-      "visuel": {
-        "robe_blanche": {},
-        "robe_rouge": {},
-        "robe_rose": {},
-        "disque": {},
-        "intensite": {},
-        "limpidite": {},
-        "brillance": {},
-        "evolution": {},
-        "remarques": ""
+      visuel: {
+        robe_blanche: null,
+        robe_rouge: null,
+        robe_rose: null,
+        disque: null,
+        intensite: null,
+        limpidite: null,
+        brillance: null,
+        evolution: null,
+        remarques: ''
       },
-      "nez": {
-        "intensite": {},
-        "qualite": {},
-        "type_aromes": [],
-        "selectedCategories": [],
-        "nature_aromes": [
-          {"id": "1", "fruite": []},
-          {"id": "2", "florale": []},
-          {"id": "3", "boisee": []},
-          {"id": "4", "balsamique": []},
-          {"id": "5", "epicee": []},
-          {"id": "6", "empyreumatique": []},
-          {"id": "7", "animale": []},
-          {"id": "8", "vegetale": []},
-          {"id": "9", "alimentaire": []},
-          {"id": "10", "minerale": []},
-          {"id": "11", "chimique": []},
-          {"id": "12", "anormale": []}
-        ],
-        "description": ""
+      nez: {
+        intensite: null,
+        qualite: null,
+        type_aromes: [],
+        selectedCategories: [],
+        nature_aromes: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+        description: ''
       },
-      "bouche": {
-        "attaque": "",
-        "evolution": "",
-        "fin_de_bouche": "",
-        "structure": "",
-        "texture": "",
-        "intensite": "",
-        "qualite": "",
-        "equilibre": "",
-        "aromes": [],
-        "longueur_en_bouche": "",
-        "persistance_aromatique": "",
-        "remarques": ""
+      bouche: {
+        attaque: '',
+        evolution: '',
+        fin_de_bouche: '',
+        structure: '',
+        texture: '',
+        intensite: '',
+        qualite: '',
+        equilibre: '',
+        aromes: [],
+        persistance_aromatique: '',
+        longueur_en_bouche: '',
+        remarques: ''
       },
-      "conclusion": {
-        "caudalies": 0,
-        "note_finale": {
-          "tres_mediocre": false,
-          "mediocre": false,
-          "mauvais": false,
-          "passable": false,
-          "correct": false,
-          "bon": false,
-          "tres_bon": false,
-          "superbe": false,
-          "excellent": false,
-          "exceptionnel": false,
-          "legendaire": false
+      longueur: {
+        persistance_aromatique: 0,
+        caudalies: 0,
+        structure: ''
+      },
+      conclusion: {
+        caudalies: 0,
+        note_finale: {
+          tres_mediocre: false,
+          mediocre: false,
+          mauvais: false,
+          passable: false,
+          correct: false,
+          bon: false,
+          tres_bon: false,
+          superbe: false,
+          excellent: false,
+          exceptionnel: false,
+          legendaire: false
         },
-        "conclusion": ""
+        conclusion: ''
       },
-      "autres": {
-        "temperature_ideale_de_consommation": 0,
-        "date_ideale_de_consommation": "",
-        "evolution_probable": "",
-        "accords_mets_vins": []
+      autres: {
+        temperature_ideale_de_consommation: 0,
+        date_ideale_de_consommation: '',
+        evolution_probable: '',
+        accords_mets_vins: []
       }
     }
-  });
+  })
 }
 
-
-// Open the drawer when the mouse moves near the left edge of the screen
 const handleMouseMove = (event) => {
-  if (event.clientX <= 20) {        // Mouse near the left screen edge
-    drawer.value = true             // Show the drawer
+  if (event.clientX <= 20) {
+    drawer.value = true
   }
 }
 
-// Hide the drawer when the mouse leaves the drawer area
 const handleMouseLeave = () => {
-  drawer.value = false              // Hide the drawer
+  drawer.value = false
 }
 
-// Vérifie si une option est sélectionnée
 const isSelected = (val, groupId) => {
-  console.log(selected.value);
-  console.log(selected.value[groupId]?.some((item) => item.id === val.id) || false);
-  return (
-      selected.value[groupId]?.some((item) => item.id === val.id) || false
-  );
-};
+  return selected.value[groupId]?.some((item) => item.id === val.id) || false
+}
 
-// Function to update selected notes
 const updateSelectedNotes = (group, val, selectedValues) => {
-  // Ensure the nested object exists
   if (!selectedTasting.vin.nez.nature_aromes[val.id]) {
-    selectedTasting.vin.nez.nature_aromes[val.id] = [];
+    selectedTasting.vin.nez.nature_aromes[val.id] = []
   }
 
-  // Store only selected values
   if (selectedValues.length > 0) {
-    selectedTasting.vin.nez.nature_aromes[val.id] = selectedValues;
+    selectedTasting.vin.nez.nature_aromes[val.id] = selectedValues
   } else {
-    // If empty, reset the array to avoid storing unwanted data
-    selectedTasting.vin.nez.nature_aromes[val.id] = [];
+    selectedTasting.vin.nez.nature_aromes[val.id] = []
   }
-};
+}
 
 const test = (...args) => {
-  // console.log("___________");
-  // console.log("test");
-  console.log(args);
-  // console.log(e);
-  // console.log(selectedTasting);
-  // console.log("___________");
-  testTaste.value = args;
+  testTaste.value = args
 }
 
-const filteredWineTypeValues = (items = []) => {
-  const selectedWineType = toRaw(selectedTasting.vin.informations.type?.wineType);
+const filteredWineTypeValues = (itemsArg = []) => {
+  const selectedWineType = getSelectedWineTypeCode()
+  if (!selectedWineType) return itemsArg
 
-  if (!selectedWineType) return items;
-
-  return items.filter(item => {
-    const wineType = toRaw(item?.wineType);
-
-    if (!wineType) return true;              // option valid for all wine types
-    if (Array.isArray(wineType)) return wineType.includes(selectedWineType);
-
-    return wineType === selectedWineType;
-  });
-};
-
-
-const isSameWineType = (item) => {
-  const selectedWineType = selectedTasting.vin.informations.type?.wineType;
-  if (!selectedWineType) return true;
-
-  const itemWineType = item.wineType;
-  if (!itemWineType || !itemWineType.length) return true;
-
-  if (Array.isArray(itemWineType)) {
-    return itemWineType.includes(selectedWineType);
-  }
-
-  return selectedWineType === itemWineType;
-};
+  return itemsArg.filter((item) => {
+    const wineType = toRaw(item?.wineType)
+    if (!wineType) return true
+    if (Array.isArray(wineType)) return wineType.includes(selectedWineType)
+    return wineType === selectedWineType
+  })
+}
 
 const getStepIcon = (stepName) => {
   const icons = {
@@ -632,9 +581,9 @@ const getStepIcon = (stepName) => {
     bouche: 'mdi-mouth',
     longueur: 'mdi-timer',
     conclusion: 'mdi-check-circle'
-  };
-  return icons[stepName] || 'mdi-circle';
-};
+  }
+  return icons[stepName] || 'mdi-circle'
+}
 
 const getFieldIcon = (fieldType) => {
   const icons = {
@@ -643,75 +592,84 @@ const getFieldIcon = (fieldType) => {
     autocomplete: 'mdi-magnify',
     select: 'mdi-menu-down',
     number: 'mdi-numeric',
-    slider: 'mdi-tune'
-  };
-  return icons[fieldType] || 'mdi-circle';
-};
+    slider: 'mdi-tune',
+    'select-button': 'mdi-format-list-bulleted'
+  }
+  return icons[fieldType] || 'mdi-circle'
+}
 
 const getCheckboxColor = (val) => {
-  if (val.color) return val.color;
-  if (val.negatif) return 'error';
-  return 'wine-primary';
-};
+  if (val?.color) return val.color
+  if (val?.negatif) return 'error'
+  return 'wine-primary'
+}
 
 const getSliderLabel = (field, modelValue) => {
-  if (field.name === 'persistance_aromatique') {
-    const labels = ['nulle', 'courte', 'moyenne', 'bonne', 'longue', 'très longue', 'infinie'];
-    return labels[Math.min(Math.floor(modelValue / 14.28), 6)] || 'moyenne';
+  if (field?.name === 'persistance_aromatique') {
+    const labels = ['nulle', 'courte', 'moyenne', 'bonne', 'longue', 'très longue', 'infinie']
+    return labels[Math.min(Math.floor((modelValue || 0) / 14.28), 6)] || 'moyenne'
   }
-  return modelValue;
-};
+  return modelValue
+}
 
-const ensureAromaBucket = (stepName, val) => {
-  const aromas = selectedTasting.vin[stepName].nature_aromes;
-  const index = Number(val.id) - 1;      // sécurise l'index numérique
-  const key = val.value.toLowerCase();   // "fruitée", "florale", etc.
+const ensureAromaBucket = (stepName, val, index) => {
+  const stepObj = selectedTasting.vin[stepName]
+  if (!stepObj || !Array.isArray(stepObj.nature_aromes)) return
 
-  // Si l'entrée du tableau n'existe pas, on la crée
-  if (!aromas[index]) {
-    aromas[index] = {};
-  }
+  const aromas = stepObj.nature_aromes
+  const idx = typeof index === 'number' ? index : getCategoryIndex(val?.value)
+  if (idx === -1) return
 
-  // Si le tableau pour cette clé n'existe pas, on le crée
-  if (!Array.isArray(aromas[index][key])) {
-    aromas[index][key] = [];
-  }
-};
+  const key = (val?.value || '').toLowerCase()
+  if (!aromas[idx]) aromas[idx] = {}
+  if (!Array.isArray(aromas[idx][key])) aromas[idx][key] = []
+}
 
 const getTypeAromesGroups = (field) => {
-  if (!field?.groups || !Array.isArray(field.groups)) return [];
-  // Chaque entry de field.groups EST un groupe
+  if (!field?.groups || !Array.isArray(field.groups)) return []
   return field.groups.map((g, index) => ({
     id: g.id ?? index + 1,
     required: !!g.required,
     options: g.groupValues || []
-  }));
-};
+  }))
+}
 
 const onTypeAromeToggle = (group, value, checked) => {
   const current = Array.isArray(selectedTasting.vin.nez.type_aromes)
       ? [...selectedTasting.vin.nez.type_aromes]
-      : [];
+      : []
 
-  // on retire toutes les valeurs de ce groupe ?
-  // → si tu veux limiter à UNE valeur par groupe, on enlève d’abord les anciennes valeurs de ce groupe :
-  const groupValues = group.options.map(o => o.value);
-  let next = current.filter(v => !groupValues.includes(v));
+  const groupValues = (group?.options || []).map((o) => o.value)
+  let next = current.filter((v) => !groupValues.includes(v))
 
-  if (checked) {
-    next.push(value);
+  if (checked) next.push(value)
+  selectedTasting.vin.nez.type_aromes = next
+}
+
+const getFieldValues = (field) => {
+  if (Array.isArray(field?.values) && field.values.length) return field.values
+  if (Array.isArray(field?.groups) && field.groups.length && Array.isArray(field.groups[0]?.groupValues)) {
+    return field.groups[0].groupValues
   }
-
-  selectedTasting.vin.nez.type_aromes = next;
-};
-
+  return []
+}
 </script>
 
 <template>
   <div class="tasting-background">
-    <v-navigation-drawer v-model="drawer" temporary @mouseleave="handleMouseLeave" class="wine-drawer">
+    <v-navigation-drawer
+        v-model="drawer"
+        temporary
+        @mouseleave="handleMouseLeave"
+        class="wine-drawer"
+    >
       <div class="d-flex flex-column justify-center pa-4">
-        <v-btn v-if="!showForm" class="ma-2 wine-btn-primary" @click="toggleForm" elevation="2">
+        <v-btn
+            v-if="!showForm"
+            class="ma-2 wine-btn-primary"
+            @click="toggleForm"
+            elevation="2"
+        >
           <v-icon class="mr-2">mdi-plus</v-icon>
           Nouvelle dégustation
         </v-btn>
@@ -735,11 +693,20 @@ const onTypeAromeToggle = (group, value, checked) => {
             </v-form>
           </v-card-text>
           <v-card-actions class="pa-4">
-            <v-btn @click="confirmNewItem" class="wine-btn-primary" :disabled="!newTitle" elevation="2">
+            <v-btn
+                @click="confirmNewItem"
+                class="wine-btn-primary"
+                :disabled="!newTitle"
+                elevation="2"
+            >
               <v-icon class="mr-2">mdi-check</v-icon>
               Confirmer
             </v-btn>
-            <v-btn @click="cancelNewItem" variant="outlined" class="wine-btn-secondary">
+            <v-btn
+                @click="cancelNewItem"
+                variant="outlined"
+                class="wine-btn-secondary"
+            >
               <v-icon class="mr-2">mdi-close</v-icon>
               Annuler
             </v-btn>
@@ -754,23 +721,32 @@ const onTypeAromeToggle = (group, value, checked) => {
               class="wine-list-item"
               :class="{ 'wine-list-item-active': editingTastingId === tasting.id }"
           >
-            <v-icon class="mr-3">mdi-wine</v-icon>
-            <v-list-item-content>
-              <v-list-item-title class="wine-title">
-                {{ getTastingTitle(tasting) }}
-              </v-list-item-title>
-              <v-list-item-subtitle class="wine-subtitle">
-                {{ tasting.wineType }} • {{ tasting.region }} • {{ tasting.noteFinale }}
-              </v-list-item-subtitle>
-              <v-list-item-subtitle class="wine-date">
-                {{ formatDate(tasting.createdAt) }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-btn icon small @click.stop="deleteTasting(tasting.id)">
+            <template #prepend>
+              <v-icon class="mr-3">mdi-wine</v-icon>
+            </template>
+
+            <v-list-item-title class="wine-title">
+              {{ getTastingTitle(tasting) }}
+            </v-list-item-title>
+
+            <v-list-item-subtitle class="wine-subtitle">
+              {{ tasting.wineType }} • {{ tasting.region }} • {{ tasting.noteFinale }}
+            </v-list-item-subtitle>
+
+            <v-list-item-subtitle class="wine-date">
+              {{ formatDate(tasting.createdAt) }}
+            </v-list-item-subtitle>
+
+            <template #append>
+              <v-btn
+                  icon
+                  variant="text"
+                  size="small"
+                  @click.stop="deleteTasting(tasting.id)"
+              >
                 <v-icon color="error">mdi-delete</v-icon>
               </v-btn>
-            </v-list-item-action>
+            </template>
           </v-list-item>
         </v-list>
       </div>
@@ -778,7 +754,6 @@ const onTypeAromeToggle = (group, value, checked) => {
 
     <v-container width="100%" fluid class="tasting-container">
       <v-row class="tasting-row" no-gutters>
-        <!-- Image Section - Desktop: left, Mobile: top -->
         <v-col cols="12" lg="4" class="image-section">
           <v-card class="wine-card image-card" elevation="8">
             <v-tabs v-model="tabImg" class="wine-tabs" bg-color="rgba(139, 69, 19, 0.1)">
@@ -809,9 +784,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                       icon="mdi-camera-outline"
                       :size="$vuetify.display.xs ? 'default' : 'large'"
                       elevation="4"
-                  >
-                    <v-icon>mdi-camera-outline</v-icon>
-                  </v-btn>
+                  />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item class="relative image-window" value="two">
@@ -829,16 +802,13 @@ const onTypeAromeToggle = (group, value, checked) => {
                       icon="mdi-camera-outline"
                       :size="$vuetify.display.xs ? 'default' : 'large'"
                       elevation="4"
-                  >
-                    <v-icon>mdi-camera-outline</v-icon>
-                  </v-btn>
+                  />
                 </v-tabs-window-item>
               </v-tabs-window>
             </v-card-text>
           </v-card>
         </v-col>
 
-        <!-- Form Section - Desktop: right, Mobile: bottom -->
         <v-col cols="12" class="form-section">
           <v-card class="wine-card form-card" elevation="8">
             <v-stepper
@@ -848,10 +818,14 @@ const onTypeAromeToggle = (group, value, checked) => {
                 class="wine-stepper"
                 elevation="0"
             >
-              <template v-slot:[`item.${step.step}`] v-for="step in steps" :key="step.step">
+              <template
+                  v-for="step in steps"
+                  :key="step.step"
+                  v-slot:[`item.${step.step}`]
+              >
                 <div class="step-content">
                   <div class="step-header">
-                    <v-icon class="step-icon mr-2" :icon="getStepIcon(step.name)"></v-icon>
+                    <v-icon class="step-icon mr-2" :icon="getStepIcon(step.name)" />
                     <h2 class="step-title">{{ step.title }}</h2>
                   </div>
 
@@ -867,9 +841,10 @@ const onTypeAromeToggle = (group, value, checked) => {
                                   :class="{ 'aroma-field': field.name === 'nature_aromes' }"
                               >
                                 <v-card-title class="field-title pa-2">
-                                  <v-icon class="mr-2" size="small" :icon="getFieldIcon(field.type)"></v-icon>
+                                  <v-icon class="mr-2" size="small" :icon="getFieldIcon(field.type)" />
                                   <span class="field-label">{{ field.label }}</span>
                                 </v-card-title>
+
                                 <v-card-text class="pa-3">
                                   <template v-if="field.type === 'text'">
                                     <v-text-field
@@ -883,7 +858,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     />
                                   </template>
 
-                                  <template v-if="field.type === 'textarea'">
+                                  <template v-else-if="field.type === 'textarea'">
                                     <v-textarea
                                         v-model="selectedTasting.vin[step.name][field.name]"
                                         :label="field.label"
@@ -896,17 +871,21 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     />
                                   </template>
 
-                                  <template v-if="field.type === 'autocomplete'">
+                                  <template
+                                      v-else-if="(field.type === 'autocomplete' || field.type === 'select-button')
+                                      && field.name !== 'type_aromes'
+                                      && field.name !== 'nature_aromes'"
+                                  >
                                     <v-autocomplete
                                         :label="field.label"
                                         density="comfortable"
                                         chips
-                                        v-model="selectedTasting.vin[step.name][field.name]"
-                                        :items="filteredWineTypeValues(field.values)"
-                                        item-title="value"
-                                        item-value="id"
-                                        variant="outlined"
                                         return-object
+                                        v-model="selectedTasting.vin[step.name][field.name]"
+                                        :items="filteredWineTypeValues(getFieldValues(field))"
+                                        item-title="value"
+                                        item-value="value"
+                                        variant="outlined"
                                         :multiple="field.multi"
                                         class="wine-autocomplete"
                                         prepend-inner-icon="mdi-magnify"
@@ -914,7 +893,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     />
                                   </template>
 
-                                  <template v-if="field.type === 'select'">
+                                  <template v-else-if="field.type === 'select'">
                                     <v-select
                                         density="comfortable"
                                         variant="outlined"
@@ -927,7 +906,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     />
                                   </template>
 
-                                  <template v-if="field.type === 'number'">
+                                  <template v-else-if="field.type === 'number'">
                                     <v-text-field
                                         density="comfortable"
                                         variant="outlined"
@@ -941,7 +920,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     />
                                   </template>
 
-                                  <template v-if="field.name === 'type_aromes'">
+                                  <template v-else-if="field.name === 'type_aromes'">
                                     <div class="type-aromes-groups">
                                       <div
                                           v-for="group in getTypeAromesGroups(field)"
@@ -949,9 +928,9 @@ const onTypeAromeToggle = (group, value, checked) => {
                                           class="type-aromes-group mb-3"
                                       >
                                         <div class="d-flex align-center mb-1">
-        <span class="text-body-2 font-weight-medium">
-          Groupe {{ group.id }}
-        </span>
+                                          <span class="text-body-2 font-weight-medium">
+                                            Groupe {{ group.id }}
+                                          </span>
                                           <v-chip
                                               v-if="group.required"
                                               size="x-small"
@@ -982,9 +961,12 @@ const onTypeAromeToggle = (group, value, checked) => {
                                     </div>
                                   </template>
 
-                                  <template v-else-if="field.groups">
+                                  <template v-else-if="field.name === 'nature_aromes' && field.groups">
                                     <div class="checkbox-group">
-                                      <template v-for="(val, index2) in field.groups[0].groupValues" :key="val.id">
+                                      <template
+                                          v-for="(val, index2) in field.groups[0].groupValues"
+                                          :key="val.id"
+                                      >
                                         <v-checkbox
                                             :value="val"
                                             class="wine-checkbox mb-2"
@@ -996,18 +978,22 @@ const onTypeAromeToggle = (group, value, checked) => {
                                             density="comfortable"
                                             hide-details
                                             :class="{ 'checkbox-mobile': $vuetify.display.xs }"
-                                            @change="ensureAromaBucket(step.name, val)"
+                                            @update:model-value="checked => { if (checked) ensureAromaBucket(step.name, val, index2) }"
                                         />
-
 
                                         <v-expand-transition>
                                           <v-autocomplete
-                                              v-if=" val.notes && Array.isArray(selectedTasting.vin[step.name].selectedCategories) && selectedTasting.vin[step.name].selectedCategories.includes(val) && selectedTasting.vin[step.name].nature_aromes[val.id - 1]"
+                                              v-if="
+                                              val.notes &&
+                                              Array.isArray(selectedTasting.vin[step.name].selectedCategories) &&
+                                              selectedTasting.vin[step.name].selectedCategories.includes(val) &&
+                                              selectedTasting.vin[step.name].nature_aromes[index2]
+                                            "
                                               :label="`Notes pour ${val.value}`"
                                               density="comfortable"
                                               chips
                                               :items="val.notes"
-                                              v-model="selectedTasting.vin[step.name].nature_aromes[val.id - 1][val.value.toLowerCase()]"
+                                              v-model="selectedTasting.vin[step.name].nature_aromes[index2][val.value.toLowerCase()]"
                                               item-title="libelle"
                                               item-value="libelle"
                                               variant="outlined"
@@ -1016,13 +1002,12 @@ const onTypeAromeToggle = (group, value, checked) => {
                                               prepend-inner-icon="mdi-fruit-grapes"
                                               :hide-details="$vuetify.display.xs"
                                           />
-
                                         </v-expand-transition>
                                       </template>
                                     </div>
                                   </template>
 
-                                  <template v-if="field.type === 'slider'">
+                                  <template v-else-if="field.type === 'slider'">
                                     <div class="slider-container">
                                       <v-slider
                                           v-model="selectedTasting.vin[step.name][field.name]"
@@ -1030,7 +1015,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                                           class="wine-slider"
                                           color="wine-primary"
                                       >
-                                        <template v-slot:thumb-label="{ modelValue }">
+                                        <template #thumb-label="{ modelValue }">
                                           {{ getSliderLabel(field, modelValue) }}
                                         </template>
                                       </v-slider>
@@ -1061,6 +1046,7 @@ const onTypeAromeToggle = (group, value, checked) => {
                 <span class="d-none d-sm-inline">Annuler</span>
                 <span class="d-sm-none">Annuler</span>
               </v-btn>
+
               <v-btn
                   @click="submitForm"
                   class="wine-btn-primary submit-btn"
@@ -1068,11 +1054,15 @@ const onTypeAromeToggle = (group, value, checked) => {
                   elevation="4"
                   block
               >
-                <v-icon class="mr-2">{{ isEditMode ? 'mdi-content-save-edit' : 'mdi-content-save' }}</v-icon>
-                <span class="d-none d-sm-inline">{{
-                    isEditMode ? 'Mettre à jour' : 'Enregistrer la dégustation'
-                  }}</span>
-                <span class="d-sm-none">{{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}</span>
+                <v-icon class="mr-2">
+                  {{ isEditMode ? 'mdi-content-save-edit' : 'mdi-content-save' }}
+                </v-icon>
+                <span class="d-none d-sm-inline">
+                  {{ isEditMode ? 'Mettre à jour' : 'Enregistrer la dégustation' }}
+                </span>
+                <span class="d-sm-none">
+                  {{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}
+                </span>
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -1255,27 +1245,6 @@ const onTypeAromeToggle = (group, value, checked) => {
   flex-shrink: 0;
 }
 
-.stepper-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid rgba(139, 69, 19, 0.2);
-  flex-shrink: 0;
-}
-
-.stepper-title {
-  margin: 0;
-  color: #8b4513;
-  font-weight: 600;
-}
-
-.edit-indicator {
-  background: linear-gradient(45deg, #8b4513, #a0522d);
-  color: white;
-}
-
 .step-icon {
   color: #8b4513;
   font-size: 24px;
@@ -1397,7 +1366,6 @@ const onTypeAromeToggle = (group, value, checked) => {
   margin: 0 auto;
 }
 
-/* Responsive Design */
 @media (min-width: 1264px) {
   .tasting-background {
     padding: 16px;
@@ -1532,5 +1500,3 @@ const onTypeAromeToggle = (group, value, checked) => {
   }
 }
 </style>
-
-
