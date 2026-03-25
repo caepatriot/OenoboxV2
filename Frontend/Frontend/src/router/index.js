@@ -27,6 +27,11 @@ const router = createRouter({
             component: () => import('../views/CavePlacementView.vue')
         },
         {
+            path: '/cave-test',
+            name: 'cave-test',
+            component: () => import('../views/CaveTestView.vue')
+        },
+        {
             path: '/about',
             name: 'about',
             // route level code-splitting

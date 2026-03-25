@@ -445,10 +445,47 @@ const onMouseMove = (event) => {
   const newY = (event.clientY - canvasRect.top - dragOffset.value.y) / scale.value;
 
   const maxX = selectedCave.value.dimensions.width - draggingUnit.value.dimensions.width;
-  const maxY = selectedCave.value.dimensions.depth - draggingUnit.value.dimensions.height;
+  const maxY = selectedCave.value.dimensions.depth - draggingUnit.value.dimensions.depth;
 
-  draggingUnit.value.position.x = Math.max(0, Math.min(maxX, newX));
-  draggingUnit.value.position.y = Math.max(0, Math.min(maxY, newY));
+  const nextX = Math.max(0, Math.min(maxX, newX));
+  const nextY = Math.max(0, Math.min(maxY, newY));
+
+  draggingUnit.value.position.x = nextX;
+  draggingUnit.value.position.y = nextY;
+
+  // Snapping logic to walls
+  const threshold = 20;
+  const { width, depth } = selectedCave.value.dimensions;
+  
+  if (nextY <= threshold) {
+    draggingUnit.value.position.y = 0;
+    draggingUnit.value.wall = "north";
+  } else if (nextY >= depth - draggingUnit.value.dimensions.depth - threshold) {
+    draggingUnit.value.position.y = depth - draggingUnit.value.dimensions.depth;
+    draggingUnit.value.wall = "south";
+  } else if (nextX <= threshold) {
+    draggingUnit.value.position.x = 0;
+    draggingUnit.value.wall = "west";
+  } else if (nextX >= width - draggingUnit.value.dimensions.width - threshold) {
+    draggingUnit.value.position.x = width - draggingUnit.value.dimensions.width;
+    draggingUnit.value.wall = "east";
+  }
+
+  // Force snap for specific types
+  if (draggingUnit.value.type === 'shelf' || draggingUnit.value.type === 'wall-mounted') {
+    const dN = draggingUnit.value.position.y;
+    const dS = depth - draggingUnit.value.dimensions.depth - draggingUnit.value.position.y;
+    const dW = draggingUnit.value.position.x;
+    const dE = width - draggingUnit.value.dimensions.width - draggingUnit.value.position.x;
+    const minD = Math.min(dN, dS, dW, dE);
+
+    if (minD > 0) { // If not already snapped
+      if (minD === dN) { draggingUnit.value.position.y = 0; draggingUnit.value.wall = "north"; }
+      else if (minD === dS) { draggingUnit.value.position.y = depth - draggingUnit.value.dimensions.depth; draggingUnit.value.wall = "south"; }
+      else if (minD === dW) { draggingUnit.value.position.x = 0; draggingUnit.value.wall = "west"; }
+      else if (minD === dE) { draggingUnit.value.position.x = width - draggingUnit.value.dimensions.width; draggingUnit.value.wall = "east"; }
+    }
+  }
 };
 
 const onMouseUp = async () => {
@@ -456,6 +493,7 @@ const onMouseUp = async () => {
     if (draggingUnit.value && selectedCave.value) {
       const updated = await caveStore.updateStorageUnit(selectedCave.value.id, draggingUnit.value.id, {
         position: { ...draggingUnit.value.position },
+        wall: draggingUnit.value.wall,
       });
 
       if (selectedUnit.value?.id === updated?.id) {
@@ -512,7 +550,7 @@ const startResize = (unit, dir, event) => {
     x: unit.position.x,
     y: unit.position.y,
     w: unit.dimensions.width,
-    h: unit.dimensions.height,
+    d: unit.dimensions.depth,
   };
 
   document.addEventListener("mousemove", onResizeMove);
@@ -528,34 +566,34 @@ const onResizeMove = (event) => {
   let newX = resizeStart.value.x;
   let newY = resizeStart.value.y;
   let newW = resizeStart.value.w;
-  let newH = resizeStart.value.h;
+  let newD = resizeStart.value.d;
 
   const dir = resizeDir.value || "";
 
   if (dir.includes("e")) newW = resizeStart.value.w + dx;
-  if (dir.includes("s")) newH = resizeStart.value.h + dy;
+  if (dir.includes("s")) newD = resizeStart.value.d + dy;
   if (dir.includes("w")) {
     newW = resizeStart.value.w - dx;
     newX = resizeStart.value.x + dx;
   }
   if (dir.includes("n")) {
-    newH = resizeStart.value.h - dy;
+    newD = resizeStart.value.d - dy;
     newY = resizeStart.value.y + dy;
   }
 
   newW = Math.max(MIN_UNIT_W, newW);
-  newH = Math.max(MIN_UNIT_H, newH);
+  newD = Math.max(MIN_UNIT_H, newD);
 
   const caveW = selectedCave.value.dimensions.width;
   const caveD = selectedCave.value.dimensions.depth;
 
   newX = Math.max(0, Math.min(caveW - newW, newX));
-  newY = Math.max(0, Math.min(caveD - newH, newY));
+  newY = Math.max(0, Math.min(caveD - newD, newY));
 
   resizingUnit.value.position.x = newX;
   resizingUnit.value.position.y = newY;
   resizingUnit.value.dimensions.width = newW;
-  resizingUnit.value.dimensions.height = newH;
+  resizingUnit.value.dimensions.depth = newD;
 };
 
 const onResizeUp = async () => {
@@ -756,6 +794,26 @@ const onElevateUp = async () => {
                   </div>
 
                   <div class="d-flex align-center">
+                    <v-btn-toggle
+                        v-model="selectedView"
+                        mandatory
+                        color="brown"
+                        variant="outlined"
+                        density="comfortable"
+                        class="mr-2"
+                    >
+                      <v-btn value="overview">
+                        <v-icon start>mdi-floor-plan</v-icon>
+                        Vue Plan
+                      </v-btn>
+                      <v-btn value="walls">
+                        <v-icon start>mdi-wall</v-icon>
+                        Vue Murs
+                      </v-btn>
+                    </v-btn-toggle>
+
+                    <v-divider vertical class="mx-2 my-2" />
+
                     <v-btn variant="outlined" class="mr-2" @click="openEditCave(selectedCave)">
                       <v-icon class="mr-2">mdi-pencil</v-icon>
                       Modifier Cave
@@ -779,11 +837,6 @@ const onElevateUp = async () => {
                     >
                       <v-icon class="mr-2">{{ editMode ? "mdi-check" : "mdi-pencil" }}</v-icon>
                       {{ editMode ? "Terminer Édition" : "Éditer Disposition" }}
-                    </v-btn>
-
-                    <v-btn variant="outlined" class="ml-2" @click="selectedView = 'walls'">
-                      <v-icon class="mr-2">mdi-wall</v-icon>
-                      Vue Murs
                     </v-btn>
                   </div>
                 </div>
@@ -851,14 +904,26 @@ const onElevateUp = async () => {
                   </div>
 
                   <div ref="overviewViewportRef" class="cave-layout-scroll">
-                    <div
-                        ref="canvasRef"
-                        class="cave-layout-canvas"
-                        :style="{
-                        width: selectedCave.dimensions.width * scale + 'px',
-                        height: selectedCave.dimensions.height * scale + 'px'
-                      }"
-                    >
+                    <div class="layout-wrapper" :style="{
+                        width: (selectedCave.dimensions.width * scale + 80) + 'px',
+                        height: (selectedCave.dimensions.depth * scale + 80) + 'px',
+                        padding: '40px',
+                        position: 'relative'
+                    }">
+                      <!-- Wall Labels -->
+                      <div class="wall-label wall-label-north">NORD (Mur 1)</div>
+                      <div class="wall-label wall-label-south">SUD (Mur 3)</div>
+                      <div class="wall-label wall-label-east">EST (Mur 2)</div>
+                      <div class="wall-label wall-label-west">OUEST (Mur 4)</div>
+
+                      <div
+                          ref="canvasRef"
+                          class="cave-layout-canvas"
+                          :style="{
+                          width: selectedCave.dimensions.width * scale + 'px',
+                          height: selectedCave.dimensions.depth * scale + 'px'
+                        }"
+                      >
                       <div
                           v-for="unit in selectedCave.units"
                           :key="unit.id"
@@ -875,7 +940,7 @@ const onElevateUp = async () => {
                           left: unit.position.x * scale + 'px',
                           top: unit.position.y * scale + 'px',
                           width: unit.dimensions.width * scale + 'px',
-                          height: unit.dimensions.height * scale + 'px',
+                          height: unit.dimensions.depth * scale + 'px',
                           '--rotation': `${unit.rotation || 0}deg`,
                           cursor: editMode ? 'move' : 'pointer'
                         }"
@@ -920,8 +985,9 @@ const onElevateUp = async () => {
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="mt-4 text-caption text-medium-emphasis">
+                <div class="mt-4 text-caption text-medium-emphasis">
                     Astuce : dans la Vue Murs, vous pouvez déplacer les éléments en hauteur (élévation) en mode édition.
                   </div>
                 </div>
@@ -934,15 +1000,27 @@ const onElevateUp = async () => {
               <v-card-title class="cave-overview-title">
                 <div class="d-flex align-center justify-space-between w-100">
                   <div class="d-flex align-center">
-                    <v-btn icon variant="text" @click="selectedView = 'overview'" class="mr-2">
-                      <v-icon>mdi-arrow-left</v-icon>
-                    </v-btn>
-                    <v-icon class="mr-3" color="brown">mdi-wall</v-icon>
+                    <v-btn-toggle
+                        v-model="selectedView"
+                        mandatory
+                        color="brown"
+                        variant="outlined"
+                        density="comfortable"
+                        class="mr-4"
+                    >
+                      <v-btn value="overview">
+                        <v-icon start>mdi-floor-plan</v-icon>
+                        Vue Plan
+                      </v-btn>
+                      <v-btn value="walls">
+                        <v-icon start>mdi-wall</v-icon>
+                        Vue Murs
+                      </v-btn>
+                    </v-btn-toggle>
+
+                    <v-icon class="mr-3" color="brown">mdi-wall-outline</v-icon>
                     <div>
-                      <h2 class="text-h5 mb-1">Vue frontale des murs</h2>
-                      <p class="text-body-2 text-medium-emphasis mb-0">
-                        Choisissez un mur et ajustez la hauteur (élévation) des éléments
-                      </p>
+                      <h2 class="text-h5 mb-0">Vue frontale : {{ wallItems.find(w => w.value === selectedWall)?.title }}</h2>
                     </div>
                   </div>
 
@@ -988,15 +1066,24 @@ const onElevateUp = async () => {
                 </div>
 
                 <div ref="wallViewportRef" class="wall-layout-scroll">
-                  <div
-                      ref="wallCanvasRef"
-                      class="wall-layout-canvas"
-                      :style="{
-                      width: wallLengthCm * scale + 'px',
-                      height: wallHeightCm * scale + 'px'
-                    }"
-                  >
-                    <div class="wall-floor-line"></div>
+                  <div class="layout-wrapper" :style="{
+                      width: (wallLengthCm * scale + 80) + 'px',
+                      height: (wallHeightCm * scale + 120) + 'px',
+                      padding: '40px 40px 80px 40px',
+                      position: 'relative'
+                  }">
+                    <div class="view-indicator side-view">VUE MURALE</div>
+
+                    <div
+                        ref="wallCanvasRef"
+                        class="wall-layout-canvas"
+                        :style="{
+                        width: wallLengthCm * scale + 'px',
+                        height: wallHeightCm * scale + 'px'
+                      }"
+                    >
+                      <div class="wall-floor-line"></div>
+                      <div class="wall-ceiling-line"></div>
 
                     <div
                         v-for="unit in unitsOnSelectedWall"
@@ -1012,7 +1099,7 @@ const onElevateUp = async () => {
                         :style="{
                         left: getWallUnitLeftPx(unit) + 'px',
                         top: getWallUnitTopPx(unit) + 'px',
-                        width: unit.dimensions.width * scale + 'px',
+                        width: (selectedWall === 'north' || selectedWall === 'south' ? unit.dimensions.width : unit.dimensions.depth) * scale + 'px',
                         height: unit.dimensions.height * scale + 'px'
                       }"
                         @click="!editMode && onUnitClick(unit)"
@@ -1042,6 +1129,7 @@ const onElevateUp = async () => {
                     </div>
                   </div>
                 </div>
+              </div>
 
                 <div class="mt-3 text-caption text-medium-emphasis">
                   En mode édition : attrapez “Glisser” pour monter/descendre l’élément (hauteur/élévation). La valeur est sauvegardée.
@@ -1473,58 +1561,120 @@ const onElevateUp = async () => {
 }
 .cave-layout-canvas {
   position: relative;
-  background: linear-gradient(45deg, #f9f9f9, #e9e9e9);
-  border: 2px solid #ddd;
+  background-color: #e0dcd5;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 4px solid #8b4513;
   border-radius: 8px;
   margin: 0 auto;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.1);
 }
 .storage-unit {
   position: absolute;
-  border: 2px solid;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4px;
+  padding: 0;
   font-size: 10px;
   overflow: hidden;
   transform: rotate(var(--rotation));
   transform-origin: center;
   user-select: none;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 .storage-unit:hover {
   z-index: 10;
-  transform: rotate(var(--rotation)) scale(1.05);
+  transform: rotate(var(--rotation)) scale(1.02);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 }
 .unit-rack {
-  background: linear-gradient(45deg, #d2b48c, #cd853f);
-  border-color: #8b4513;
+  background: #8b4513;
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 10px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 10px);
+  border: 1px solid #5d2e0a;
 }
 .unit-shelf {
-  background: linear-gradient(45deg, #f4a460, #daa520);
-  border-color: #a0522d;
+  background: #deb887;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 15px 100%;
+  border: 1px solid #8b4513;
 }
 .unit-cabinet {
-  background: linear-gradient(45deg, #b0c4de, #778899);
-  border-color: #4682b4;
+  background: #505050;
+  background-image: 
+    linear-gradient(to bottom, transparent 90%, rgba(0, 0, 0, 0.3) 100%),
+    linear-gradient(to right, transparent 48%, rgba(255, 255, 255, 0.1) 50%, transparent 52%);
+  border: 1px solid #333;
 }
 .unit-wall-mounted {
-  background: linear-gradient(45deg, #98fb98, #32cd32);
-  border-color: #228b22;
+  background: #a52a2a;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 10px 10px;
+  border: 1px solid #800000;
 }
 .unit-floor-standing {
-  background: linear-gradient(45deg, #dda0dd, #ba55d3);
-  border-color: #8a2be2;
+  background: #708090;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0, 0, 0, 0.05) 10px, rgba(0, 0, 0, 0.05) 11px);
+  border: 1px solid #4682b4;
 }
+.layout-wrapper {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wall-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 14px;
+  color: #8b4513;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.wall-label-north { top: 10px; left: 50%; transform: translateX(-50%); }
+.wall-label-south { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.wall-label-east { right: 10px; top: 50%; transform: rotate(90deg) translateX(50%); transform-origin: right center; }
+.wall-label-west { left: 10px; top: 50%; transform: rotate(-90deg) translateX(-50%); transform-origin: left center; }
+
+.view-indicator {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(139, 69, 19, 0.8);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  z-index: 5;
+}
+
+.wall-ceiling-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to bottom, #ddd, transparent);
+}
+
 .unit-header {
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   font-weight: bold;
   color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  padding: 2px 4px;
+  backdrop-filter: blur(2px);
 }
 .unit-name {
   font-size: 9px;
@@ -1533,9 +1683,14 @@ const onElevateUp = async () => {
   text-overflow: ellipsis;
 }
 .unit-capacity {
-  font-size: 8px;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 .unit-actions {
   display: flex;
@@ -1599,19 +1754,25 @@ const onElevateUp = async () => {
 
 .wall-layout-canvas {
   position: relative;
-  background: linear-gradient(180deg, #fbfbfb, #f1f1f1);
-  border: 2px solid #ddd;
+  background-color: #d2b48c;
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  border: 4px solid #5d2e0a;
   border-radius: 8px;
   margin: 0 auto;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 50px rgba(0,0,0,0.1);
 }
 .wall-floor-line {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  height: 3px;
-  background: rgba(139, 69, 19, 0.35);
+  height: 12px;
+  background: linear-gradient(to bottom, #8b4513, #5d2e0a);
+  border-top: 1px solid rgba(255,255,255,0.2);
+  z-index: 2;
 }
 .wall-unit {
   position: absolute;

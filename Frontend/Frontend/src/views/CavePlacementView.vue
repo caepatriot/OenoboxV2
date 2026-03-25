@@ -190,6 +190,29 @@ const formatDate = (dateString) => {
     day: 'numeric'
   })
 }
+
+// UI Helpers
+const getUnitIcon = (type) => {
+  const icons = {
+    rack: 'mdi-package-variant-closed',
+    shelf: 'mdi-shelf',
+    cabinet: 'mdi-archive',
+    'wall-mounted': 'mdi-wall',
+    'floor-standing': 'mdi-floor-plan'
+  }
+  return icons[type] || 'mdi-package-variant'
+}
+
+const getUnitColor = (type) => {
+  const colors = {
+    rack: 'brown',
+    shelf: 'orange',
+    cabinet: 'blue',
+    'wall-mounted': 'green',
+    'floor-standing': 'purple'
+  }
+  return colors[type] || 'grey'
+}
 </script>
 
 <template>
@@ -326,14 +349,26 @@ const formatDate = (dateString) => {
                 </v-row>
 
                 <!-- Storage Grid -->
-                <div class="storage-grid-container">
-                  <h3 class="text-h6 mb-3">Emplacements de stockage</h3>
+                <div class="storage-grid-container" :class="`unit-type-${selectedUnit.type}`">
+                  <div class="d-flex align-center justify-space-between mb-3">
+                    <h3 class="text-h6 mb-0">Emplacements de stockage</h3>
+                    <div class="d-flex align-center">
+                       <v-chip size="small" variant="text" class="mr-2">
+                         <v-icon start size="14">mdi-information-outline</v-icon>
+                         Cliquez sur un emplacement libre pour ajouter une bouteille
+                       </v-chip>
+                    </div>
+                  </div>
+
                   <div class="storage-grid">
                     <div
                       v-for="space in selectedUnit.spaces"
                       :key="space.id"
                       class="storage-space"
-                      :class="`space-${getSpaceStatus(space)}`"
+                      :class="[
+                        `space-${getSpaceStatus(space)}`,
+                        { 'has-wine': getSpaceStatus(space) === 'occupied' }
+                      ]"
                       @click="getSpaceStatus(space) === 'available' ? selectSpaceForPlacement(space) : null"
                     >
                       <div class="space-header">
@@ -341,31 +376,30 @@ const formatDate = (dateString) => {
                         <v-btn
                           v-if="getSpaceStatus(space) === 'occupied'"
                           icon
-                          size="small"
-                          variant="text"
+                          size="x-small"
+                          variant="tonal"
                           color="error"
                           @click.stop="removeBottlePlacement(space)"
                           class="remove-btn"
                         >
-                          <v-icon size="14">mdi-close</v-icon>
+                          <v-icon size="10">mdi-close</v-icon>
                         </v-btn>
                       </div>
 
                       <div v-if="getSpaceStatus(space) === 'occupied'" class="space-content">
+                        <div class="bottle-visual">
+                          <v-icon :color="getSpaceContent(space).wine.type === 'red' ? '#800000' : getSpaceContent(space).wine.type === 'white' ? '#f0e68c' : '#ffc0cb'" size="48">
+                            mdi-bottle-wine
+                          </v-icon>
+                        </div>
                         <div class="wine-info">
                           <div class="wine-name">{{ getSpaceContent(space).wine.name }}</div>
-                          <div class="wine-details">
-                            {{ getSpaceContent(space).wine.year }} • {{ getSpaceContent(space).wine.region }}
-                          </div>
-                          <div class="wine-date">
-                            Ajouté: {{ formatDate(getSpaceContent(space).dateAdded) }}
-                          </div>
+                          <div class="wine-year">{{ getSpaceContent(space).wine.year }}</div>
                         </div>
                       </div>
 
                       <div v-else class="space-empty">
-                        <v-icon color="grey" size="24">mdi-plus</v-icon>
-                        <div class="empty-text">Ajouter</div>
+                        <v-icon color="grey-lighten-1" size="32">mdi-plus</v-icon>
                       </div>
                     </div>
                   </div>
@@ -684,46 +718,62 @@ const formatDate = (dateString) => {
 
 .storage-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  max-width: 600px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  max-width: 1000px;
   margin: 0 auto;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 .storage-space {
-  aspect-ratio: 1;
-  border: 2px solid #ddd;
+  aspect-ratio: 0.8;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   position: relative;
+  background: white;
 }
 
 .storage-space:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 .space-available {
-  background: linear-gradient(45deg, #f9f9f9, #e9e9e9);
-  border-color: #ddd;
+  background: #ffffff;
+  border: 1px dashed #ccc;
 }
 
 .space-available:hover {
-  background: linear-gradient(45deg, #e9e9e9, #d9d9d9);
   border-color: #8b4513;
+  background: #fffaf0;
 }
 
 .space-occupied {
-  background: linear-gradient(45deg, #98fb98, #32cd32);
-  border-color: #228b22;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  border: 2px solid #8b4513;
 }
 
-.space-occupied:hover {
-  background: linear-gradient(45deg, #32cd32, #228b22);
+.unit-type-rack .storage-grid {
+  background-color: #f4ece4;
+  border: 8px solid #8b4513;
+  background-image: repeating-linear-gradient(90deg, transparent, transparent 118px, #8b4513 118px, #8b4513 120px);
+}
+
+.unit-type-shelf .storage-grid {
+  background-color: #fdfaf6;
+  border-left: 12px solid #deb887;
+  border-right: 12px solid #deb887;
+  background-image: linear-gradient(#deb887 2px, transparent 2px);
+  background-size: 100% 160px;
 }
 
 .space-header {
@@ -731,10 +781,11 @@ const formatDate = (dateString) => {
   justify-content: space-between;
   align-items: center;
   padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.03);
   font-size: 10px;
   font-weight: bold;
   color: #666;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .space-coordinates {
@@ -755,33 +806,39 @@ const formatDate = (dateString) => {
   padding: 8px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+}
+
+.bottle-visual {
+  margin-bottom: 8px;
+  filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+}
+
+.storage-space:hover .bottle-visual {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .wine-info {
   text-align: center;
+  width: 100%;
 }
 
 .wine-name {
   font-size: 11px;
   font-weight: bold;
-  color: white;
+  color: #333;
   margin-bottom: 2px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.wine-details {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2px;
-}
-
-.wine-date {
-  font-size: 8px;
-  color: rgba(255, 255, 255, 0.8);
+.wine-year {
+  font-size: 10px;
+  color: #666;
+  font-weight: bold;
 }
 
 .space-empty {
@@ -790,12 +847,12 @@ const formatDate = (dateString) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: #ccc;
+  transition: color 0.3s ease;
 }
 
-.empty-text {
-  font-size: 10px;
-  margin-top: 2px;
+.storage-space:hover .space-empty {
+  color: #8b4513;
 }
 
 .wine-selection-section {
