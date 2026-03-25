@@ -1,164 +1,12 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
-
-// Mock data for caves, storage units, and bottle placements
-const mockCaves = [
-    {
-        id: 1,
-        name: 'Cave Principale',
-        description: 'Cave principale du domaine avec température contrôlée',
-        dimensions: {width: 400, height: 300, depth: 200}, // cm
-        temperature: 12,
-        humidity: 70,
-        units: [
-            {
-                id: 1,
-                name: 'Rack Central',
-                type: 'rack',
-                position: {x: 50, y: 50},
-                rotation: 0,
-                dimensions: {width: 120, height: 180, depth: 30},
-                orientation: 'vertical',
-                capacity: 24,
-                spaces: Array.from({length: 24}, (_, i) => ({
-                    id: i + 1,
-                    unitId: 1,
-                    position: {row: Math.floor(i / 6), column: i % 6},
-                    coordinates: {x: (i % 6) * 20, y: Math.floor(i / 6) * 30},
-                    capacity: 1,
-                    currentBottles: []
-                }))
-            },
-            {
-                id: 2,
-                name: 'Étagère Murale',
-                type: 'shelf',
-                position: {x: 200, y: 30},
-                rotation: 0,
-                dimensions: {width: 150, height: 40, depth: 25},
-                orientation: 'horizontal',
-                capacity: 12,
-                spaces: Array.from({length: 12}, (_, i) => ({
-                    id: i + 25,
-                    unitId: 2,
-                    position: {row: Math.floor(i / 6), column: i % 6},
-                    coordinates: {x: (i % 6) * 25, y: Math.floor(i / 6) * 20},
-                    capacity: 1,
-                    currentBottles: []
-                }))
-            }
-        ]
-    },
-    {
-        id: 2,
-        name: 'Cave Secondaire',
-        description: 'Petite cave de stockage supplémentaire',
-        dimensions: {width: 200, height: 150, depth: 100},
-        temperature: 14,
-        humidity: 65,
-        units: [
-            {
-                id: 3,
-                name: 'Armoire Vin',
-                type: 'cabinet',
-                position: {x: 20, y: 20},
-                rotation: 0,
-                dimensions: {width: 80, height: 120, depth: 40},
-                orientation: 'vertical',
-                capacity: 16,
-                spaces: Array.from({length: 16}, (_, i) => ({
-                    id: i + 37,
-                    unitId: 3,
-                    position: {row: Math.floor(i / 4), column: i % 4},
-                    coordinates: {x: (i % 4) * 20, y: Math.floor(i / 4) * 30},
-                    capacity: 1,
-                    currentBottles: []
-                }))
-            }
-        ]
-    }
-]
-
-const mockBottlePlacements = [
-    {
-        id: 1,
-        spaceId: 1,
-        wine: {
-            id: 1,
-            name: 'Château Margaux 2015',
-            type: 'red',
-            cepage: ['Cabernet Sauvignon', 'Merlot'],
-            region: 'Bordeaux',
-            year: 2015
-        },
-        quantity: 1,
-        dateAdded: '2024-01-15',
-        preferredStorageDuration: 10,
-        notes: 'Excellent millésime'
-    },
-    {
-        id: 2,
-        spaceId: 5,
-        wine: {
-            id: 2,
-            name: 'Domaine de la Romanée-Conti 2018',
-            type: 'red',
-            cepage: ['Pinot Noir'],
-            region: 'Bourgogne',
-            year: 2018
-        },
-        quantity: 1,
-        dateAdded: '2024-02-20',
-        preferredStorageDuration: 15,
-        notes: 'Acquisition spéciale'
-    }
-]
-
-// Mock wines database (simplified version of existing wines)
-const mockWines = [
-    {
-        id: 1,
-        name: 'Château Margaux 2015',
-        type: 'red',
-        cepage: ['Cabernet Sauvignon', 'Merlot'],
-        region: 'Bordeaux',
-        year: 2015,
-        aopIgpVdf: 'AOP',
-        elevage: '18 mois en barriques',
-        prixLancement: 450,
-        prixActuel: 520
-    },
-    {
-        id: 2,
-        name: 'Domaine de la Romanée-Conti 2018',
-        type: 'red',
-        cepage: ['Pinot Noir'],
-        region: 'Bourgogne',
-        year: 2018,
-        aopIgpVdf: 'AOP',
-        elevage: '16 mois en fûts',
-        prixLancement: 1200,
-        prixActuel: 1500
-    },
-    {
-        id: 3,
-        name: 'Chablis Premier Cru 2020',
-        type: 'white',
-        cepage: ['Chardonnay'],
-        region: 'Bourgogne',
-        year: 2020,
-        aopIgpVdf: 'AOP',
-        elevage: '8 mois sur lies',
-        prixLancement: 35,
-        prixActuel: 42
-    }
-]
+import {caveApi, wineApi} from '@/services/api.js'
 
 export const useCaveStore = defineStore('cave', () => {
     // Reactive state
-    const caves = ref([...mockCaves])
-    const bottlePlacements = ref([...mockBottlePlacements])
-    const wines = ref([...mockWines])
+    const caves = ref([])
+    const bottlePlacements = ref([])
+    const wines = ref([])
     const isLoading = ref(false)
     const error = ref(null)
 
@@ -178,7 +26,7 @@ export const useCaveStore = defineStore('cave', () => {
         const unitSpaces = selectedUnit.value.spaces || []
         return unitSpaces.filter(space => {
             const placement = bottlePlacements.value.find(p => p.spaceId === space.id)
-            return !placement || placement.quantity < space.capacity
+            return !placement || placement.quantity < (space.capacity || 1)
         })
     })
 
@@ -197,8 +45,9 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            // In real implementation, this would call the API
-            // For now, just return mock data
+            const response = await caveApi.getAll()
+            caves.value = response.data
+            syncBottlePlacements()
             return caves.value
         } catch (err) {
             error.value = err.message
@@ -208,12 +57,27 @@ export const useCaveStore = defineStore('cave', () => {
         }
     }
 
+    const syncBottlePlacements = () => {
+        bottlePlacements.value = caves.value.flatMap(c => 
+            (c.units || []).flatMap(u => 
+                (u.spaces || []).flatMap(s => s.currentBottles || [])
+            )
+        )
+    }
+
     const getCaveById = async (id) => {
         try {
             isLoading.value = true
             error.value = null
-            const cave = caves.value.find(c => c.id === id)
-            if (!cave) throw new Error('Cave not found')
+            const response = await caveApi.getById(id)
+            const cave = response.data
+            const index = caves.value.findIndex(c => c.id === id)
+            if (index !== -1) {
+                caves.value[index] = cave
+            } else {
+                caves.value.push(cave)
+            }
+            syncBottlePlacements()
             return cave
         } catch (err) {
             error.value = err.message
@@ -227,11 +91,8 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            const newCave = {
-                id: Math.max(...caves.value.map(c => c.id)) + 1,
-                ...caveData,
-                units: []
-            }
+            const response = await caveApi.create(caveData)
+            const newCave = response.data
             caves.value.push(newCave)
             return newCave
         } catch (err) {
@@ -246,24 +107,12 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-
+            const response = await caveApi.update(id, caveData)
+            const updated = response.data
             const index = caves.value.findIndex(c => c.id === id)
-            if (index === -1) throw new Error('Cave not found')
-
-            const updated = {
-                ...caves.value[index],
-                ...caveData,
-                dimensions: {
-                    ...caves.value[index].dimensions,
-                    ...(caveData.dimensions ?? {})
-                }
-            }
-
-            caves.value[index] = updated
-
-            // Sync selection (important si ton UI utilise selectedCave)
+            if (index !== -1) caves.value[index] = updated
             if (selectedCave.value?.id === id) selectedCave.value = updated
-
+            syncBottlePlacements()
             return updated
         } catch (err) {
             error.value = err.message
@@ -273,42 +122,18 @@ export const useCaveStore = defineStore('cave', () => {
         }
     }
 
-
     const deleteCave = async (id) => {
         try {
             isLoading.value = true
             error.value = null
-
-            const cave = caves.value.find(c => c.id === id)
-            if (!cave) throw new Error('Cave not found')
-
-            // 1) récupérer tous les spaceIds appartenant à cette cave
-            const spaceIdsToRemove = new Set(
-                (cave.units ?? []).flatMap(u => (u.spaces ?? []).map(s => s.id))
-            )
-
-            // 2) supprimer les bottlePlacements qui pointent vers ces spaces
-            bottlePlacements.value = bottlePlacements.value.filter(p => !spaceIdsToRemove.has(p.spaceId))
-
-            // 3) si tu avais du state UI sur unit/space sélectionnés, on nettoie
+            await caveApi.delete(id)
+            caves.value = caves.value.filter(c => c.id !== id)
             if (selectedCave.value?.id === id) {
                 selectedCave.value = null
                 selectedUnit.value = null
                 selectedSpace.value = null
-            } else {
-                // même si une autre cave est sélectionnée, il peut arriver que selectedUnit/Space
-                // pointe encore vers un objet supprimé => sécurité
-                if (selectedUnit.value && (cave.units ?? []).some(u => u.id === selectedUnit.value.id)) {
-                    selectedUnit.value = null
-                    selectedSpace.value = null
-                }
-                if (selectedSpace.value && spaceIdsToRemove.has(selectedSpace.value.id)) {
-                    selectedSpace.value = null
-                }
             }
-
-            // 4) supprimer la cave
-            caves.value = caves.value.filter(c => c.id !== id)
+            syncBottlePlacements()
         } catch (err) {
             error.value = err.message
             throw err
@@ -317,25 +142,18 @@ export const useCaveStore = defineStore('cave', () => {
         }
     }
 
-
     const addStorageUnit = async (caveId, unitData) => {
         try {
             isLoading.value = true
             error.value = null
+            const response = await caveApi.createUnit(caveId, unitData)
+            const newUnit = response.data
             const cave = caves.value.find(c => c.id === caveId)
-            if (!cave) throw new Error('Cave not found')
-
-            const newUnit = {
-                id: Math.max(...caves.value.flatMap(c => c.units.map(u => u.id))) + 1,
-                ...unitData,
-                rotation: unitData.rotation || 0,
-                spaces: [] // Will be generated based on dimensions
+            if (cave) {
+                if (!cave.units) cave.units = []
+                cave.units.push(newUnit)
+                if (selectedCave.value?.id === caveId) selectedCave.value = {...cave}
             }
-
-            // Generate storage spaces based on unit type and dimensions
-            newUnit.spaces = generateStorageSpaces(newUnit)
-
-            cave.units.push(newUnit)
             return newUnit
         } catch (err) {
             error.value = err.message
@@ -349,14 +167,17 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
+            const response = await caveApi.updateUnit(unitId, unitData)
+            const updatedUnit = response.data
             const cave = caves.value.find(c => c.id === caveId)
-            if (!cave) throw new Error('Cave not found')
-
-            const unitIndex = cave.units.findIndex(u => u.id === unitId)
-            if (unitIndex === -1) throw new Error('Storage unit not found')
-
-            cave.units[unitIndex] = {...cave.units[unitIndex], ...unitData}
-            return cave.units[unitIndex]
+            if (cave && cave.units) {
+                const index = cave.units.findIndex(u => u.id === unitId)
+                if (index !== -1) cave.units[index] = updatedUnit
+                if (selectedCave.value?.id === caveId) selectedCave.value = {...cave}
+                if (selectedUnit.value?.id === unitId) selectedUnit.value = updatedUnit
+            }
+            syncBottlePlacements()
+            return updatedUnit
         } catch (err) {
             error.value = err.message
             throw err
@@ -369,13 +190,17 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
+            await caveApi.deleteUnit(unitId)
             const cave = caves.value.find(c => c.id === caveId)
-            if (!cave) throw new Error('Cave not found')
-
-            const unitIndex = cave.units.findIndex(u => u.id === unitId)
-            if (unitIndex === -1) throw new Error('Storage unit not found')
-
-            cave.units.splice(unitIndex, 1)
+            if (cave && cave.units) {
+                cave.units = cave.units.filter(u => u.id !== unitId)
+                if (selectedCave.value?.id === caveId) selectedCave.value = {...cave}
+            }
+            if (selectedUnit.value?.id === unitId) {
+                selectedUnit.value = null
+                selectedSpace.value = null
+            }
+            syncBottlePlacements()
         } catch (err) {
             error.value = err.message
             throw err
@@ -388,25 +213,9 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-
-            // Check if wine exists, if not add it
-            let wine = wines.value.find(w => w.id === placementData.wine.id)
-            if (!wine) {
-                wine = {
-                    id: Math.max(...wines.value.map(w => w.id)) + 1,
-                    ...placementData.wine
-                }
-                wines.value.push(wine)
-            }
-
-            const newPlacement = {
-                id: Math.max(...bottlePlacements.value.map(p => p.id)) + 1,
-                ...placementData,
-                wine: wine,
-                dateAdded: new Date().toISOString().split('T')[0]
-            }
-
-            bottlePlacements.value.push(newPlacement)
+            const response = await caveApi.addPlacement(placementData)
+            const newPlacement = response.data
+            syncBottlePlacements()
             return newPlacement
         } catch (err) {
             error.value = err.message
@@ -420,11 +229,10 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            const index = bottlePlacements.value.findIndex(p => p.id === id)
-            if (index === -1) throw new Error('Bottle placement not found')
-
-            bottlePlacements.value[index] = {...bottlePlacements.value[index], ...placementData}
-            return bottlePlacements.value[index]
+            const response = await caveApi.updatePlacement(id, placementData)
+            const updated = response.data
+            syncBottlePlacements()
+            return updated
         } catch (err) {
             error.value = err.message
             throw err
@@ -437,10 +245,8 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            const index = bottlePlacements.value.findIndex(p => p.id === id)
-            if (index === -1) throw new Error('Bottle placement not found')
-
-            bottlePlacements.value.splice(index, 1)
+            await caveApi.deletePlacement(id)
+            syncBottlePlacements()
         } catch (err) {
             error.value = err.message
             throw err
@@ -453,7 +259,8 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            // In real implementation, this would call the wine API
+            const response = await wineApi.getAll()
+            wines.value = response.data
             return wines.value
         } catch (err) {
             error.value = err.message
@@ -467,12 +274,10 @@ export const useCaveStore = defineStore('cave', () => {
         try {
             isLoading.value = true
             error.value = null
-            const results = wines.value.filter(wine =>
+            return wines.value.filter(wine =>
                 wine.name.toLowerCase().includes(query.toLowerCase()) ||
-                wine.region.toLowerCase().includes(query.toLowerCase()) ||
-                wine.cepage.some(c => c.toLowerCase().includes(query.toLowerCase()))
+                (wine.region && wine.region.toLowerCase().includes(query.toLowerCase()))
             )
-            return results
         } catch (err) {
             error.value = err.message
             throw err
@@ -481,33 +286,6 @@ export const useCaveStore = defineStore('cave', () => {
         }
     }
 
-    // Helper function to generate storage spaces based on unit dimensions
-    const generateStorageSpaces = (unit) => {
-        const spaces = []
-        let spaceId = Math.max(...caves.value.flatMap(c => c.units.flatMap(u => u.spaces?.map(s => s.id) || []))) + 1
-
-        // Simple grid generation based on unit type
-        const rows = unit.type === 'shelf' ? 2 : 6
-        const cols = unit.type === 'shelf' ? 6 : 4
-
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                spaces.push({
-                    id: spaceId++,
-                    unitId: unit.id,
-                    position: {row, column: col},
-                    coordinates: {
-                        x: col * (unit.dimensions.width / cols),
-                        y: row * (unit.dimensions.height / rows)
-                    },
-                    capacity: 1,
-                    currentBottles: []
-                })
-            }
-        }
-
-        return spaces
-    }
 
     // UI state management
     const selectCave = (cave) => {

@@ -87,4 +87,19 @@ export const wineApi = {
   delete: (id) => api.delete(`/wines/${id}`),
 };
 
+// Cave Management API endpoints
+export const caveApi = {
+  getAll: () => api.get('/caves'),
+  getById: (id) => api.get(`/caves/${id}`),
+  create: (caveData) => api.post('/caves', caveData),
+  update: (id, caveData) => api.put(`/caves/${id}`, caveData),
+  delete: (id) => api.delete(`/caves/${id}`),
+  createUnit: (caveId, unitData) => api.post(`/caves/${caveId}/units`, unitData),
+  updateUnit: (unitId, unitData) => api.put(`/caves/units/${unitId}`, unitData),
+  deleteUnit: (unitId) => api.delete(`/caves/units/${unitId}`),
+  addPlacement: (placementData) => api.post('/caves/placements', placementData),
+  updatePlacement: (id, placementData) => api.put(`/caves/placements/${id}`, placementData),
+  deletePlacement: (id) => api.delete(`/caves/placements/${id}`),
+};
+
 export default api;

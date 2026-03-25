@@ -178,3 +178,89 @@ CREATE TRIGGER update_tasting_field_updated_at BEFORE UPDATE ON tasting_field FO
 CREATE TRIGGER update_tasting_field_option_updated_at BEFORE UPDATE ON tasting_field_option FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_aroma_note_updated_at BEFORE UPDATE ON aroma_note FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_tasting_updated_at BEFORE UPDATE ON tasting FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ===========================================
+-- CAVE MANAGEMENT TABLES
+-- ===========================================
+
+CREATE TABLE IF NOT EXISTS cave (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    width DOUBLE PRECISION,
+    height DOUBLE PRECISION,
+    depth DOUBLE PRECISION,
+    temperature DOUBLE PRECISION,
+    humidity DOUBLE PRECISION,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS storage_unit (
+    id BIGSERIAL PRIMARY KEY,
+    cave_id BIGINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    pos_x DOUBLE PRECISION,
+    pos_y DOUBLE PRECISION,
+    width DOUBLE PRECISION,
+    height DOUBLE PRECISION,
+    depth DOUBLE PRECISION,
+    orientation VARCHAR(20),
+    wall VARCHAR(20),
+    elevation DOUBLE PRECISION,
+    capacity INTEGER,
+    rotation DOUBLE PRECISION,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cave_id) REFERENCES cave(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS space (
+    id BIGSERIAL PRIMARY KEY,
+    unit_id BIGINT NOT NULL,
+    pos_row INTEGER,
+    pos_column INTEGER,
+    coord_x DOUBLE PRECISION,
+    coord_y DOUBLE PRECISION,
+    capacity INTEGER,
+    FOREIGN KEY (unit_id) REFERENCES storage_unit(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS wine (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    wine_type_id BIGINT,
+    region VARCHAR(255),
+    wine_year INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (wine_type_id) REFERENCES wine_type(id)
+);
+
+CREATE TABLE IF NOT EXISTS wine_cepages (
+    wine_id BIGINT NOT NULL,
+    cepage_id BIGINT NOT NULL,
+    PRIMARY KEY (wine_id, cepage_id),
+    FOREIGN KEY (wine_id) REFERENCES wine(id) ON DELETE CASCADE,
+    FOREIGN KEY (cepage_id) REFERENCES cepage(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS bottle_placement (
+    id BIGSERIAL PRIMARY KEY,
+    space_id BIGINT NOT NULL,
+    wine_id BIGINT NOT NULL,
+    quantity INTEGER,
+    date_added DATE,
+    preferred_storage_duration INTEGER,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (space_id) REFERENCES space(id) ON DELETE CASCADE,
+    FOREIGN KEY (wine_id) REFERENCES wine(id) ON DELETE CASCADE
+);
+
+CREATE TRIGGER update_cave_updated_at BEFORE UPDATE ON cave FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_storage_unit_updated_at BEFORE UPDATE ON storage_unit FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_wine_updated_at BEFORE UPDATE ON wine FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_bottle_placement_updated_at BEFORE UPDATE ON bottle_placement FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

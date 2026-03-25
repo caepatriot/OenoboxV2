@@ -112,15 +112,15 @@ const selectedUnit = computed(() => caveStore.selectedUnit);
 
 const wallHeightCm = computed(() => {
   const c = selectedCave.value;
-  return Number(c?.dimensions?.depth ?? 200);
+  return Number(c?.dimensions?.height ?? 300);
 });
 
 const wallLengthCm = computed(() => {
   const c = selectedCave.value;
   if (!c) return 0;
   const w = Number(c.dimensions.width ?? 0);
-  const h = Number(c.dimensions.height ?? 0);
-  return selectedWall.value === "north" || selectedWall.value === "south" ? w : h;
+  const d = Number(c.dimensions.depth ?? 0);
+  return selectedWall.value === "north" || selectedWall.value === "south" ? w : d;
 });
 
 const unitsOnSelectedWall = computed(() => {
@@ -147,9 +147,9 @@ const computeTopFit = () => {
   const availH = Math.max(1, el.clientHeight - pad * 2);
 
   const caveW = Math.max(1, Number(c.dimensions.width ?? 1));
-  const caveH = Math.max(1, Number(c.dimensions.height ?? 1));
+  const caveD = Math.max(1, Number(c.dimensions.depth ?? 1));
 
-  const fit = Math.min(availW / caveW, availH / caveH);
+  const fit = Math.min(availW / caveW, availH / caveD);
   topFitScale.value = Number.isFinite(fit) && fit > 0 ? fit : 1;
 };
 
@@ -445,7 +445,7 @@ const onMouseMove = (event) => {
   const newY = (event.clientY - canvasRect.top - dragOffset.value.y) / scale.value;
 
   const maxX = selectedCave.value.dimensions.width - draggingUnit.value.dimensions.width;
-  const maxY = selectedCave.value.dimensions.height - draggingUnit.value.dimensions.height;
+  const maxY = selectedCave.value.dimensions.depth - draggingUnit.value.dimensions.height;
 
   draggingUnit.value.position.x = Math.max(0, Math.min(maxX, newX));
   draggingUnit.value.position.y = Math.max(0, Math.min(maxY, newY));
@@ -547,10 +547,10 @@ const onResizeMove = (event) => {
   newH = Math.max(MIN_UNIT_H, newH);
 
   const caveW = selectedCave.value.dimensions.width;
-  const caveH = selectedCave.value.dimensions.height;
+  const caveD = selectedCave.value.dimensions.depth;
 
   newX = Math.max(0, Math.min(caveW - newW, newX));
-  newY = Math.max(0, Math.min(caveH - newH, newY));
+  newY = Math.max(0, Math.min(caveD - newH, newY));
 
   resizingUnit.value.position.x = newX;
   resizingUnit.value.position.y = newY;

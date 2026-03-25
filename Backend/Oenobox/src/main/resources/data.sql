@@ -382,3 +382,41 @@ SELECT setval('tasting_step_id_seq', (SELECT MAX(id) FROM tasting_step));
 SELECT setval('tasting_field_id_seq', (SELECT MAX(id) FROM tasting_field));
 SELECT setval('tasting_field_option_id_seq', (SELECT MAX(id) FROM tasting_field_option));
 SELECT setval('aroma_note_id_seq', (SELECT MAX(id) FROM aroma_note));
+
+-- ===========================================
+-- CAVE DATA
+-- ===========================================
+
+INSERT INTO cave (id, name, description, width, height, depth, temperature, humidity) VALUES
+(1, 'Cave Principale', 'Cave principale du domaine avec température contrôlée', 400, 300, 200, 12, 70),
+(2, 'Cave Secondaire', 'Petite cave de stockage supplémentaire', 200, 150, 100, 14, 65);
+
+INSERT INTO storage_unit (id, cave_id, name, type, pos_x, pos_y, width, height, depth, orientation, wall, elevation, capacity, rotation) VALUES
+(1, 1, 'Rack Central', 'rack', 50, 50, 120, 180, 30, 'vertical', 'north', 0, 24, 0),
+(2, 1, 'Étagère Murale', 'shelf', 200, 30, 150, 40, 25, 'horizontal', 'north', 150, 12, 0),
+(3, 2, 'Armoire Vin', 'cabinet', 20, 20, 80, 120, 40, 'vertical', 'north', 0, 16, 0);
+
+-- Some spaces for the mock placements
+INSERT INTO space (id, unit_id, pos_row, pos_column, coord_x, coord_y, capacity) VALUES
+(1, 1, 0, 0, 0, 0, 1),
+(5, 1, 0, 4, 80, 0, 1);
+
+INSERT INTO wine (id, name, wine_type_id, region, wine_year) VALUES
+(1, 'Château Margaux 2015', 1, 'Bordeaux', 2015),
+(2, 'Domaine de la Romanée-Conti 2018', 1, 'Bourgogne', 2018);
+
+INSERT INTO wine_cepages (wine_id, cepage_id) VALUES
+(1, 1), -- CABERNET-SAUVIGNON
+(1, 7), -- MERLOT
+(2, 9); -- PINOT NOIR
+
+INSERT INTO bottle_placement (id, space_id, wine_id, quantity, date_added, preferred_storage_duration, notes) VALUES
+(1, 1, 1, 1, '2024-01-15', 10, 'Excellent millésime'),
+(2, 5, 2, 1, '2024-02-20', 15, 'Une pièce de collection');
+
+-- Reset sequences for new tables
+SELECT setval('cave_id_seq', (SELECT MAX(id) FROM cave));
+SELECT setval('storage_unit_id_seq', (SELECT MAX(id) FROM storage_unit));
+SELECT setval('space_id_seq', (SELECT MAX(id) FROM space));
+SELECT setval('wine_id_seq', (SELECT MAX(id) FROM wine));
+SELECT setval('bottle_placement_id_seq', (SELECT MAX(id) FROM bottle_placement));
