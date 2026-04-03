@@ -1,38 +1,516 @@
 @import './base.css';
 
-body {
-    background: #e8e8e8;
-    margin: 0 auto;
-    width: 100%;
+:root {
+  --oeno-bg: radial-gradient(circle at top, rgba(255, 245, 234, 0.95), rgba(248, 238, 228, 0.94) 38%, rgba(244, 233, 228, 0.96) 100%);
+  --oeno-card: rgba(255, 255, 255, 0.72);
+  --oeno-card-border: rgba(171, 118, 96, 0.16);
+  --oeno-rose: #6f2533;
+  --oeno-rose-deep: #431723;
+  --oeno-amber: #c6924f;
+  --oeno-ink: #3c1f20;
+  --oeno-soft-text: rgba(60, 31, 32, 0.68);
+  --oeno-shadow: 0 24px 60px rgba(64, 24, 31, 0.10);
 }
 
+html,
+body,
 #app {
-
+  min-height: 100%;
 }
 
-/*a,*/
-/*.green {*/
-/*  text-decoration: none;*/
-/*  color: hsla(160, 100%, 37%, 1);*/
-/*  transition: 0.4s;*/
-/*  padding: 3px;*/
-/*}*/
+body {
+  margin: 0;
+  width: 100%;
+  background: var(--oeno-bg);
+  color: var(--oeno-ink);
+}
 
-/*@media (hover: hover) {*/
-/*  a:hover {*/
-/*    background-color: hsla(160, 100%, 37%, 0.2);*/
-/*  }*/
-/*}*/
+#app,
+.v-application,
+.v-application__wrap {
+  min-height: 100vh;
+  background: transparent !important;
+}
 
-/*@media (min-width: 1024px) {*/
-/*  body {*/
-/*    display: flex;*/
-/*    place-items: center;*/
-/*  }*/
+body,
+button,
+input,
+textarea,
+select {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
 
-/*  #app {*/
-/*    display: grid;*/
-/*    grid-template-columns: 1fr 1fr;*/
-/*    padding: 0 2rem;*/
-/*  }*/
-/*}*/
+.oeno-shell {
+  position: relative;
+  color: var(--oeno-ink);
+}
+
+.oeno-app-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(193, 108, 92, 0.12), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(192, 146, 79, 0.12), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.12));
+  z-index: 0;
+}
+
+.oeno-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 18px 18px 0;
+}
+
+.oeno-topbar__inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  border: 1px solid rgba(171, 118, 96, 0.14);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 36px rgba(80, 30, 34, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.oeno-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.oeno-brand__mark,
+.oeno-icon-badge,
+.oeno-empty-icon,
+.oeno-icon-link {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oeno-brand__mark,
+.oeno-icon-badge {
+  background: linear-gradient(135deg, #7a2838, #3f1520);
+  color: #f8e8cb;
+  box-shadow: 0 12px 24px rgba(65, 21, 32, 0.22);
+}
+
+.oeno-icon-badge--soft,
+.oeno-empty-icon {
+  background: rgba(122, 40, 56, 0.08);
+  color: #7a2838;
+}
+
+.oeno-brand__name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.oeno-brand__meta,
+.oeno-muted,
+.oeno-card-label {
+  color: var(--oeno-soft-text);
+}
+
+.oeno-brand__meta,
+.oeno-card-label,
+.oeno-eyebrow {
+  font-size: 0.85rem;
+}
+
+.oeno-main {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 22px 18px 124px;
+}
+
+.oeno-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.oeno-page__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.oeno-eyebrow {
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: rgba(111, 37, 51, 0.74);
+}
+
+.oeno-title,
+.oeno-hero__title,
+.oeno-card-title,
+.oeno-metric,
+.oeno-soft-value,
+.oeno-hero-metric {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.oeno-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--oeno-rose-deep);
+}
+
+.oeno-subtitle {
+  margin-top: 10px;
+  max-width: 780px;
+  color: var(--oeno-soft-text);
+  line-height: 1.65;
+}
+
+.oeno-card,
+.oeno-hero,
+.oeno-glass-panel {
+  border: 1px solid var(--oeno-card-border) !important;
+  background: var(--oeno-card) !important;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--oeno-shadow) !important;
+}
+
+.oeno-card,
+.oeno-hero {
+  border-radius: 30px !important;
+}
+
+.oeno-card--dark,
+.oeno-hero {
+  background: linear-gradient(135deg, rgba(111, 37, 51, 0.96), rgba(62, 21, 32, 0.94)) !important;
+  border-color: rgba(255, 232, 203, 0.12) !important;
+}
+
+.oeno-hero {
+  padding: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.75fr);
+  gap: 22px;
+  color: #f9edd7;
+}
+
+.oeno-hero--compact {
+  grid-template-columns: 1fr minmax(280px, 420px);
+  background: rgba(255, 255, 255, 0.5) !important;
+  color: var(--oeno-ink);
+}
+
+.oeno-hero--compact .oeno-card-label,
+.oeno-hero--compact .oeno-muted,
+.oeno-hero--compact .oeno-hero__text,
+.oeno-hero--compact .oeno-eyebrow {
+  color: var(--oeno-soft-text);
+}
+
+.oeno-hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oeno-hero__title {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.02;
+  font-weight: 700;
+}
+
+.oeno-hero__text,
+.oeno-muted-light {
+  color: rgba(248, 232, 203, 0.76);
+  line-height: 1.7;
+}
+
+.oeno-hero__aside {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+}
+
+.oeno-glass-panel {
+  width: 100%;
+  border-radius: 24px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.oeno-hero-badge,
+.oeno-pill-dark,
+.oeno-link-chip,
+.oeno-link-chip--light {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.oeno-link-chip {
+  color: var(--oeno-rose-deep);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(111, 37, 51, 0.10);
+}
+
+.oeno-link-chip--light,
+.oeno-pill-dark,
+.oeno-hero-badge {
+  color: #f9edd7;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 232, 203, 0.14);
+}
+
+.oeno-hero-metric,
+.oeno-metric,
+.oeno-soft-value {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.oeno-card-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--oeno-rose-deep);
+}
+
+.oeno-card-title--light,
+.oeno-card-label--light,
+.oeno-strong--light {
+  color: #f9edd7;
+}
+
+.oeno-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.oeno-card-grid--wide {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.oeno-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.oeno-stack,
+.oeno-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oeno-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(111, 37, 51, 0.08);
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.oeno-list-item--soft {
+  background: rgba(122, 40, 56, 0.04);
+}
+
+.oeno-list-item--dark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 232, 203, 0.10);
+}
+
+.oeno-strong {
+  font-weight: 700;
+  color: var(--oeno-rose-deep);
+}
+
+.oeno-mini-stats,
+.oeno-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+}
+
+.oeno-soft-tile,
+.oeno-action-card {
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(122, 40, 56, 0.06);
+  border: 1px solid rgba(111, 37, 51, 0.08);
+}
+
+.oeno-action-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  text-decoration: none;
+  color: var(--oeno-rose-deep);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.oeno-action-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(111, 37, 51, 0.18);
+}
+
+.oeno-search-box {
+  display: flex;
+  align-items: center;
+}
+
+.oeno-search-field .v-field {
+  border-radius: 22px !important;
+  background: rgba(255, 255, 255, 0.68) !important;
+  box-shadow: none !important;
+}
+
+.oeno-btn {
+  min-height: 44px;
+  border-radius: 999px !important;
+  text-transform: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  padding-inline: 18px !important;
+}
+
+.oeno-btn--primary {
+  color: #f9edd7 !important;
+  background: linear-gradient(135deg, #7a2838, #3f1520) !important;
+  box-shadow: 0 14px 22px rgba(65, 21, 32, 0.18);
+}
+
+.oeno-btn--secondary {
+  color: var(--oeno-rose-deep) !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+}
+
+.oeno-chip {
+  background: rgba(122, 40, 56, 0.08) !important;
+  color: var(--oeno-rose-deep) !important;
+  font-weight: 700;
+}
+
+.oeno-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: min(260px, 100%);
+}
+
+.oeno-cellar-card .v-progress-linear {
+  border-radius: 999px;
+}
+
+.oeno-icon-link {
+  text-decoration: none;
+  color: var(--oeno-rose-deep);
+  background: rgba(122, 40, 56, 0.06);
+  border: 1px solid rgba(111, 37, 51, 0.10);
+}
+
+.oeno-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  padding: 0 18px 18px;
+}
+
+.oeno-bottom-nav__inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(171, 118, 96, 0.14);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 -8px 30px rgba(65, 21, 32, 0.08);
+}
+
+.oeno-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 20px;
+  color: var(--oeno-soft-text);
+  text-decoration: none;
+  font-size: 0.76rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.oeno-nav-item.is-active {
+  background: rgba(122, 40, 56, 0.08);
+  color: var(--oeno-rose-deep);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 960px) {
+  .oeno-hero,
+  .oeno-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .oeno-hero__aside {
+    justify-content: stretch;
+  }
+}
+
+@media (max-width: 720px) {
+  .oeno-topbar,
+  .oeno-main,
+  .oeno-bottom-nav {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .oeno-topbar__inner {
+    padding: 12px 14px;
+    border-radius: 22px;
+  }
+
+  .oeno-hero,
+  .oeno-card {
+    border-radius: 24px !important;
+  }
+
+  .oeno-bottom-nav__inner {
+    border-radius: 24px;
+  }
+
+  .oeno-nav-item span {
+    font-size: 0.68rem;
+  }
+}
