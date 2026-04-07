@@ -1,0 +1,933 @@
+﻿<script setup>
+import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { useCaveStore } from '@/modules/cellar/store/cellar.store.js'
+
+const caveStore = useCaveStore()
+
+// UI state
+const showAddBottleDialog = ref(false)
+const showNewWineDialog = ref(false)
+const searchQuery = ref('')
+const selectedSpaceForPlacement = ref(null)
+
+// Form data for bottle placement
+const bottlePlacementData = reactive({
+  wine: null,
+  quantity: 1,
+  preferredStorageDuration: 5,
+  notes: ''
+})
+
+// Form data for new wine
+const newWineData = reactive({
+  name: '',
+  type: 'red',
+  cepage: [],
+  region: '',
+  year: new Date().getFullYear(),
+  aopIgpVdf: '',
+  prixLancement: 0
+})
+
+// Wine type options
+const wineTypes = [
+  { value: 'red', title: 'Rouge' },
+  { value: 'white', title: 'Blanc' },
+  { value: 'rose', title: 'RosÃ©' }
+]
+
+// Load data on mount
+onMounted(async () => {
+  try {
+    await caveStore.loadCaves()
+    await caveStore.getWines()
+  } catch (error) {
+    console.error('Failed to load data:', error)
+  }
+})
+
+// Computed properties
+const selectedCave = computed(() => caveStore.selectedCave)
+const selectedUnit = computed(() => caveStore.selectedUnit)
+const availableSpaces = computed(() => caveStore.availableSpaces)
+const occupiedSpaces = computed(() => caveStore.occupiedSpaces)
+
+const filteredWines = computed(() => {
+  if (!searchQuery.value) return caveStore.wines
+  return caveStore.wines.filter(wine =>
+    wine.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    wine.region.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    wine.cepage.some(c => c.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  )
+})
+
+const totalBottlesInCave = computed(() => {
+  if (!selectedCave.value) return 0
+  return selectedCave.value.units.reduce((total, unit) => {
+    return total + unit.spaces.filter(space =>
+      caveStore.bottlePlacements.some(p => p.spaceId === space.id)
+    ).length
+  }, 0)
+})
+
+// Watch for cave selection to auto-select first unit
+watch(selectedCave, (newCave) => {
+  if (newCave && newCave.units.length > 0) {
+    caveStore.selectUnit(newCave.units[0])
+  }
+})
+
+// Methods
+const selectCave = (cave) => {
+  caveStore.selectCave(cave)
+}
+
+const selectUnit = (unit) => {
+  caveStore.selectUnit(unit)
+}
+
+const selectSpaceForPlacement = (space) => {
+  selectedSpaceForPlacement.value = space
+  bottlePlacementData.wine = null
+  bottlePlacementData.quantity = 1
+  bottlePlacementData.preferredStorageDuration = 5
+  bottlePlacementData.notes = ''
+  showAddBottleDialog.value = true
+}
+
+const addBottlePlacement = async () => {
+  if (!selectedSpaceForPlacement.value || !bottlePlacementData.wine) return
+
+  try {
+    await caveStore.addBottlePlacement({
+      spaceId: selectedSpaceForPlacement.value.id,
+      wine: bottlePlacementData.wine,
+      quantity: bottlePlacementData.quantity,
+      preferredStorageDuration: bottlePlacementData.preferredStorageDuration,
+      notes: bottlePlacementData.notes
+    })
+
+    showAddBottleDialog.value = false
+    selectedSpaceForPlacement.value = null
+  } catch (error) {
+    console.error('Failed to add bottle placement:', error)
+    alert('Erreur lors de l\'ajout de la bouteille')
+  }
+}
+
+const removeBottlePlacement = async (space) => {
+  const placement = caveStore.bottlePlacements.find(p => p.spaceId === space.id)
+  if (!placement) return
+
+  if (confirm('ÃŠtes-vous sÃ»r de vouloir retirer cette bouteille ?')) {
+    try {
+      await caveStore.removeBottlePlacement(placement.id)
+    } catch (error) {
+      console.error('Failed to remove bottle placement:', error)
+      alert('Erreur lors de la suppression de la bouteille')
+    }
+  }
+}
+
+const createNewWine = async () => {
+  // Add the new wine to the store
+  const newWine = {
+    id: Math.max(...caveStore.wines.map(w => w.id)) + 1,
+    ...newWineData
+  }
+
+  caveStore.wines.push(newWine)
+  bottlePlacementData.wine = newWine
+
+  showNewWineDialog.value = false
+  resetNewWineData()
+}
+
+const selectWine = (wine) => {
+  bottlePlacementData.wine = wine
+}
+
+const resetNewWineData = () => {
+  Object.assign(newWineData, {
+    name: '',
+    type: 'red',
+    cepage: [],
+    region: '',
+    year: new Date().getFullYear(),
+    aopIgpVdf: '',
+    prixLancement: 0
+  })
+}
+
+// Helper methods
+const getWineDisplayName = (wine) => {
+  return `${wine.name} ${wine.year} - ${wine.region}`
+}
+
+const getSpaceStatus = (space) => {
+  const placement = caveStore.bottlePlacements.find(p => p.spaceId === space.id)
+  return placement ? 'occupied' : 'available'
+}
+
+const getSpaceContent = (space) => {
+  const placement = caveStore.bottlePlacements.find(p => p.spaceId === space.id)
+  if (placement) {
+    return {
+      wine: placement.wine,
+      quantity: placement.quantity,
+      dateAdded: placement.dateAdded
+    }
+  }
+  return null
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('fr-FR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+// UI Helpers
+const getUnitIcon = (type) => {
+  const icons = {
+    rack: 'mdi-package-variant-closed',
+    shelf: 'mdi-shelf',
+    cabinet: 'mdi-archive',
+    'wall-mounted': 'mdi-wall',
+    'floor-standing': 'mdi-floor-plan'
+  }
+  return icons[type] || 'mdi-package-variant'
+}
+
+const getUnitColor = (type) => {
+  const colors = {
+    rack: 'brown',
+    shelf: 'orange',
+    cabinet: 'blue',
+    'wall-mounted': 'green',
+    'floor-standing': 'purple'
+  }
+  return colors[type] || 'grey'
+}
+</script>
+
+<template>
+  <div class="cave-placement-background">
+    <v-container fluid class="cave-placement-container">
+      <!-- Header -->
+      <v-row class="mb-4">
+        <v-col>
+          <v-card class="header-card" elevation="4">
+            <v-card-title class="d-flex align-center justify-space-between">
+              <div class="d-flex align-center">
+                <v-icon class="mr-3" size="32" color="green">mdi-bottle-wine</v-icon>
+                <div>
+                  <h1 class="text-h4 mb-1">Placement des Bouteilles</h1>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    GÃ©rez le stockage de vos bouteilles dans les espaces disponibles
+                  </p>
+                </div>
+              </div>
+              <div class="d-flex align-center">
+                <v-chip color="green" variant="flat" class="mr-3">
+                  <v-icon class="mr-1">mdi-bottle-wine</v-icon>
+                  {{ caveStore.totalBottles }} bouteilles
+                </v-chip>
+              </div>
+            </v-card-title>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <!-- Cave/Unit Selection Sidebar -->
+        <v-col cols="12" md="3">
+          <!-- Cave Selection -->
+          <v-card class="selection-card" elevation="4">
+            <v-card-title class="selection-title">
+              <v-icon class="mr-2">mdi-storefront</v-icon>
+              SÃ©lectionner une cave
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-list class="cave-list">
+                <v-list-item
+                  v-for="cave in caveStore.caves"
+                  :key="cave.id"
+                  @click="selectCave(cave)"
+                  :class="{ 'list-item-active': selectedCave?.id === cave.id }"
+                  class="list-item"
+                >
+                  <v-icon class="mr-3" color="brown">mdi-home</v-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="item-name">{{ cave.name }}</v-list-item-title>
+                    <v-list-item-subtitle class="item-details">
+                      {{ totalBottlesInCave }}/{{ cave.units.reduce((total, unit) => total + unit.capacity, 0) }} bouteilles
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+
+          <!-- Unit Selection -->
+          <v-card v-if="selectedCave" class="selection-card mt-4" elevation="4">
+            <v-card-title class="selection-title">
+              <v-icon class="mr-2">mdi-package-variant-closed</v-icon>
+              UnitÃ©s de stockage
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-list class="unit-list">
+                <v-list-item
+                  v-for="unit in selectedCave.units"
+                  :key="unit.id"
+                  @click="selectUnit(unit)"
+                  :class="{ 'list-item-active': selectedUnit?.id === unit.id }"
+                  class="list-item"
+                >
+                  <v-icon class="mr-3" :color="getUnitColor(unit.type)">mdi-package-variant-closed</v-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="item-name">{{ unit.name }}</v-list-item-title>
+                    <v-list-item-subtitle class="item-details">
+                      {{ occupiedSpaces.length }}/{{ unit.capacity }} emplacements
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-col>
+
+        <!-- Main Content Area -->
+        <v-col cols="12" md="9">
+          <!-- Unit Detail View -->
+          <div v-if="selectedUnit">
+            <v-card class="unit-detail-card" elevation="4">
+              <v-card-title class="unit-detail-title">
+                <v-icon class="mr-3" :icon="getUnitIcon(selectedUnit.type)" :color="getUnitColor(selectedUnit.type)"></v-icon>
+                <div>
+                  <h2 class="text-h5 mb-1">{{ selectedUnit.name }}</h2>
+                  <p class="text-body-2 text-medium-emphasis mb-0">
+                    {{ selectedUnit.type }} â€¢ {{ occupiedSpaces.length }}/{{ selectedUnit.capacity }} emplacements occupÃ©s
+                  </p>
+                </div>
+              </v-card-title>
+
+              <v-card-text>
+                <!-- Unit Statistics -->
+                <v-row class="mb-4">
+                  <v-col cols="12" sm="4">
+                    <v-card variant="outlined" class="stat-card">
+                      <v-card-text class="text-center">
+                        <v-icon size="32" color="green" class="mb-2">mdi-bottle-wine</v-icon>
+                        <div class="text-h6">{{ occupiedSpaces.length }}</div>
+                        <div class="text-caption">Bouteilles stockÃ©es</div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <v-card variant="outlined" class="stat-card">
+                      <v-card-text class="text-center">
+                        <v-icon size="32" color="blue" class="mb-2">mdi-package-variant-closed</v-icon>
+                        <div class="text-h6">{{ availableSpaces.length }}</div>
+                        <div class="text-caption">Emplacements libres</div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" sm="4">
+                    <v-card variant="outlined" class="stat-card">
+                      <v-card-text class="text-center">
+                        <v-icon size="32" color="orange" class="mb-2">mdi-percent</v-icon>
+                        <div class="text-h6">{{ Math.round((occupiedSpaces.length / selectedUnit.capacity) * 100) }}%</div>
+                        <div class="text-caption">Taux d'occupation</div>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+
+                <!-- Storage Grid -->
+                <div class="storage-grid-container" :class="`unit-type-${selectedUnit.type}`">
+                  <div class="d-flex align-center justify-space-between mb-3">
+                    <h3 class="text-h6 mb-0">Emplacements de stockage</h3>
+                    <div class="d-flex align-center">
+                       <v-chip size="small" variant="text" class="mr-2">
+                         <v-icon start size="14">mdi-information-outline</v-icon>
+                         Cliquez sur un emplacement libre pour ajouter une bouteille
+                       </v-chip>
+                    </div>
+                  </div>
+
+                  <div class="storage-grid">
+                    <div
+                      v-for="space in selectedUnit.spaces"
+                      :key="space.id"
+                      class="storage-space"
+                      :class="[
+                        `space-${getSpaceStatus(space)}`,
+                        { 'has-wine': getSpaceStatus(space) === 'occupied' }
+                      ]"
+                      @click="getSpaceStatus(space) === 'available' ? selectSpaceForPlacement(space) : null"
+                    >
+                      <div class="space-header">
+                        <span class="space-coordinates">{{ space.position.row + 1 }}-{{ space.position.column + 1 }}</span>
+                        <v-btn
+                          v-if="getSpaceStatus(space) === 'occupied'"
+                          icon
+                          size="x-small"
+                          variant="tonal"
+                          color="error"
+                          @click.stop="removeBottlePlacement(space)"
+                          class="remove-btn"
+                        >
+                          <v-icon size="10">mdi-close</v-icon>
+                        </v-btn>
+                      </div>
+
+                      <div v-if="getSpaceStatus(space) === 'occupied'" class="space-content">
+                        <div class="bottle-visual">
+                          <v-icon :color="getSpaceContent(space).wine.type === 'red' ? '#800000' : getSpaceContent(space).wine.type === 'white' ? '#f0e68c' : '#ffc0cb'" size="48">
+                            mdi-bottle-wine
+                          </v-icon>
+                        </div>
+                        <div class="wine-info">
+                          <div class="wine-name">{{ getSpaceContent(space).wine.name }}</div>
+                          <div class="wine-year">{{ getSpaceContent(space).wine.year }}</div>
+                        </div>
+                      </div>
+
+                      <div v-else class="space-empty">
+                        <v-icon color="grey-lighten-1" size="32">mdi-plus</v-icon>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+
+          <!-- No Unit Selected -->
+          <div v-else-if="selectedCave" class="no-selection">
+            <v-card class="no-selection-card" elevation="4">
+              <v-card-text class="text-center pa-8">
+                <v-icon size="64" color="grey" class="mb-4">mdi-package-variant-closed</v-icon>
+                <h3 class="text-h5 mb-2">Aucune unitÃ© sÃ©lectionnÃ©e</h3>
+                <p class="text-body-1 text-medium-emphasis mb-4">
+                  SÃ©lectionnez une unitÃ© de stockage pour voir les emplacements disponibles.
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+
+          <!-- No Cave Selected -->
+          <div v-else class="no-selection">
+            <v-card class="no-selection-card" elevation="4">
+              <v-card-text class="text-center pa-8">
+                <v-icon size="64" color="grey" class="mb-4">mdi-storefront-outline</v-icon>
+                <h3 class="text-h5 mb-2">Aucune cave sÃ©lectionnÃ©e</h3>
+                <p class="text-body-1 text-medium-emphasis mb-4">
+                  SÃ©lectionnez une cave pour commencer le placement des bouteilles.
+                </p>
+              </v-card-text>
+            </v-card>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <!-- Add Bottle Dialog -->
+    <v-dialog v-model="showAddBottleDialog" max-width="800px">
+      <v-card>
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-3" color="green">mdi-bottle-wine</v-icon>
+          Ajouter une bouteille
+          <v-chip size="small" variant="outlined" color="blue" class="ml-3">
+            Emplacement {{ selectedSpaceForPlacement?.position.row + 1 }}-{{ selectedSpaceForPlacement?.position.column + 1 }}
+          </v-chip>
+        </v-card-title>
+        <v-card-text>
+          <!-- Wine Selection -->
+          <div class="wine-selection-section">
+            <h4 class="text-subtitle-1 mb-3">SÃ©lectionner un vin</h4>
+
+            <!-- Search -->
+            <v-text-field
+              v-model="searchQuery"
+              label="Rechercher un vin..."
+              variant="outlined"
+              prepend-inner-icon="mdi-magnify"
+              class="mb-3"
+              clearable
+            />
+
+            <!-- Wine List -->
+            <div class="wine-list-container">
+              <v-list class="wine-list" max-height="200">
+                <v-list-item
+                  v-for="wine in filteredWines"
+                  :key="wine.id"
+                  @click="selectWine(wine)"
+                  :class="{ 'wine-selected': bottlePlacementData.wine?.id === wine.id }"
+                  class="wine-item"
+                >
+                  <v-icon class="mr-3" :color="wine.type === 'red' ? 'red' : wine.type === 'white' ? 'yellow' : 'pink'">
+                    mdi-bottle-wine
+                  </v-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ wine.name }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{ wine.year }} â€¢ {{ wine.region }} â€¢ {{ wineTypes.find(t => t.value === wine.type)?.title }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn
+                      v-if="bottlePlacementData.wine?.id === wine.id"
+                      icon
+                      color="green"
+                      size="small"
+                    >
+                      <v-icon>mdi-check</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+            </div>
+
+            <!-- Add New Wine Button -->
+            <v-btn
+              variant="outlined"
+              color="primary"
+              @click="showNewWineDialog = true"
+              class="mt-3"
+            >
+              <v-icon class="mr-2">mdi-plus</v-icon>
+              Ajouter un nouveau vin
+            </v-btn>
+          </div>
+
+          <!-- Placement Details -->
+          <v-divider class="my-4" />
+          <div v-if="bottlePlacementData.wine" class="placement-details-section">
+            <h4 class="text-subtitle-1 mb-3">DÃ©tails du placement</h4>
+
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="bottlePlacementData.quantity"
+                  label="QuantitÃ©"
+                  type="number"
+                  variant="outlined"
+                  :min="1"
+                  :max="selectedSpaceForPlacement?.capacity || 1"
+                />
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="bottlePlacementData.preferredStorageDuration"
+                  label="DurÃ©e de stockage souhaitÃ©e (annÃ©es)"
+                  type="number"
+                  variant="outlined"
+                  :min="1"
+                />
+              </v-col>
+            </v-row>
+
+            <v-textarea
+              v-model="bottlePlacementData.notes"
+              label="Notes (optionnel)"
+              variant="outlined"
+              rows="2"
+              class="mt-3"
+            />
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer />
+          <v-btn variant="outlined" @click="showAddBottleDialog = false">Annuler</v-btn>
+          <v-btn
+            color="green"
+            variant="flat"
+            @click="addBottlePlacement"
+            :disabled="!bottlePlacementData.wine"
+          >
+            <v-icon class="mr-2">mdi-content-save</v-icon>
+            Ajouter la bouteille
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- New Wine Dialog -->
+    <v-dialog v-model="showNewWineDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-3" color="primary">mdi-plus</v-icon>
+          Ajouter un nouveau vin
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-text-field
+              v-model="newWineData.name"
+              label="Nom du vin"
+              variant="outlined"
+              required
+              class="mb-3"
+            />
+            <v-select
+              v-model="newWineData.type"
+              :items="wineTypes"
+              label="Type de vin"
+              variant="outlined"
+              class="mb-3"
+            />
+            <v-combobox
+              v-model="newWineData.cepage"
+              label="CÃ©pages"
+              variant="outlined"
+              multiple
+              chips
+              class="mb-3"
+              hint="SÃ©parez les cÃ©pages par des virgules"
+            />
+            <v-text-field
+              v-model="newWineData.region"
+              label="RÃ©gion"
+              variant="outlined"
+              class="mb-3"
+            />
+            <v-text-field
+              v-model.number="newWineData.year"
+              label="MillÃ©sime"
+              type="number"
+              variant="outlined"
+              class="mb-3"
+            />
+            <v-text-field
+              v-model="newWineData.aopIgpVdf"
+              label="AOP/IGP/VDF"
+              variant="outlined"
+              class="mb-3"
+            />
+            <v-text-field
+              v-model.number="newWineData.prixLancement"
+              label="Prix de lancement (â‚¬)"
+              type="number"
+              variant="outlined"
+              prefix="â‚¬"
+            />
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer />
+          <v-btn variant="outlined" @click="showNewWineDialog = false">Annuler</v-btn>
+          <v-btn color="primary" variant="flat" @click="createNewWine" :disabled="!newWineData.name">
+            Ajouter le vin
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<style scoped>
+.cave-placement-background {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.cave-placement-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.selection-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 69, 19, 0.1);
+  height: fit-content;
+}
+
+.selection-title {
+  background: linear-gradient(90deg, #8b4513, #a0522d);
+  color: white;
+  border-radius: 10px 10px 0 0;
+}
+
+.list-item {
+  border-radius: 6px;
+  margin: 2px 8px;
+  transition: all 0.3s ease;
+}
+
+.list-item:hover {
+  background: rgba(139, 69, 19, 0.1);
+}
+
+.list-item-active {
+  background: rgba(139, 69, 19, 0.2);
+  border-left: 3px solid #8b4513;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #8b4513;
+}
+
+.item-details {
+  font-size: 0.75rem;
+}
+
+.unit-detail-card,
+.no-selection-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.unit-detail-title {
+  background: linear-gradient(90deg, rgba(139, 69, 19, 0.1), rgba(160, 82, 45, 0.1));
+  color: #8b4513;
+  border-radius: 10px 10px 0 0;
+}
+
+.stat-card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+}
+
+.storage-grid-container {
+  margin-top: 24px;
+}
+
+.storage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.storage-space {
+  aspect-ratio: 0.8;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+  background: white;
+}
+
+.storage-space:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.space-available {
+  background: #ffffff;
+  border: 1px dashed #ccc;
+}
+
+.space-available:hover {
+  border-color: #8b4513;
+  background: #fffaf0;
+}
+
+.space-occupied {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  border: 2px solid #8b4513;
+}
+
+.unit-type-rack .storage-grid {
+  background-color: #f4ece4;
+  border: 8px solid #8b4513;
+  background-image: repeating-linear-gradient(90deg, transparent, transparent 118px, #8b4513 118px, #8b4513 120px);
+}
+
+.unit-type-shelf .storage-grid {
+  background-color: #fdfaf6;
+  border-left: 12px solid #deb887;
+  border-right: 12px solid #deb887;
+  background-image: linear-gradient(#deb887 2px, transparent 2px);
+  background-size: 100% 160px;
+}
+
+.space-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.03);
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.space-coordinates {
+  font-size: 9px;
+}
+
+.remove-btn {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.storage-space:hover .remove-btn {
+  opacity: 1;
+}
+
+.space-content {
+  flex: 1;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottle-visual {
+  margin-bottom: 8px;
+  filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+}
+
+.storage-space:hover .bottle-visual {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.wine-info {
+  text-align: center;
+  width: 100%;
+}
+
+.wine-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wine-year {
+  font-size: 10px;
+  color: #666;
+  font-weight: bold;
+}
+
+.space-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  transition: color 0.3s ease;
+}
+
+.storage-space:hover .space-empty {
+  color: #8b4513;
+}
+
+.wine-selection-section {
+  margin-bottom: 16px;
+}
+
+.wine-list-container {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.wine-list {
+  padding: 0;
+}
+
+.wine-item {
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wine-item:hover {
+  background: rgba(139, 69, 19, 0.1);
+}
+
+.wine-selected {
+  background: rgba(76, 175, 80, 0.1);
+  border-left: 3px solid #4caf50;
+}
+
+.placement-details-section {
+  margin-top: 16px;
+}
+
+.no-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .cave-placement-background {
+    padding: 8px;
+  }
+
+  .storage-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cave-placement-background {
+    padding: 4px;
+  }
+
+  .storage-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 300px;
+  }
+
+  .storage-space {
+    min-height: 60px;
+  }
+
+  .wine-name {
+    font-size: 10px;
+  }
+
+  .wine-details {
+    font-size: 8px;
+  }
+}
+</style>

@@ -1,6 +1,6 @@
-<script setup>
+﻿<script setup>
 import { ref, reactive, onMounted, onBeforeUnmount, computed, watch, nextTick } from "vue";
-import { useCaveStore } from "@/stores/cave.js";
+import { useCaveStore } from "@/modules/cellar/store/cellar.store.js";
 
 const caveStore = useCaveStore();
 
@@ -90,8 +90,8 @@ const newUnitData = reactive({
 
 // Unit types
 const unitTypes = [
-  { value: "rack", title: "Rack à vin" },
-  { value: "shelf", title: "Étagère" },
+  { value: "rack", title: "Rack Ã  vin" },
+  { value: "shelf", title: "Ã‰tagÃ¨re" },
   { value: "cabinet", title: "Armoire" },
   { value: "wall-mounted", title: "Fixation murale" },
   { value: "floor-standing", title: "Support au sol" },
@@ -220,7 +220,7 @@ const createCave = async () => {
     resetNewCaveData();
   } catch (error) {
     console.error("Failed to create cave:", error);
-    alert("Erreur lors de la création de la cave");
+    alert("Erreur lors de la crÃ©ation de la cave");
   }
 };
 
@@ -250,13 +250,13 @@ const updateCave = async () => {
     resetEditCaveData();
   } catch (error) {
     console.error("Failed to update cave:", error);
-    alert("Erreur lors de la mise à jour de la cave");
+    alert("Erreur lors de la mise Ã  jour de la cave");
   }
 };
 
 const deleteCave = async (cave) => {
   const name = cave?.name ?? "cette cave";
-  if (!confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?\nLes emplacements et placements associés seront supprimés.`)) return;
+  if (!confirm(`ÃŠtes-vous sÃ»r de vouloir supprimer "${name}" ?\nLes emplacements et placements associÃ©s seront supprimÃ©s.`)) return;
 
   try {
     await caveStore.deleteCave(cave.id);
@@ -299,7 +299,7 @@ const createStorageUnit = async () => {
     resetNewUnitData();
   } catch (error) {
     console.error("Failed to create storage unit:", error);
-    alert("Erreur lors de la création de l'unité de stockage");
+    alert("Erreur lors de la crÃ©ation de l'unitÃ© de stockage");
   }
 };
 
@@ -336,14 +336,14 @@ const updateStorageUnit = async () => {
     resetNewUnitData();
   } catch (error) {
     console.error("Failed to update storage unit:", error);
-    alert("Erreur lors de la mise à jour de l'unité de stockage");
+    alert("Erreur lors de la mise Ã  jour de l'unitÃ© de stockage");
   }
 };
 
 const deleteStorageUnit = async (unit) => {
   if (!selectedCave.value) return;
 
-  if (confirm(`Êtes-vous sûr de vouloir supprimer l'unité "${unit.name}" ?`)) {
+  if (confirm(`ÃŠtes-vous sÃ»r de vouloir supprimer l'unitÃ© "${unit.name}" ?`)) {
     try {
       await caveStore.deleteStorageUnit(selectedCave.value.id, unit.id);
 
@@ -353,7 +353,7 @@ const deleteStorageUnit = async (unit) => {
       }
     } catch (error) {
       console.error("Failed to delete storage unit:", error);
-      alert("Erreur lors de la suppression de l'unité de stockage");
+      alert("Erreur lors de la suppression de l'unitÃ© de stockage");
     }
   }
 };
@@ -703,7 +703,7 @@ const onElevateUp = async () => {
                 <div>
                   <h1 class="text-h4 mb-1">Administration des Caves</h1>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    Gérez la disposition et la configuration de vos espaces de stockage
+                    GÃ©rez la disposition et la configuration de vos espaces de stockage
                   </p>
                 </div>
               </div>
@@ -740,7 +740,7 @@ const onElevateUp = async () => {
 
                   <v-list-item-title class="cave-name">{{ cave.name }}</v-list-item-title>
                   <v-list-item-subtitle class="cave-details">
-                    {{ (cave.units?.length ?? 0) }} unités • {{ cave.dimensions.width }}×{{ cave.dimensions.height }}cm
+                    {{ (cave.units?.length ?? 0) }} unitÃ©s â€¢ {{ cave.dimensions.width }}Ã—{{ cave.dimensions.height }}cm
                   </v-list-item-subtitle>
 
                   <template #append>
@@ -826,7 +826,7 @@ const onElevateUp = async () => {
 
                     <v-btn color="primary" variant="flat" @click="showCreateUnitDialog = true">
                       <v-icon class="mr-2">mdi-plus</v-icon>
-                      Ajouter Unité
+                      Ajouter UnitÃ©
                     </v-btn>
 
                     <v-btn
@@ -836,7 +836,7 @@ const onElevateUp = async () => {
                         class="ml-2"
                     >
                       <v-icon class="mr-2">{{ editMode ? "mdi-check" : "mdi-pencil" }}</v-icon>
-                      {{ editMode ? "Terminer Édition" : "Éditer Disposition" }}
+                      {{ editMode ? "Terminer Ã‰dition" : "Ã‰diter Disposition" }}
                     </v-btn>
                   </div>
                 </div>
@@ -849,7 +849,7 @@ const onElevateUp = async () => {
                       <v-card-text class="text-center">
                         <v-icon size="32" color="brown" class="mb-2">mdi-package-variant-closed</v-icon>
                         <div class="text-h6">{{ selectedCave.units.length }}</div>
-                        <div class="text-caption">Unités</div>
+                        <div class="text-caption">UnitÃ©s</div>
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -857,8 +857,8 @@ const onElevateUp = async () => {
                     <v-card variant="outlined" class="stat-card">
                       <v-card-text class="text-center">
                         <v-icon size="32" color="blue" class="mb-2">mdi-thermometer</v-icon>
-                        <div class="text-h6">{{ selectedCave.temperature }}°C</div>
-                        <div class="text-caption">Température</div>
+                        <div class="text-h6">{{ selectedCave.temperature }}Â°C</div>
+                        <div class="text-caption">TempÃ©rature</div>
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -867,7 +867,7 @@ const onElevateUp = async () => {
                       <v-card-text class="text-center">
                         <v-icon size="32" color="green" class="mb-2">mdi-water-percent</v-icon>
                         <div class="text-h6">{{ selectedCave.humidity }}%</div>
-                        <div class="text-caption">Humidité</div>
+                        <div class="text-caption">HumiditÃ©</div>
                       </v-card-text>
                     </v-card>
                   </v-col>
@@ -876,7 +876,7 @@ const onElevateUp = async () => {
                       <v-card-text class="text-center">
                         <v-icon size="32" color="orange" class="mb-2">mdi-ruler-square</v-icon>
                         <div class="text-h6">
-                          {{ selectedCave.dimensions.width }}×{{ selectedCave.dimensions.height }}
+                          {{ selectedCave.dimensions.width }}Ã—{{ selectedCave.dimensions.height }}
                         </div>
                         <div class="text-caption">Dimensions (cm)</div>
                       </v-card-text>
@@ -988,7 +988,7 @@ const onElevateUp = async () => {
                 </div>
 
                 <div class="mt-4 text-caption text-medium-emphasis">
-                    Astuce : dans la Vue Murs, vous pouvez déplacer les éléments en hauteur (élévation) en mode édition.
+                    Astuce : dans la Vue Murs, vous pouvez dÃ©placer les Ã©lÃ©ments en hauteur (Ã©lÃ©vation) en mode Ã©dition.
                   </div>
                 </div>
               </v-card-text>
@@ -1032,7 +1032,7 @@ const onElevateUp = async () => {
                         class="ml-2"
                     >
                       <v-icon class="mr-2">{{ editMode ? "mdi-check" : "mdi-pencil" }}</v-icon>
-                      {{ editMode ? "Terminer Édition" : "Éditer (hauteur)" }}
+                      {{ editMode ? "Terminer Ã‰dition" : "Ã‰diter (hauteur)" }}
                     </v-btn>
                   </div>
                 </div>
@@ -1047,7 +1047,7 @@ const onElevateUp = async () => {
 
                 <div class="d-flex align-center justify-space-between mb-3">
                   <div class="text-body-2">
-                    Longueur mur : <strong>{{ wallLengthCm }} cm</strong> • Hauteur mur : <strong>{{ wallHeightCm }} cm</strong>
+                    Longueur mur : <strong>{{ wallLengthCm }} cm</strong> â€¢ Hauteur mur : <strong>{{ wallHeightCm }} cm</strong>
                   </div>
 
                   <div class="layout-zoom">
@@ -1132,7 +1132,7 @@ const onElevateUp = async () => {
               </div>
 
                 <div class="mt-3 text-caption text-medium-emphasis">
-                  En mode édition : attrapez “Glisser” pour monter/descendre l’élément (hauteur/élévation). La valeur est sauvegardée.
+                  En mode Ã©dition : attrapez â€œGlisserâ€ pour monter/descendre lâ€™Ã©lÃ©ment (hauteur/Ã©lÃ©vation). La valeur est sauvegardÃ©e.
                 </div>
               </v-card-text>
             </v-card>
@@ -1150,7 +1150,7 @@ const onElevateUp = async () => {
                 <div>
                   <h2 class="text-h5 mb-1">{{ selectedUnit.name }}</h2>
                   <p class="text-body-2 text-medium-emphasis mb-0">
-                    {{ selectedUnit.type }} • {{ selectedUnit.capacity }} emplacements
+                    {{ selectedUnit.type }} â€¢ {{ selectedUnit.capacity }} emplacements
                   </p>
                 </div>
               </v-card-title>
@@ -1159,7 +1159,7 @@ const onElevateUp = async () => {
                 <v-row>
                   <v-col cols="12" md="8">
                     <div class="unit-grid-container">
-                      <h4 class="text-subtitle-1 mb-3">Vue détaillée des emplacements</h4>
+                      <h4 class="text-subtitle-1 mb-3">Vue dÃ©taillÃ©e des emplacements</h4>
                       <div class="unit-grid">
                         <div
                             v-for="space in selectedUnit.spaces"
@@ -1182,7 +1182,7 @@ const onElevateUp = async () => {
 
                   <v-col cols="12" md="4">
                     <v-card variant="outlined" class="unit-properties">
-                      <v-card-title class="text-subtitle-1">Propriétés</v-card-title>
+                      <v-card-title class="text-subtitle-1">PropriÃ©tÃ©s</v-card-title>
                       <v-card-text>
                         <div class="property-item">
                           <strong>Type:</strong> {{ unitTypes.find(t => t.value === selectedUnit.type)?.title }}
@@ -1191,23 +1191,23 @@ const onElevateUp = async () => {
                           <strong>Mur:</strong> {{ wallItems.find(w => w.value === (selectedUnit.wall ?? 'north'))?.title }}
                         </div>
                         <div class="property-item">
-                          <strong>Élévation:</strong> {{ Math.round(selectedUnit.elevation ?? 0) }} cm
+                          <strong>Ã‰lÃ©vation:</strong> {{ Math.round(selectedUnit.elevation ?? 0) }} cm
                         </div>
                         <div class="property-item">
                           <strong>Position:</strong> {{ selectedUnit.position.x }}, {{ selectedUnit.position.y }}
                         </div>
                         <div class="property-item">
                           <strong>Dimensions:</strong>
-                          {{ selectedUnit.dimensions.width }}×{{ selectedUnit.dimensions.height }}×{{ selectedUnit.dimensions.depth }} cm
+                          {{ selectedUnit.dimensions.width }}Ã—{{ selectedUnit.dimensions.height }}Ã—{{ selectedUnit.dimensions.depth }} cm
                         </div>
                         <div class="property-item">
                           <strong>Orientation:</strong> {{ selectedUnit.orientation === 'vertical' ? 'Verticale' : 'Horizontale' }}
                         </div>
                         <div class="property-item">
-                          <strong>Capacité:</strong> {{ selectedUnit.capacity }} bouteilles
+                          <strong>CapacitÃ©:</strong> {{ selectedUnit.capacity }} bouteilles
                         </div>
                         <div class="property-item">
-                          <strong>Occupés:</strong> {{ caveStore.occupiedSpaces.length }}/{{ selectedUnit.capacity }}
+                          <strong>OccupÃ©s:</strong> {{ caveStore.occupiedSpaces.length }}/{{ selectedUnit.capacity }}
                         </div>
 
                         <div class="mt-3 d-flex" style="gap: 8px; flex-wrap: wrap">
@@ -1232,13 +1232,13 @@ const onElevateUp = async () => {
             <v-card class="no-selection-card" elevation="4">
               <v-card-text class="text-center pa-8">
                 <v-icon size="64" color="grey" class="mb-4">mdi-storefront-outline</v-icon>
-                <h3 class="text-h5 mb-2">Aucune cave sélectionnée</h3>
+                <h3 class="text-h5 mb-2">Aucune cave sÃ©lectionnÃ©e</h3>
                 <p class="text-body-1 text-medium-emphasis mb-4">
-                  Sélectionnez une cave dans la liste ou créez-en une nouvelle pour commencer.
+                  SÃ©lectionnez une cave dans la liste ou crÃ©ez-en une nouvelle pour commencer.
                 </p>
                 <v-btn color="brown" variant="flat" @click="showCreateCaveDialog = true" size="large">
                   <v-icon class="mr-2">mdi-plus</v-icon>
-                  Créer ma première cave
+                  CrÃ©er ma premiÃ¨re cave
                 </v-btn>
               </v-card-text>
             </v-card>
@@ -1251,7 +1251,7 @@ const onElevateUp = async () => {
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-3" color="brown">mdi-plus</v-icon>
-          Créer une nouvelle cave
+          CrÃ©er une nouvelle cave
         </v-card-title>
 
         <v-card-text>
@@ -1273,10 +1273,10 @@ const onElevateUp = async () => {
 
             <v-row class="mt-3">
               <v-col cols="6">
-                <v-text-field v-model.number="newCaveData.temperature" label="Température (°C)" type="number" variant="outlined" />
+                <v-text-field v-model.number="newCaveData.temperature" label="TempÃ©rature (Â°C)" type="number" variant="outlined" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model.number="newCaveData.humidity" label="Humidité (%)" type="number" variant="outlined" />
+                <v-text-field v-model.number="newCaveData.humidity" label="HumiditÃ© (%)" type="number" variant="outlined" />
               </v-col>
             </v-row>
           </v-form>
@@ -1285,7 +1285,7 @@ const onElevateUp = async () => {
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="outlined" @click="showCreateCaveDialog = false">Annuler</v-btn>
-          <v-btn color="brown" variant="flat" @click="createCave" :disabled="!newCaveData.name">Créer la cave</v-btn>
+          <v-btn color="brown" variant="flat" @click="createCave" :disabled="!newCaveData.name">CrÃ©er la cave</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1316,10 +1316,10 @@ const onElevateUp = async () => {
 
             <v-row class="mt-3">
               <v-col cols="6">
-                <v-text-field v-model.number="editCaveData.temperature" label="Température (°C)" type="number" variant="outlined" />
+                <v-text-field v-model.number="editCaveData.temperature" label="TempÃ©rature (Â°C)" type="number" variant="outlined" />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model.number="editCaveData.humidity" label="Humidité (%)" type="number" variant="outlined" />
+                <v-text-field v-model.number="editCaveData.humidity" label="HumiditÃ© (%)" type="number" variant="outlined" />
               </v-col>
             </v-row>
           </v-form>
@@ -1338,7 +1338,7 @@ const onElevateUp = async () => {
             Annuler
           </v-btn>
           <v-btn color="brown" variant="flat" @click="updateCave" :disabled="!editCaveData.name">
-            Mettre à jour
+            Mettre Ã  jour
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -1348,14 +1348,14 @@ const onElevateUp = async () => {
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-3" color="primary">mdi-plus</v-icon>
-          Ajouter une unité de stockage
+          Ajouter une unitÃ© de stockage
         </v-card-title>
 
         <v-card-text>
           <v-form>
-            <v-text-field v-model="newUnitData.name" label="Nom de l'unité" variant="outlined" required class="mb-3" />
+            <v-text-field v-model="newUnitData.name" label="Nom de l'unitÃ©" variant="outlined" required class="mb-3" />
 
-            <v-select v-model="newUnitData.type" :items="unitTypes" label="Type d'unité" variant="outlined" class="mb-3" />
+            <v-select v-model="newUnitData.type" :items="unitTypes" label="Type d'unitÃ©" variant="outlined" class="mb-3" />
 
             <v-select
                 v-model="newUnitData.wall"
@@ -1367,7 +1367,7 @@ const onElevateUp = async () => {
 
             <v-text-field
                 v-model.number="newUnitData.elevation"
-                label="Élévation (cm depuis le sol)"
+                label="Ã‰lÃ©vation (cm depuis le sol)"
                 type="number"
                 variant="outlined"
                 class="mb-3"
@@ -1401,7 +1401,7 @@ const onElevateUp = async () => {
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="outlined" @click="showCreateUnitDialog = false">Annuler</v-btn>
-          <v-btn color="primary" variant="flat" @click="createStorageUnit" :disabled="!newUnitData.name">Ajouter l'unité</v-btn>
+          <v-btn color="primary" variant="flat" @click="createStorageUnit" :disabled="!newUnitData.name">Ajouter l'unitÃ©</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1410,13 +1410,13 @@ const onElevateUp = async () => {
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="mr-3" color="primary">mdi-pencil</v-icon>
-          Modifier l'unité de stockage
+          Modifier l'unitÃ© de stockage
         </v-card-title>
 
         <v-card-text>
           <v-form>
-            <v-text-field v-model="newUnitData.name" label="Nom de l'unité" variant="outlined" required class="mb-3" />
-            <v-select v-model="newUnitData.type" :items="unitTypes" label="Type d'unité" variant="outlined" class="mb-3" />
+            <v-text-field v-model="newUnitData.name" label="Nom de l'unitÃ©" variant="outlined" required class="mb-3" />
+            <v-select v-model="newUnitData.type" :items="unitTypes" label="Type d'unitÃ©" variant="outlined" class="mb-3" />
 
             <v-select
                 v-model="newUnitData.wall"
@@ -1428,7 +1428,7 @@ const onElevateUp = async () => {
 
             <v-text-field
                 v-model.number="newUnitData.elevation"
-                label="Élévation (cm depuis le sol)"
+                label="Ã‰lÃ©vation (cm depuis le sol)"
                 type="number"
                 variant="outlined"
                 class="mb-3"
@@ -1462,7 +1462,7 @@ const onElevateUp = async () => {
         <v-card-actions class="pa-4">
           <v-spacer />
           <v-btn variant="outlined" @click="showEditUnitDialog = false">Annuler</v-btn>
-          <v-btn color="primary" variant="flat" @click="updateStorageUnit" :disabled="!newUnitData.name">Mettre à jour</v-btn>
+          <v-btn color="primary" variant="flat" @click="updateStorageUnit" :disabled="!newUnitData.name">Mettre Ã  jour</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -1913,3 +1913,4 @@ const onElevateUp = async () => {
   }
 }
 </style>
+
