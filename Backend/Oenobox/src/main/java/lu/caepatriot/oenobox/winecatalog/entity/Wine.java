@@ -26,38 +26,22 @@ public class Wine {
     private List<Cepage> cepages;
 
     private String region;
-    
+
     @Column(name = "wine_year")
     private Integer year;
 
     private String producer;
-
     private String country;
-
     private String appellation;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "aroma_notes", columnDefinition = "jsonb")
-    private List<String> aromaNotes;
-
-    @Column(name = "food_pairings", columnDefinition = "jsonb")
-    private List<String> foodPairings;
-
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Column(name = "data_source")
-    private String dataSource;
-
-    @Column(name = "external_id")
-    private String externalId;
-
-    // Constructors
     public Wine() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -88,19 +72,6 @@ public class Wine {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public List<String> getAromaNotes() { return aromaNotes; }
-    public void setAromaNotes(List<String> aromaNotes) { this.aromaNotes = aromaNotes; }
-
-    public List<String> getFoodPairings() { return foodPairings; }
-    public void setFoodPairings(List<String> foodPairings) { this.foodPairings = foodPairings; }
-
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-
-    public String getDataSource() { return dataSource; }
-    public void setDataSource(String dataSource) { this.dataSource = dataSource; }
-
-    public String getExternalId() { return externalId; }
-    public void setExternalId(String externalId) { this.externalId = externalId; }
 }
-

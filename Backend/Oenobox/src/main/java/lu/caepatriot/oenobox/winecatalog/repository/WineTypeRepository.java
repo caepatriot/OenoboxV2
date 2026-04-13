@@ -1,7 +1,6 @@
 package lu.caepatriot.oenobox.winecatalog.repository;
 
 import lu.caepatriot.oenobox.winecatalog.entity.WineType;
-import lu.caepatriot.oenobox.winecatalog.entity.Wine;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +14,7 @@ public interface WineTypeRepository extends JpaRepository<WineType, Long> {
     // Find wine type by exact name
     Optional<WineType> findByName(String name);
 
-    @Query("SELECT wt FROM WineType wt WHERE LOWER(wt.name) = LOWER(:name)")
-    Optional<WineType> findByNameIgnoreCase(@Param("name") String name);
+    Optional<WineType> findByNameIgnoreCase(String name);
 
     // Find wine types by color code
     List<WineType> findByColorCode(String colorCode);
@@ -29,4 +27,3 @@ public interface WineTypeRepository extends JpaRepository<WineType, Long> {
     @Query("SELECT wt FROM WineType wt WHERE LOWER(wt.colorCode) LIKE LOWER(CONCAT('%', :colorCode, '%'))")
     List<WineType> findByColorCodeContainingIgnoreCase(@Param("colorCode") String colorCode);
 }
-

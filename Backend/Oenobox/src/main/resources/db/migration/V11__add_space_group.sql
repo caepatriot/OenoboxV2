@@ -1,0 +1,1 @@
+ALTER TABLE space ADD COLUMN group_name VARCHAR(255);

@@ -15,33 +15,58 @@ public class StorageUnit {
     private String name;
 
     @Column(nullable = false)
-    private String type; // rack, shelf, cabinet...
+    private String type;
 
+    @Column(name = "template_key")
+    private String templateKey;
+
+    @Column(name = "layout_mode")
+    private String layoutMode;
+
+    @Column(name = "posx")
     private Double posX;
+
+    @Column(name = "posy")
     private Double posY;
-    
+
     private Double width;
     private Double height;
     private Double depth;
 
-    private String orientation; // vertical, horizontal
-    private String wall; // north, south, east, west
+    private String orientation;
+    private String wall;
     private Double elevation;
-    
     private Integer capacity;
     private Double rotation;
+
+    @Column(name = "row_count")
+    private Integer rowCount;
+
+    @Column(name = "column_count")
+    private Integer columnCount;
+
+    @Column(name = "default_space_capacity")
+    private Integer defaultSpaceCapacity;
+
+    @Column(name = "display_order")
+    private Integer displayOrder;
+
+    @Column(name = "preferred_wine_group")
+    private String preferredWineGroup;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cave_id", nullable = false)
     private Cave cave;
 
     @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("row ASC, column ASC")
     private List<Space> spaces = new ArrayList<>();
 
-    // Constructors
     public StorageUnit() {}
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -50,6 +75,12 @@ public class StorageUnit {
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
+
+    public String getTemplateKey() { return templateKey; }
+    public void setTemplateKey(String templateKey) { this.templateKey = templateKey; }
+
+    public String getLayoutMode() { return layoutMode; }
+    public void setLayoutMode(String layoutMode) { this.layoutMode = layoutMode; }
 
     public Double getPosX() { return posX; }
     public void setPosX(Double posX) { this.posX = posX; }
@@ -81,10 +112,27 @@ public class StorageUnit {
     public Double getRotation() { return rotation; }
     public void setRotation(Double rotation) { this.rotation = rotation; }
 
+    public Integer getRowCount() { return rowCount; }
+    public void setRowCount(Integer rowCount) { this.rowCount = rowCount; }
+
+    public Integer getColumnCount() { return columnCount; }
+    public void setColumnCount(Integer columnCount) { this.columnCount = columnCount; }
+
+    public Integer getDefaultSpaceCapacity() { return defaultSpaceCapacity; }
+    public void setDefaultSpaceCapacity(Integer defaultSpaceCapacity) { this.defaultSpaceCapacity = defaultSpaceCapacity; }
+
+    public Integer getDisplayOrder() { return displayOrder; }
+    public void setDisplayOrder(Integer displayOrder) { this.displayOrder = displayOrder; }
+
+    public String getPreferredWineGroup() { return preferredWineGroup; }
+    public void setPreferredWineGroup(String preferredWineGroup) { this.preferredWineGroup = preferredWineGroup; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
     public Cave getCave() { return cave; }
     public void setCave(Cave cave) { this.cave = cave; }
 
     public List<Space> getSpaces() { return spaces; }
     public void setSpaces(List<Space> spaces) { this.spaces = spaces; }
 }
-
