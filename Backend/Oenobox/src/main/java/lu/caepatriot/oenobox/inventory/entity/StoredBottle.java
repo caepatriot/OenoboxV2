@@ -21,6 +21,10 @@ public class StoredBottle {
     @JoinColumn(name = "acquisition_lot_id")
     private AcquisitionLot acquisitionLot;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "acquisition_lot_item_id")
+    private AcquisitionLotItem acquisitionLotItem;
+
     private String status;
 
     @Column(name = "purchase_price", precision = 10, scale = 2)
@@ -42,6 +46,9 @@ public class StoredBottle {
 
     public AcquisitionLot getAcquisitionLot() { return acquisitionLot; }
     public void setAcquisitionLot(AcquisitionLot acquisitionLot) { this.acquisitionLot = acquisitionLot; }
+
+    public AcquisitionLotItem getAcquisitionLotItem() { return acquisitionLotItem; }
+    public void setAcquisitionLotItem(AcquisitionLotItem acquisitionLotItem) { this.acquisitionLotItem = acquisitionLotItem; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }

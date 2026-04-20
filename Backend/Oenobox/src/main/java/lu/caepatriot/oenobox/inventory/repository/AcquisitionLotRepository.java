@@ -4,4 +4,5 @@ import lu.caepatriot.oenobox.inventory.entity.AcquisitionLot;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AcquisitionLotRepository extends JpaRepository<AcquisitionLot, Long> {
+    java.util.List<AcquisitionLot> findAllByOrderByAcquiredOnDescIdDesc();
 }

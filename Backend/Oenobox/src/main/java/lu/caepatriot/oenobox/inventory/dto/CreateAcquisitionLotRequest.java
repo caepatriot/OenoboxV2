@@ -1,38 +1,18 @@
-package lu.caepatriot.oenobox.inventory.entity;
+package lu.caepatriot.oenobox.inventory.dto;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "acquisition_lots")
-public class AcquisitionLot {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "household_id")
+public class CreateAcquisitionLotRequest {
     private Long householdId;
-
     private String source;
-
-    @Column(name = "acquired_on")
     private LocalDate acquiredOn;
-
-    @Column(name = "total_price", precision = 10, scale = 2)
     private BigDecimal totalPrice;
-
     private String currency;
-
     private String notes;
-
-    @OneToMany(mappedBy = "acquisitionLot", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AcquisitionLotItem> items = new ArrayList<>();
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private Boolean createStoredBottles;
+    private List<CreateAcquisitionLotItemRequest> items;
 
     public Long getHouseholdId() { return householdId; }
     public void setHouseholdId(Long householdId) { this.householdId = householdId; }
@@ -52,6 +32,9 @@ public class AcquisitionLot {
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
 
-    public List<AcquisitionLotItem> getItems() { return items; }
-    public void setItems(List<AcquisitionLotItem> items) { this.items = items; }
+    public Boolean getCreateStoredBottles() { return createStoredBottles; }
+    public void setCreateStoredBottles(Boolean createStoredBottles) { this.createStoredBottles = createStoredBottles; }
+
+    public List<CreateAcquisitionLotItemRequest> getItems() { return items; }
+    public void setItems(List<CreateAcquisitionLotItemRequest> items) { this.items = items; }
 }

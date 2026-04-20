@@ -94,4 +94,28 @@ export const cellarApi = {
 
 export const caveApi = cellarApi
 
+export const inventoryIntakeApi = {
+  search: (query) => api.get('/inventory/intake/search', { params: { q: query } }),
+  ocrLookup: (payload) => api.post('/inventory/intake/ocr', payload),
+  scanImage: (file, options = {}) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    if (options.language) formData.append('language', options.language)
+    return api.post('/inventory/intake/ocr/scan', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+}
+
+export const acquisitionLotApi = {
+  create: (payload) => api.post('/inventory/lots', payload),
+  getAll: () => api.get('/inventory/lots'),
+  getById: (id) => api.get(`/inventory/lots/${id}`),
+  dispatch: (id, payload) => api.post(`/inventory/lots/${id}/dispatch`, payload),
+}
+
+export const catalogSubmissionApi = {
+  create: (payload) => api.post('/catalog/submissions', payload),
+}
+
 export default api

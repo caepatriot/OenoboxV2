@@ -1,35 +1,21 @@
-package lu.caepatriot.oenobox.inventory.entity;
+package lu.caepatriot.oenobox.inventory.dto;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "acquisition_lots")
-public class AcquisitionLot {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AcquisitionLotDto {
     private Long id;
-
-    @Column(name = "household_id")
     private Long householdId;
-
     private String source;
-
-    @Column(name = "acquired_on")
     private LocalDate acquiredOn;
-
-    @Column(name = "total_price", precision = 10, scale = 2)
     private BigDecimal totalPrice;
-
     private String currency;
-
     private String notes;
-
-    @OneToMany(mappedBy = "acquisitionLot", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AcquisitionLotItem> items = new ArrayList<>();
+    private Integer totalReceived;
+    private Integer totalAvailable;
+    private Integer totalDispatched;
+    private List<AcquisitionLotItemDto> items;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -52,6 +38,15 @@ public class AcquisitionLot {
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
 
-    public List<AcquisitionLotItem> getItems() { return items; }
-    public void setItems(List<AcquisitionLotItem> items) { this.items = items; }
+    public Integer getTotalReceived() { return totalReceived; }
+    public void setTotalReceived(Integer totalReceived) { this.totalReceived = totalReceived; }
+
+    public Integer getTotalAvailable() { return totalAvailable; }
+    public void setTotalAvailable(Integer totalAvailable) { this.totalAvailable = totalAvailable; }
+
+    public Integer getTotalDispatched() { return totalDispatched; }
+    public void setTotalDispatched(Integer totalDispatched) { this.totalDispatched = totalDispatched; }
+
+    public List<AcquisitionLotItemDto> getItems() { return items; }
+    public void setItems(List<AcquisitionLotItemDto> items) { this.items = items; }
 }

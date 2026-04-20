@@ -24,6 +24,32 @@ const router = createRouter({
       path: '/inventory',
       name: 'inventory',
       component: () => import('@/views/InventoryView.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/inventory/overview',
+        },
+        {
+          path: 'overview',
+          name: 'inventory-overview',
+          component: () => import('@/modules/inventory/pages/InventoryOverviewPage.vue'),
+        },
+        {
+          path: 'intake',
+          name: 'inventory-intake',
+          component: () => import('@/modules/inventory/pages/InventoryIntakePage.vue'),
+        },
+        {
+          path: 'lots',
+          name: 'inventory-lots',
+          component: () => import('@/modules/inventory/pages/AcquisitionLotsPage.vue'),
+        },
+        {
+          path: 'lots/:lotId',
+          name: 'inventory-lot-detail',
+          component: () => import('@/modules/inventory/pages/AcquisitionLotDetailPage.vue'),
+        },
+      ],
     },
     {
       path: '/oli',

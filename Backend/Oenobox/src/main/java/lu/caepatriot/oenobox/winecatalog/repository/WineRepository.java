@@ -7,4 +7,9 @@ import java.util.List;
 
 public interface WineRepository extends JpaRepository<Wine, Long> {
     List<Wine> findByNameContainingIgnoreCaseOrRegionContainingIgnoreCaseOrderByNameAsc(String name, String region);
+    List<Wine> findTop25ByNameContainingIgnoreCaseOrProducerContainingIgnoreCaseOrAppellationContainingIgnoreCaseOrderByNameAsc(
+            String name,
+            String producer,
+            String appellation
+    );
 }

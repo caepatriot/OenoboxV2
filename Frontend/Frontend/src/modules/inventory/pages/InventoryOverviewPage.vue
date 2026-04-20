@@ -1,136 +1,77 @@
-﻿<script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useCaveStore } from '@/modules/cellar/store/cellar.store.js'
-import { extractPlacements, formatBottleTitle, formatCurrency, safeArray } from '@/shared/helpers/cellarMetrics.js'
+<script setup>
+import { computed, onMounted } from 'vue'
+import { useInventoryStore } from '@/modules/inventory/store/inventory.store'
 
-const caveStore = useCaveStore()
-const search = ref('')
+const inventoryStore = useInventoryStore()
 
 onMounted(async () => {
-  await Promise.allSettled([caveStore.loadCaves(), caveStore.getWines()])
+  if (!inventoryStore.lots.length) {
+    await inventoryStore.fetchLots()
+  }
 })
 
-const placements = computed(() => extractPlacements(caveStore.caves))
-
-const filteredPlacements = computed(() => {
-  const query = search.value.trim().toLowerCase()
-  if (!query) return placements.value
-
-  return placements.value.filter((placement) => {
-    const haystack = [
-      placement?.wine?.name,
-      placement?.wine?.region,
-      placement?.wine?.type,
-      placement?.caveName,
-      placement?.unitName,
-      placement?.spaceLabel,
-      placement?.wine?.year,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase()
-
-    return haystack.includes(query)
-  })
-})
-
-const groupedPlacements = computed(() => {
-  return filteredPlacements.value.reduce((groups, placement) => {
-    const key = `${placement.caveName}__${placement.unitName}`
-    if (!groups[key]) {
-      groups[key] = {
-        key,
-        caveName: placement.caveName,
-        unitName: placement.unitName,
-        items: [],
-      }
-    }
-    groups[key].items.push(placement)
-    return groups
-  }, {})
-})
-
-const groupsList = computed(() => Object.values(groupedPlacements.value))
-const knownWines = computed(() => safeArray(caveStore.wines).length)
+const latestLots = computed(() => inventoryStore.lots.slice(0, 5))
 </script>
 
 <template>
-  <section class="oeno-page">
-    <div class="oeno-page__heading">
-      <div>
-        <p class="oeno-eyebrow">Inventory</p>
-        <h1 class="oeno-title">Bottle inventory</h1>
-        <p class="oeno-subtitle">Search stock by bottle, rack, or cellar section and jump back into the legacy placement workflow when needed.</p>
-      </div>
-      <RouterLink to="/cave-placement" class="oeno-link-chip">
-        <v-icon size="18">mdi-swap-horizontal-bold</v-icon>
-        Manage placements
-      </RouterLink>
+  <div class="oeno-stack">
+    <div class="oeno-card-grid">
+      <v-card class="oeno-card" variant="flat">
+        <v-card-text class="pa-5">
+          <p class="oeno-card-label mb-2">Received</p>
+          <div class="oeno-metric">{{ inventoryStore.totals.received }}</div>
+          <p class="oeno-muted mt-2">Total bottles received through intake lots.</p>
+        </v-card-text>
+      </v-card>
+      <v-card class="oeno-card" variant="flat">
+        <v-card-text class="pa-5">
+          <p class="oeno-card-label mb-2">Unassigned</p>
+          <div class="oeno-metric">{{ inventoryStore.totals.available }}</div>
+          <p class="oeno-muted mt-2">Still in inventory intake and not dispatched.</p>
+        </v-card-text>
+      </v-card>
+      <v-card class="oeno-card" variant="flat">
+        <v-card-text class="pa-5">
+          <p class="oeno-card-label mb-2">Dispatched</p>
+          <div class="oeno-metric">{{ inventoryStore.totals.dispatched }}</div>
+          <p class="oeno-muted mt-2">Moved from intake to cellar-ready stock.</p>
+        </v-card-text>
+      </v-card>
     </div>
 
-    <div class="oeno-hero oeno-hero--compact mb-6">
-      <div class="oeno-hero__content">
-        <div class="oeno-mini-stats">
-          <div class="oeno-soft-tile">
-            <div class="oeno-card-label">Placed references</div>
-            <div class="oeno-soft-value">{{ filteredPlacements.length }}</div>
+    <v-card class="oeno-card" variant="flat">
+      <v-card-text class="pa-6">
+        <div class="d-flex align-center justify-space-between flex-wrap ga-3 mb-4">
+          <div>
+            <p class="oeno-card-label mb-1">Recent activity</p>
+            <h2 class="oeno-card-title">Latest acquisition lots</h2>
           </div>
-          <div class="oeno-soft-tile">
-            <div class="oeno-card-label">Known wines</div>
-            <div class="oeno-soft-value">{{ knownWines }}</div>
-          </div>
+          <RouterLink to="/inventory/lots" class="oeno-link-chip">
+            <v-icon size="18">mdi-arrow-right</v-icon>
+            Open lots
+          </RouterLink>
         </div>
-      </div>
 
-      <div class="oeno-search-box">
-        <v-text-field
-          v-model="search"
-          hide-details
-          variant="solo-filled"
-          density="comfortable"
-          placeholder="Search a bottle, region, rack or cellar"
-          prepend-inner-icon="mdi-magnify"
-          class="oeno-search-field"
-        />
-      </div>
-    </div>
-
-    <div class="oeno-stack">
-      <v-card v-for="group in groupsList" :key="group.key" class="oeno-card" variant="flat">
-        <v-card-text class="pa-6">
-          <div class="d-flex align-center justify-space-between flex-wrap ga-3 mb-4">
+        <div v-if="inventoryStore.isLoading" class="oeno-muted">Loading lots...</div>
+        <v-alert v-else-if="inventoryStore.error" type="error" variant="tonal" class="mb-2">
+          {{ inventoryStore.error }}
+        </v-alert>
+        <div v-else-if="latestLots.length" class="oeno-list">
+          <RouterLink
+            v-for="lot in latestLots"
+            :key="lot.id"
+            :to="`/inventory/lots/${lot.id}`"
+            class="oeno-list-item text-decoration-none"
+          >
             <div>
-              <p class="oeno-card-label mb-2">{{ group.caveName }}</p>
-              <h2 class="oeno-card-title">{{ group.unitName }}</h2>
+              <div class="oeno-strong">Lot #{{ lot.id }} · {{ lot.source || 'Unknown source' }}</div>
+              <div class="oeno-muted mt-1">{{ lot.acquiredOn || 'No date' }} · {{ lot.items?.length || 0 }} item(s)</div>
             </div>
-            <v-chip class="oeno-chip" variant="flat">{{ group.items.length }} tracked slots</v-chip>
-          </div>
-
-          <div class="oeno-list">
-            <div v-for="item in group.items" :key="item.id || `${item.spaceId}-${item.wine?.id || item.spaceLabel}`" class="oeno-list-item">
-              <div>
-                <div class="oeno-strong">{{ formatBottleTitle(item.wine) }}</div>
-                <div class="oeno-muted mt-1">{{ item.spaceLabel }} Â· {{ item.quantity }} bottle<span v-if="item.quantity > 1">s</span></div>
-              </div>
-              <div class="text-right">
-                <div class="oeno-strong">{{ formatCurrency((item.wine?.prixActuel ?? item.wine?.prixLancement ?? 0) * item.quantity) }}</div>
-                <div class="oeno-muted mt-1">{{ item.wine?.type || 'Wine' }}</div>
-              </div>
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
-
-      <v-card v-if="!groupsList.length" class="oeno-card" variant="flat">
-        <v-card-text class="pa-8 text-center">
-          <div class="oeno-empty-icon mx-auto mb-4">
-            <v-icon size="30">mdi-magnify-close</v-icon>
-          </div>
-          <h2 class="oeno-card-title mb-2">No matching bottles</h2>
-          <p class="oeno-muted">Try another search or use the placement screen to assign new stock to your cellar map.</p>
-        </v-card-text>
-      </v-card>
-    </div>
-  </section>
+            <v-chip class="oeno-chip" variant="flat">{{ lot.totalAvailable || 0 }} unassigned</v-chip>
+          </RouterLink>
+        </div>
+        <p v-else class="oeno-muted">No acquisition lot yet. Use the intake tab to create your first lot.</p>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
-
