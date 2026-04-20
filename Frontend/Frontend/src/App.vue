@@ -1,8 +1,15 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
+import {
+  startServerStatusPolling,
+  stopServerStatusPolling,
+  useServerStatus,
+} from '@/core/connectivity/serverStatus'
 
 const route = useRoute()
+const serverStatus = useServerStatus()
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
 
 const navItems = [
   { to: '/', label: 'Home', icon: 'mdi-home-variant-outline', match: '/' },
@@ -38,11 +45,24 @@ function isActive(item) {
     ? route.path === '/'
     : route.path === item.to || route.path.startsWith(`${item.to}/`)
 }
+
+onMounted(() => {
+  startServerStatusPolling(apiBaseUrl)
+})
+
+onUnmounted(() => {
+  stopServerStatusPolling()
+})
 </script>
 
 <template>
-  <v-app class="oeno-shell">
+  <v-app class="oeno-shell" :class="{ 'oeno-shell--offline': !serverStatus.isServerReachable }">
     <div class="oeno-app-bg"></div>
+
+    <div v-if="!serverStatus.isServerReachable" class="oeno-status-banner" role="status" aria-live="polite">
+      <v-icon size="18">mdi-alert-circle-outline</v-icon>
+      <span>Server unreachable. Reconnecting automatically...</span>
+    </div>
 
     <header class="oeno-topbar">
       <div class="oeno-topbar__inner">
