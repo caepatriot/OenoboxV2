@@ -1,0 +1,55 @@
+name: Update AGENTS.md
+
+# Trigger when project structure files change
+on:
+  push:
+    paths:
+      - 'Backend/Oenobox/src/main/java/lu/caepatriot/oenobox/*'
+      - 'Backend/Oenobox/pom.xml'
+      - 'Frontend/Frontend/src/modules/*'
+      - 'Frontend/Frontend/package.json'
+      - 'Backend/Oenobox/src/main/resources/db/migration/*'
+    branches:
+      - main
+      - develop
+
+jobs:
+  update-agents:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Update AGENTS.md
+        run: |
+          cd ${{ github.workspace }}
+          node scripts/update-agents-md.js
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet AGENTS.md; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add AGENTS.md
+          git commit -m "chore: auto-update AGENTS.md with current project structure"
+          git push
+
